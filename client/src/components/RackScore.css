@@ -1,0 +1,17 @@
+.rack-score {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5em;
+    width: 20%;
+}
+
+.score-piece {
+    flex: 1 1 3ch;
+    text-align: center;
+    min-width: 2ch;
+}
+
+.multiplier {
+    min-width: 5ch;
+}

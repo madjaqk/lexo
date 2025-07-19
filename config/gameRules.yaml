@@ -1,0 +1,35 @@
+multipliers:
+    3: 6
+    4: 5
+    5: 4
+    6: 3
+# Letter scores based on Peter Norvig's letter-frequency calculations.
+# http://norvig.com/scrabble-letter-scores.html
+letterValues:
+    A: 1
+    B: 3
+    C: 3
+    D: 1
+    E: 1
+    F: 4
+    G: 2
+    H: 3
+    I: 1
+    J: 8
+    K: 6
+    L: 1
+    M: 2
+    N: 1   # TODO: In the distant past, `N` was a YAML shortcut for "false".  I don't think that's the case anymore, but if this causes problems, change the key here to `"N"` (that is, with quotes) to force it to be a string. -- JDB 2025-07-14
+    O: 1
+    P: 2
+    Q: 10
+    R: 1
+    S: 1
+    T: 1
+    U: 3
+    V: 6
+    W: 4
+    X: 8
+    Y: 4
+    Z: 8
+timerSeconds: 300 # in seconds
