@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useCallback, useRef } from "react"
-import WordRacks from "./WordRacks"
-import type { GameRules, Tile, WordScore, GameState, DailyPuzzle } from "@/types"
-import { isValidWord } from "@/utils/wordValidation"
+import { useCallback, useEffect, useRef, useState } from "react"
+import { saveHistoryForDate } from "@/services/playHistory"
+import type { DailyPuzzle, GameRules, GameState, Tile, WordScore } from "@/types"
 import { sum } from "@/utils/math"
+import { isValidWord } from "@/utils/wordValidation"
 import "./Game.css"
 import ScoreReport from "./ScoreReport"
 import TimerBar from "./TimerBar"
-import { saveHistoryForDate } from "@/services/playHistory"
+import WordRacks from "./WordRacks"
 
 export interface GameProps {
     puzzle: DailyPuzzle

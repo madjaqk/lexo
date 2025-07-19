@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback } from "react"
+import { useCallback, useEffect, useState } from "react"
 import Game from "./components/Game"
 import type { DailyPuzzle, GameRules } from "./types"
 import "./App.css"
 import { fetchDailyPuzzle, fetchGameRules } from "./services/gameService"
+import { clearAllHistory, getHistoryForDate } from "./services/playHistory"
 import { loadWordList } from "./utils/wordValidation"
-import { getHistoryForDate, clearAllHistory } from "./services/playHistory"
 
 function App() {
     const [dailyPuzzle, setDailyPuzzle] = useState<DailyPuzzle | null>(null)

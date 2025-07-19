@@ -1,6 +1,6 @@
 import type { WordScore } from "@/types"
-import ShareButton from "./ShareButton"
 import { sum } from "@/utils/math"
+import ShareButton from "./ShareButton"
 
 export interface ScoreReportProps {
     rackScores: WordScore[]

@@ -1,4 +1,4 @@
-import type { DailyPuzzle, GameRules, PuzzleState } from "@/types"
+import type { DailyPuzzle, GameRules } from "@/types"
 
 const BASE_URL = "/api"
 
@@ -126,8 +126,9 @@ export async function fetchGameRules(): Promise<GameRules> {
     return response.json()
 }
 
-export async function fetchDailyPuzzle(date: string): Promise<PuzzleState> {
-    const response = await fetch(`${BASE_URL}/puzzle/${date}`)
+export async function fetchDailyPuzzle(date?: string): Promise<PuzzleState> {
+    const url = date ? `${BASE_URL}/puzzle/${date}` : `${BASE_URL}/puzzle/today`
+    const response = await fetch(url)
 
     if (!response.ok) {
         throw new Error(`Failed to fetch daily puzzle: ${response.status}`)

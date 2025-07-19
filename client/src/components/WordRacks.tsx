@@ -1,16 +1,15 @@
-import React, { type Dispatch, useEffect, useState, useCallback, type SetStateAction } from "react"
 import {
     DndContext,
-    DragOverlay,
     type DragOverEvent,
-    type DragEndEvent,
-    rectIntersection,
+    DragOverlay,
     type DragStartEvent,
+    rectIntersection,
     type UniqueIdentifier,
 } from "@dnd-kit/core"
-import { SortableContext, horizontalListSortingStrategy } from "@dnd-kit/sortable"
-import { WordRack } from "./WordRack"
+import { horizontalListSortingStrategy, SortableContext } from "@dnd-kit/sortable"
+import { type Dispatch, type SetStateAction, useState } from "react"
 import type { Tile, WordScore } from "@/types"
+import { WordRack } from "./WordRack"
 import "./WordRacks.css"
 
 export interface WordRacksProps {
@@ -101,67 +100,14 @@ export default function WordRacks(props: WordRacksProps) {
         })
     }
 
-    function handleDragEnd(event: DragEndEvent) {
+    function handleDragEnd() {
         setActiveTileId(null)
-        // I _think_ all of the logic for updating the racks is handled in handleDragOver, so this function doesn't need to do anything except clear activeTileId.
-
-        // const { active, over } = event
-        // if (!over || active.id === over.id) {
-        //     return
-        // }
-
-        // let fromRack = -1
-        // let toRack = -1
-        // let oldIndex = -1
-        // let newIndex = -1
-
-        // racks.forEach((rack, rackIdx) => {
-        //     const idx = rack.findIndex(t => t.id === active.id)
-        //     if (idx !== -1) {
-        //         fromRack = rackIdx
-        //         oldIndex = idx
-        //     }
-        //     const overIdx = rack.findIndex(t => t.id === over.id)
-        //     if (overIdx !== -1) {
-        //         toRack = rackIdx
-        //         newIndex = overIdx
-        //     }
-        // })
-
-        // if (toRack === -1 && over && typeof over.id === "string" && over.id.startsWith("rack-")) {
-        //     toRack = Number.parseInt(over.id.split("-")[1], 10)
-        //     newIndex = racks[toRack].length
-        // }
-
-        // if (fromRack === -1 || toRack === -1) {
-        //     return
-        // }
-
-        // const tile = racks[fromRack][oldIndex]
-        // const newRacks = racks.map((rack, idx) => {
-        //     if (idx === fromRack && idx === toRack) {
-        //         const filtered = rack.filter(t => t.id !== active.id)
-        //         const before = filtered.slice(0, newIndex)
-        //         const after = filtered.slice(newIndex)
-        //         return [...before, tile, ...after]
-        //     }
-        //     if (idx === fromRack) {
-        //         return rack.filter(t => t.id !== active.id)
-        //     }
-        //     if (idx === toRack) {
-        //         const before = rack.slice(0, newIndex)
-        //         const after = rack.slice(newIndex)
-        //         return [...before, tile, ...after]
-        //     }
-        //     return rack
-        // })
-
-        // setRacks(newRacks)
     }
 
     let activeTile = null
+
     if (activeTileId) {
-        for (let rack of racks) {
+        for (const rack of racks) {
             const found = rack.find((t) => t.id === activeTileId)
             if (found) {
                 activeTile = found
@@ -181,6 +127,7 @@ export default function WordRacks(props: WordRacksProps) {
                 {racks.map((rack, idx) => {
                     return (
                         <SortableContext
+                            // biome-ignore lint/suspicious/noArrayIndexKey: The racks are in a fixed order and won't change or have a rack added or removed.  (It's possible that the correct answer is still to changes racks from Array<Array<Tile>> to Array<{ tiles: Tile[], wordLength: number }>.  I'm undecided. -- JDB 2025-07-19)
                             key={idx}
                             items={rack.map((t) => t.id)}
                             strategy={horizontalListSortingStrategy}
