@@ -22,17 +22,17 @@
 }
 
 .drop-zone {
-  display: inline-block;
-  width: 18px;
-  height: 60px;
-  vertical-align: middle;
-  background: rgba(0,128,0,0.1);
-  margin: 0 2px;
+    display: inline-block;
+    width: 18px;
+    height: 60px;
+    vertical-align: middle;
+    background: rgba(0, 128, 0, 0.1);
+    margin: 0 2px;
 }
 .rack-full {
-  color: red;
-  font-weight: bold;
-  margin-left: 10px;
+    color: red;
+    font-weight: bold;
+    margin-left: 10px;
 }
 
 .tile {
@@ -48,7 +48,7 @@
     flex: 1;
     /* min-height: 75px; */
     display: flex;
-    background: rgba(0,128,0,0.1);
+    background: rgba(0, 128, 0, 0.1);
     /* display: block; */
     align-items: center;
     justify-content: center;

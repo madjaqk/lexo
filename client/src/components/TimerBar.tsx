@@ -6,7 +6,7 @@ export interface TimerBarProps {
 }
 
 export default function TimerBar({ timeRemainingMs, totalTimeMs }: TimerBarProps) {
-    const ratio = (timeRemainingMs / totalTimeMs)
+    const ratio = timeRemainingMs / totalTimeMs
 
     const secondsRemaining = Math.ceil(timeRemainingMs / 1000)
 
@@ -18,12 +18,10 @@ export default function TimerBar({ timeRemainingMs, totalTimeMs }: TimerBarProps
 
     return (
         <div className="timer-bar-container">
-            <div className="timer-background-red" style={{ transform: `scaleX(${ratio})`}}>
+            <div className="timer-background-red" style={{ transform: `scaleX(${ratio})` }}>
                 <div className="timer-fill-green" style={{ opacity: ratio }} />
             </div>
-            <span className="timer-bar-text">
-                {secondsToTimeString(secondsRemaining)}
-            </span>
+            <span className="timer-bar-text">{secondsToTimeString(secondsRemaining)}</span>
         </div>
     )
 }

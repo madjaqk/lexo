@@ -25,7 +25,6 @@ export function getHistoryForDate(date: string): PlayHistoryRecord | null {
         console.error("Failed to parse play history", e)
         return null
     }
-
 }
 
 export function saveHistoryForDate(date: string, record: PlayHistoryRecord): void {

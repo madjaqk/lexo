@@ -1,7 +1,7 @@
 .game {
     display: flex;
     flex-direction: column;
-    align-items: center;  /* Copilot has this as flex-end, presumably to solve some CSS problem, but I don't know what.  If some other alignment breaks, changing this. */
+    align-items: center; /* Copilot has this as flex-end, presumably to solve some CSS problem, but I don't know what.  If some other alignment breaks, changing this. */
     width: 100%;
 }
 

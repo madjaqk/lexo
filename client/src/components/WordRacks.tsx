@@ -1,5 +1,13 @@
 import React, { type Dispatch, useEffect, useState, useCallback, type SetStateAction } from "react"
-import { DndContext, DragOverlay, type DragOverEvent, type DragEndEvent, rectIntersection, type DragStartEvent, type UniqueIdentifier } from "@dnd-kit/core"
+import {
+    DndContext,
+    DragOverlay,
+    type DragOverEvent,
+    type DragEndEvent,
+    rectIntersection,
+    type DragStartEvent,
+    type UniqueIdentifier,
+} from "@dnd-kit/core"
 import { SortableContext, horizontalListSortingStrategy } from "@dnd-kit/sortable"
 import { WordRack } from "./WordRack"
 import type { Tile, WordScore } from "@/types"
@@ -17,7 +25,6 @@ export default function WordRacks(props: WordRacksProps) {
     const { racks, setRacks, maxTiles = 8, rackScores, disabled = false } = props
     const [activeTileId, setActiveTileId] = useState<UniqueIdentifier | null>(null)
 
-
     function handleDragStart(event: DragStartEvent) {
         setActiveTileId(event.active.id)
     }
@@ -28,18 +35,18 @@ export default function WordRacks(props: WordRacksProps) {
             return
         }
 
-        let fromRack = -1  // dnd-kit code calls this activeContainer
-        let toRack = -1  // dnd-kit code calls this overContainer
-        let oldIndex = -1  // dnd-kit code calls this activeIndex
-        let newIndex = -1  // dnd-kit code calls this overIndex
+        let fromRack = -1 // dnd-kit code calls this activeContainer
+        let toRack = -1 // dnd-kit code calls this overContainer
+        let oldIndex = -1 // dnd-kit code calls this activeIndex
+        let newIndex = -1 // dnd-kit code calls this overIndex
 
         racks.forEach((rack, rackIdx) => {
-            const idx = rack.findIndex(t => t.id === active.id)
+            const idx = rack.findIndex((t) => t.id === active.id)
             if (idx !== -1) {
                 fromRack = rackIdx
                 oldIndex = idx
             }
-            const overIdx = rack.findIndex(t => t.id === over.id)
+            const overIdx = rack.findIndex((t) => t.id === over.id)
             if (overIdx !== -1) {
                 toRack = rackIdx
                 newIndex = overIdx
@@ -60,37 +67,38 @@ export default function WordRacks(props: WordRacksProps) {
             return
         }
 
-
-          setRacks(prevRacks => {
+        setRacks((prevRacks) => {
             const activeRackTiles = prevRacks[fromRack]
 
-            const isBelowOverItem = over && active.rect.current.translated && active.rect.current.translated.top > over.rect.top + over.rect.height
+            const isBelowOverItem =
+                over &&
+                active.rect.current.translated &&
+                active.rect.current.translated.top > over.rect.top + over.rect.height
 
             const modifier = isBelowOverItem ? 1 : 0
             newIndex += modifier
 
             return prevRacks.map((rack, idx) => {
-              if (idx === fromRack && idx === toRack) {
-                // Moving within the same rack
-                const filtered = rack.filter(t => t.id !== active.id)
-                const before = filtered.slice(0, newIndex)
-                const after = filtered.slice(newIndex)
-                return [...before, activeRackTiles[oldIndex], ...after]
-              }
-              if (idx === fromRack) {
-                // Removing from the original rack
-                return rack.filter(t => t.id !== active.id)
-              }
-              if (idx === toRack) {
-                // Adding to the target rack
-                const before = rack.slice(0, newIndex)
-                const after = rack.slice(newIndex)
-                return [...before, activeRackTiles[oldIndex], ...after]
-              }
-              return rack
-            }
-          )})
-
+                if (idx === fromRack && idx === toRack) {
+                    // Moving within the same rack
+                    const filtered = rack.filter((t) => t.id !== active.id)
+                    const before = filtered.slice(0, newIndex)
+                    const after = filtered.slice(newIndex)
+                    return [...before, activeRackTiles[oldIndex], ...after]
+                }
+                if (idx === fromRack) {
+                    // Removing from the original rack
+                    return rack.filter((t) => t.id !== active.id)
+                }
+                if (idx === toRack) {
+                    // Adding to the target rack
+                    const before = rack.slice(0, newIndex)
+                    const after = rack.slice(newIndex)
+                    return [...before, activeRackTiles[oldIndex], ...after]
+                }
+                return rack
+            })
+        })
     }
 
     function handleDragEnd(event: DragEndEvent) {
@@ -154,7 +162,7 @@ export default function WordRacks(props: WordRacksProps) {
     let activeTile = null
     if (activeTileId) {
         for (let rack of racks) {
-            const found = rack.find(t => t.id === activeTileId)
+            const found = rack.find((t) => t.id === activeTileId)
             if (found) {
                 activeTile = found
                 break
@@ -174,7 +182,7 @@ export default function WordRacks(props: WordRacksProps) {
                     return (
                         <SortableContext
                             key={idx}
-                            items={rack.map(t => t.id)}
+                            items={rack.map((t) => t.id)}
                             strategy={horizontalListSortingStrategy}
                             disabled={disabled}
                         >
@@ -190,13 +198,12 @@ export default function WordRacks(props: WordRacksProps) {
                 })}
             </div>
             <DragOverlay>
-                {activeTile
-                    ? <div className="tile drag-preview">
+                {activeTile ? (
+                    <div className="tile drag-preview">
                         <span className="tile-letter">{activeTile.letter}</span>
                         <span className="tile-value">{activeTile.value}</span>
                     </div>
-                    : null
-                }
+                ) : null}
             </DragOverlay>
         </DndContext>
     )

@@ -1,13 +1,15 @@
-import { fetchWordList } from "@/services/gameService";
+import { fetchWordList } from "@/services/gameService"
 
 // Usage example:
-let wordSet: Set<string> = new Set();
+let wordSet: Set<string> = new Set()
 
 export async function loadWordList(): Promise<void> {
-  if (wordSet.size > 0) { return }
-  wordSet = await fetchWordList();
+    if (wordSet.size > 0) {
+        return
+    }
+    wordSet = await fetchWordList()
 }
 
 export function isValidWord(word: string): boolean {
-  return wordSet.has(word.toUpperCase());
+    return wordSet.has(word.toUpperCase())
 }
