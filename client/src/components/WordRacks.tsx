@@ -13,7 +13,7 @@ import {
     useSensors,
 } from "@dnd-kit/core"
 import { arrayMove, horizontalListSortingStrategy, SortableContext } from "@dnd-kit/sortable"
-import { type Dispatch, type SetStateAction, useState } from "react"
+import { type Dispatch, type SetStateAction, useMemo, useState } from "react"
 import type { Tile, WordScore } from "@/types"
 import { WordRack } from "./WordRack"
 import "./WordRacks.css"
@@ -111,17 +111,18 @@ export default function WordRacks(props: WordRacksProps) {
         setActiveTileId(null)
     }
 
-    let activeTile = null
-
-    if (activeTileId) {
+    const activeTile = useMemo(() => {
+        if (!activeTileId) {
+            return null
+        }
         for (const rack of racks) {
-            const found = rack.find((t) => t.id === activeTileId)
-            if (found) {
-                activeTile = found
-                break
+            const tile = rack.find((t) => t.id === activeTileId)
+            if (tile) {
+                return tile
             }
         }
-    }
+        return null
+    }, [activeTileId, racks])
 
     const sensors = useSensors(
         useSensor(MouseSensor),
