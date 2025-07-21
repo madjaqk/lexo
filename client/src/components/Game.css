@@ -15,11 +15,12 @@
 }
 
 /* Desktop: Timer is to the right of the racks */
-/* @media (min-width: 768px) {
+@media (min-width: 768px) {
     .game-board {
         flex-direction: row;
+        align-items: stretch;
     }
-} */
+}
 
 .racks-column {
     width: 100%;
