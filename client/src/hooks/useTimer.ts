@@ -7,11 +7,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
  * @param initialDurationMs The total duration of the timer, used to reset the display.
  * @returns The time remaining in milliseconds.
  */
-export function useTimer(
-    endTime: Date | null,
-    onEnd: () => void,
-    initialDurationMs: number,
-) {
+export function useTimer(endTime: Date | null, onEnd: () => void, initialDurationMs: number) {
     const [timeRemainingMs, setTimeRemainingMs] = useState(initialDurationMs)
     const animationFrameId = useRef<number | null>(null)
 

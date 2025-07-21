@@ -4,20 +4,15 @@ import {
     type DragOverEvent,
     DragOverlay,
     type DragStartEvent,
+    KeyboardSensor,
+    MouseSensor,
     rectIntersection,
+    TouchSensor,
     type UniqueIdentifier,
     useSensor,
     useSensors,
-    PointerSensor,
-    MouseSensor,
-    KeyboardSensor,
-    TouchSensor
 } from "@dnd-kit/core"
-import {
-    arrayMove,
-    horizontalListSortingStrategy,
-    SortableContext,
-} from "@dnd-kit/sortable"
+import { arrayMove, horizontalListSortingStrategy, SortableContext } from "@dnd-kit/sortable"
 import { type Dispatch, type SetStateAction, useState } from "react"
 import type { Tile, WordScore } from "@/types"
 import { WordRack } from "./WordRack"
@@ -45,7 +40,9 @@ export default function WordRacks(props: WordRacksProps) {
 
     function handleDragOver(event: DragOverEvent) {
         const { active, over } = event
-        if (!over || active.id === over.id) { return }
+        if (!over || active.id === over.id) {
+            return
+        }
 
         const fromRackIndex = findRackIndexForTile(active.id, racks)
         let toRackIndex = findRackIndexForTile(over.id, racks)
@@ -56,10 +53,14 @@ export default function WordRacks(props: WordRacksProps) {
         }
 
         // If dragging within the same rack, do nothing. SortableContext handles the visual preview.
-        if (fromRackIndex === -1 || toRackIndex === -1 || fromRackIndex === toRackIndex) { return }
+        if (fromRackIndex === -1 || toRackIndex === -1 || fromRackIndex === toRackIndex) {
+            return
+        }
 
         // Handle moving a tile to a different rack
-        if (racks[toRackIndex].length >= maxTiles) { return }
+        if (racks[toRackIndex].length >= maxTiles) {
+            return
+        }
 
         setRacks((prevRacks) => {
             const newRacks = prevRacks.map((r) => [...r]) // Deep copy
@@ -68,8 +69,9 @@ export default function WordRacks(props: WordRacksProps) {
             const activeIndex = activeRack.findIndex((t) => t.id === active.id)
             let overIndex = overRack.findIndex((t) => t.id === over.id)
 
-            if (activeIndex === -1) { return prevRacks // Should not happen
-}
+            if (activeIndex === -1) {
+                return prevRacks // Should not happen
+            }
 
             // If dropping on the droppable area, add to the end
             if (overIndex === -1) {
@@ -124,7 +126,7 @@ export default function WordRacks(props: WordRacksProps) {
     const sensors = useSensors(
         useSensor(MouseSensor),
         useSensor(KeyboardSensor),
-        useSensor(TouchSensor)
+        useSensor(TouchSensor),
     )
 
     return (

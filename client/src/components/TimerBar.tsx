@@ -12,10 +12,7 @@ export default function TimerBar({ timeRemainingMs, totalTimeMs }: TimerBarProps
 
     return (
         <div className="timer-bar-container">
-            <div
-                className="timer-fill"
-                style={{"--scale-ratio": ratio } as React.CSSProperties}
-            >
+            <div className="timer-fill" style={{ "--scale-ratio": ratio } as React.CSSProperties}>
                 <div className="timer-fill-color" style={{ opacity: ratio }} />
             </div>
             <span className="timer-bar-text">{secondsToTimeString(secondsRemaining)}</span>

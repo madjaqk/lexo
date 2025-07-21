@@ -11,11 +11,7 @@ import { isValidWord } from "@/utils/wordValidation"
  * @param gameRules The current game rules, including scoring multipliers.
  * @returns An object containing the player's rack scores, the target scores, the player's total score, and the target total score.
  */
-export function useGameScoring(
-    wordRacks: Tile[][],
-    puzzle: DailyPuzzle,
-    gameRules: GameRules,
-) {
+export function useGameScoring(wordRacks: Tile[][], puzzle: DailyPuzzle, gameRules: GameRules) {
     const [rackScores, setRackScores] = useState<WordScore[]>([])
     const [targetScores, setTargetScores] = useState<WordScore[]>([])
 
