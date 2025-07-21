@@ -1,3 +1,4 @@
+import { secondsToTimeString } from "@/utils/time"
 import "./TimerBar.css"
 
 export interface TimerBarProps {
@@ -7,14 +8,7 @@ export interface TimerBarProps {
 
 export default function TimerBar({ timeRemainingMs, totalTimeMs }: TimerBarProps) {
     const ratio = Math.max(timeRemainingMs / totalTimeMs, 0)
-
     const secondsRemaining = Math.ceil(timeRemainingMs / 1000)
-
-    function secondsToTimeString(seconds: number): string {
-        const minutes = Math.floor(seconds / 60)
-        const remainingSeconds = seconds % 60
-        return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`
-    }
 
     return (
         <div className="timer-bar-container">
