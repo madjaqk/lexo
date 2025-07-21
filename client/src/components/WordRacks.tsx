@@ -1,12 +1,23 @@
 import {
     DndContext,
+    type DragEndEvent,
     type DragOverEvent,
     DragOverlay,
     type DragStartEvent,
     rectIntersection,
     type UniqueIdentifier,
+    useSensor,
+    useSensors,
+    PointerSensor,
+    MouseSensor,
+    KeyboardSensor,
+    TouchSensor
 } from "@dnd-kit/core"
-import { horizontalListSortingStrategy, SortableContext } from "@dnd-kit/sortable"
+import {
+    arrayMove,
+    horizontalListSortingStrategy,
+    SortableContext,
+} from "@dnd-kit/sortable"
 import { type Dispatch, type SetStateAction, useState } from "react"
 import type { Tile, WordScore } from "@/types"
 import { WordRack } from "./WordRack"
@@ -28,79 +39,73 @@ export default function WordRacks(props: WordRacksProps) {
         setActiveTileId(event.active.id)
     }
 
+    function findRackIndexForTile(tileId: UniqueIdentifier, currentRacks: Tile[][]): number {
+        return currentRacks.findIndex((rack) => rack.some((tile) => tile.id === tileId))
+    }
+
     function handleDragOver(event: DragOverEvent) {
         const { active, over } = event
-        if (!over) {
-            return
+        if (!over || active.id === over.id) { return }
+
+        const fromRackIndex = findRackIndexForTile(active.id, racks)
+        let toRackIndex = findRackIndexForTile(over.id, racks)
+
+        // Handle dropping on an empty rack's droppable area
+        if (toRackIndex === -1 && typeof over.id === "string" && over.id.startsWith("rack-")) {
+            toRackIndex = Number.parseInt(over.id.split("-")[1], 10)
         }
 
-        let fromRack = -1 // dnd-kit code calls this activeContainer
-        let toRack = -1 // dnd-kit code calls this overContainer
-        let oldIndex = -1 // dnd-kit code calls this activeIndex
-        let newIndex = -1 // dnd-kit code calls this overIndex
+        // If dragging within the same rack, do nothing. SortableContext handles the visual preview.
+        if (fromRackIndex === -1 || toRackIndex === -1 || fromRackIndex === toRackIndex) { return }
 
-        racks.forEach((rack, rackIdx) => {
-            const idx = rack.findIndex((t) => t.id === active.id)
-            if (idx !== -1) {
-                fromRack = rackIdx
-                oldIndex = idx
-            }
-            const overIdx = rack.findIndex((t) => t.id === over.id)
-            if (overIdx !== -1) {
-                toRack = rackIdx
-                newIndex = overIdx
-            }
-        })
-
-        if (toRack === -1 && over && typeof over.id === "string" && over.id.startsWith("rack-")) {
-            toRack = Number.parseInt(over.id.split("-")[1], 10)
-            newIndex = racks[toRack].length
-            // console.log("toRack is a rack placeholder", toRack, newIndex)
-        }
-
-        if (fromRack === -1 || toRack === -1) {
-            return
-        }
-
-        if (fromRack !== toRack && racks[toRack].length >= maxTiles) {
-            return
-        }
+        // Handle moving a tile to a different rack
+        if (racks[toRackIndex].length >= maxTiles) { return }
 
         setRacks((prevRacks) => {
-            const activeRackTiles = prevRacks[fromRack]
+            const newRacks = prevRacks.map((r) => [...r]) // Deep copy
+            const activeRack = newRacks[fromRackIndex]
+            const overRack = newRacks[toRackIndex]
+            const activeIndex = activeRack.findIndex((t) => t.id === active.id)
+            let overIndex = overRack.findIndex((t) => t.id === over.id)
 
-            const isBelowOverItem =
-                over &&
-                active.rect.current.translated &&
-                active.rect.current.translated.top > over.rect.top + over.rect.height
+            if (activeIndex === -1) { return prevRacks // Should not happen
+}
 
-            const modifier = isBelowOverItem ? 1 : 0
-            newIndex += modifier
+            // If dropping on the droppable area, add to the end
+            if (overIndex === -1) {
+                overIndex = overRack.length
+            }
 
-            return prevRacks.map((rack, idx) => {
-                if (idx === fromRack && idx === toRack) {
-                    // Moving within the same rack
-                    const filtered = rack.filter((t) => t.id !== active.id)
-                    const before = filtered.slice(0, newIndex)
-                    const after = filtered.slice(newIndex)
-                    return [...before, activeRackTiles[oldIndex], ...after]
-                }
-                if (idx === fromRack) {
-                    // Removing from the original rack
-                    return rack.filter((t) => t.id !== active.id)
-                }
-                if (idx === toRack) {
-                    // Adding to the target rack
-                    const before = rack.slice(0, newIndex)
-                    const after = rack.slice(newIndex)
-                    return [...before, activeRackTiles[oldIndex], ...after]
-                }
-                return rack
-            })
+            const [movedItem] = newRacks[fromRackIndex].splice(activeIndex, 1)
+            newRacks[toRackIndex].splice(overIndex, 0, movedItem)
+
+            return newRacks
         })
     }
 
-    function handleDragEnd() {
+    function handleDragEnd(event: DragEndEvent) {
+        const { active, over } = event
+
+        if (over && active.id !== over.id) {
+            const fromRackIndex = findRackIndexForTile(active.id, racks)
+            const toRackIndex = findRackIndexForTile(over.id, racks)
+
+            // This handles the final state update for reordering within the same rack
+            if (fromRackIndex !== -1 && fromRackIndex === toRackIndex) {
+                setRacks((prevRacks) => {
+                    const newRacks = [...prevRacks]
+                    const rackToReorder = newRacks[fromRackIndex]
+                    const oldIndex = rackToReorder.findIndex((t) => t.id === active.id)
+                    const newIndex = rackToReorder.findIndex((t) => t.id === over.id)
+
+                    if (oldIndex !== -1 && newIndex !== -1) {
+                        newRacks[fromRackIndex] = arrayMove(rackToReorder, oldIndex, newIndex)
+                    }
+                    return newRacks
+                })
+            }
+        }
+
         setActiveTileId(null)
     }
 
@@ -116,9 +121,16 @@ export default function WordRacks(props: WordRacksProps) {
         }
     }
 
+    const sensors = useSensors(
+        useSensor(MouseSensor),
+        useSensor(KeyboardSensor),
+        useSensor(TouchSensor)
+    )
+
     return (
         <DndContext
             collisionDetection={rectIntersection}
+            sensors={sensors}
             onDragStart={handleDragStart}
             onDragOver={handleDragOver}
             onDragEnd={handleDragEnd}
