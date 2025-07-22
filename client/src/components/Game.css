@@ -1,7 +1,7 @@
 .game {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Copilot has this as flex-end, presumably to solve some CSS problem, but I don't know what.  If some other alignment breaks, changing this. */
+    align-items: center; /* Copilot has this as flex-end, presumably to solve some CSS problem, but I don't know what.  If some other alignment breaks, try changing this. */
     width: 100%;
 }
 
@@ -14,22 +14,29 @@
     flex-direction: column;
 }
 
+.racks-column {
+    width: 100%;
+}
+
 /* Desktop: Timer is to the right of the racks */
 @media (min-width: 768px) {
     .game-board {
         flex-direction: row;
         align-items: stretch;
     }
-}
 
-.racks-column {
-    width: 100%;
+    .racks-column {
+        flex: 1;
+        width: auto;
+    }
 }
 
 .total-score-row {
     display: flex;
+    flex-direction: column-reverse;
     align-items: center;
-    width: 100%;
+    gap: 1rem;
+    /* width: 100%; */
 }
 
 .rack-score-spacer {
@@ -44,7 +51,8 @@
     font-weight: bold;
 }
 
-.score.total-score {
-    width: 20%;
-    text-align: center;
+@media (min-width: 768px) {
+    .total-score-row {
+        flex-direction: row;
+    }
 }

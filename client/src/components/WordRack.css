@@ -1,16 +1,29 @@
 .word-rack-row {
     display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-    width: 100%;
+    /* Mobile-first: Stack the rack and score vertically */
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    /* align-items: center; */
 }
 
 .word-rack {
-    margin: 10px 0;
-    min-height: 75px;
+    min-height: 5em;
     display: flex;
     align-items: center;
-    flex: 1;
+    /* On mobile, the rack takes the full width */
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .word-rack-row {
+        flex-direction: row;
+    }
+
+    .word-rack {
+        flex: 1;
+        width: auto;
+    }
 }
 
 .valid {
@@ -21,14 +34,15 @@
     border: 5px solid red;
 }
 
-.drop-zone {
+/* .drop-zone {
     display: inline-block;
-    width: 18px;
-    height: 60px;
+    width: 1.2em;
+    height: 4em;
     vertical-align: middle;
     background: rgba(0, 128, 0, 0.1);
     margin: 0 2px;
-}
+} */
+
 .rack-full {
     color: red;
     font-weight: bold;
@@ -36,26 +50,23 @@
 }
 
 .tile {
-    border: 2px solid black;
-    padding: 10px 5px;
-    margin: 10px;
+    border: 0.15em solid black;
+    padding: 0.5em;
+    margin: 0.5em;
     display: inline-block;
-    height: 35px;
-    width: 35px;
+    height: 2.5em;
+    width: 2.5em;
 }
 
 .drop-placeholder-target {
     flex: 1;
-    /* min-height: 75px; */
     display: flex;
     background: rgba(0, 128, 0, 0.1);
-    /* display: block; */
     align-items: center;
     justify-content: center;
     font-size: 1.2em;
     border: 2px dashed #008000;
     margin-top: 4px;
-    /* position: relative; */
     z-index: 0;
 }
 

@@ -72,7 +72,7 @@ export function WordRack({
                     className="drop-placeholder-target"
                     style={{ display: tiles.length < maxTiles ? "block" : "none" }}
                 >
-                    {isRackOver && tiles.length > 0 ? "Drop here" : ""}
+                    {isRackOver && tiles.length > 0 ? "." : ""}
                 </div>
                 {tiles.length >= maxTiles && <div className="rack-full">Rack Full</div>}
             </div>

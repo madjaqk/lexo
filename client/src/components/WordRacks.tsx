@@ -1,4 +1,6 @@
 import {
+    closestCenter,
+    closestCorners,
     DndContext,
     type DragEndEvent,
     type DragOverEvent,
@@ -132,7 +134,7 @@ export default function WordRacks(props: WordRacksProps) {
 
     return (
         <DndContext
-            collisionDetection={rectIntersection}
+            collisionDetection={closestCorners}
             sensors={sensors}
             onDragStart={handleDragStart}
             onDragOver={handleDragOver}
