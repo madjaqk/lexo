@@ -7,12 +7,17 @@ import "./WordRack.css"
 
 interface TileSortableProps {
     tile: Tile
+    rackIndex: number
     isPlaceholder: boolean
 }
 
-function TileSortable({ tile, isPlaceholder }: TileSortableProps) {
+function TileSortable({ tile, rackIndex, isPlaceholder }: TileSortableProps) {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
         id: tile.id,
+        data: {
+            type: "tile",
+            rackIndex,
+        },
     })
     const style = {
         transform: CSS.Transform.toString(transform),
@@ -53,27 +58,32 @@ export function WordRack({
     rackScore,
     activeTileId = null,
 }: WordRackProps) {
-    const { setNodeRef: setRackNodeRef, isOver: isRackOver } = useDroppable({
-        id: `rack-${rackIndex}-end`,
+    const { setNodeRef: setRackNodeRef } = useDroppable({
+        id: `rack-${rackIndex}`,
+        data: {
+            type: "rack",
+            rackIndex,
+        },
     })
 
     return (
         <div className="word-rack-row">
-            <div className={`word-rack ${rackScore.baseScore > 0 ? "valid" : "invalid"}`}>
+            <div
+                ref={setRackNodeRef}
+                className={`word-rack ${rackScore.baseScore > 0 ? "valid" : "invalid"}`}
+            >
                 {tiles.map((tile) => (
                     <TileSortable
                         key={tile.id}
                         tile={tile}
+                        rackIndex={rackIndex}
                         isPlaceholder={tile.id === activeTileId}
                     />
                 ))}
                 <div
-                    ref={setRackNodeRef}
-                    className="drop-placeholder-target"
+                    className="drop-placeholder-visual"
                     style={{ display: tiles.length < maxTiles ? "block" : "none" }}
-                >
-                    {isRackOver && tiles.length > 0 ? "." : ""}
-                </div>
+                />
                 {tiles.length >= maxTiles && <div className="rack-full">Rack Full</div>}
             </div>
             <RackScore rackScore={rackScore} />

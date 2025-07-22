@@ -58,7 +58,7 @@
     width: 2.5em;
 }
 
-.drop-placeholder-target {
+.drop-placeholder-visual {
     flex: 1;
     display: flex;
     background: rgba(0, 128, 0, 0.1);
