@@ -15,7 +15,7 @@ import {
     useSensors,
 } from "@dnd-kit/core"
 import { arrayMove, horizontalListSortingStrategy, SortableContext } from "@dnd-kit/sortable"
-import { type Dispatch, type SetStateAction, useCallback, useState } from "react"
+import { type Dispatch, type SetStateAction, useCallback, useEffect, useState } from "react"
 import type { Tile, WordScore } from "@/types"
 import { WordRack } from "./WordRack"
 import "./WordRacks.css"
@@ -31,6 +31,13 @@ export interface WordRacksProps {
 export default function WordRacks(props: WordRacksProps) {
     const { racks, setRacks, maxTiles = 8, rackScores, disabled = false } = props
     const [activeTileId, setActiveTileId] = useState<UniqueIdentifier | null>(null)
+    const [previewRacks, setPreviewRacks] = useState(racks)
+
+    // Keep the preview state in sync with the official state from props.
+    // This is important for when the puzzle is reset or loaded from history.
+    useEffect(() => {
+        setPreviewRacks(racks)
+    }, [racks])
 
     /**
      * Custom collision detection strategy.
@@ -70,9 +77,9 @@ export default function WordRacks(props: WordRacksProps) {
 
     const findRackIndexForTile = useCallback(
         (tileId: UniqueIdentifier): number => {
-            return racks.findIndex((rack) => rack.some((tile) => tile.id === tileId))
+            return previewRacks.findIndex((rack) => rack.some((tile) => tile.id === tileId))
         },
-        [racks],
+        [previewRacks],
     )
 
     // onDragOver is responsible for the real-time preview of moving tiles between racks.
@@ -93,23 +100,24 @@ export default function WordRacks(props: WordRacksProps) {
             toRackIndex = findRackIndexForTile(over.id)
         }
 
-        // If we can't find the racks or are dragging within the same rack, let dnd-kit handle it.
+        // Only handle moves between different racks in onDragOver.
+        // Intra-rack sorting is handled by SortableContext's preview and finalized in onDragEnd.
         if (fromRackIndex === -1 || toRackIndex === -1 || fromRackIndex === toRackIndex) {
             return
         }
 
-        // Prevent moving to a full rack.
-        if (racks[toRackIndex].length >= maxTiles) {
-            return
-        }
-
-        setRacks((prevRacks) => {
+        setPreviewRacks((prevRacks) => {
+            if (prevRacks[toRackIndex].length >= maxTiles) {
+                return prevRacks // Abort update if the destination rack is full.
+            }
             const newRacks = prevRacks.map((r) => [...r])
             const fromRack = newRacks[fromRackIndex]
             const toRack = newRacks[toRackIndex]
             const activeIndex = fromRack.findIndex((t) => t.id === active.id)
+            if (activeIndex === -1) {
+                return prevRacks
+            }
 
-            // If dropping on a tile, find its index. If on a rack container, append to the end.
             let overIndex = toRack.findIndex((t) => t.id === over.id)
             if (overIndex === -1) {
                 overIndex = toRack.length
@@ -117,35 +125,34 @@ export default function WordRacks(props: WordRacksProps) {
 
             const [movedItem] = fromRack.splice(activeIndex, 1)
             toRack.splice(overIndex, 0, movedItem)
-
             return newRacks
         })
     }
 
     function handleDragEnd(event: DragEndEvent) {
         const { active, over } = event
+        let finalRacks = previewRacks
 
         if (over && active.id !== over.id) {
             const fromRackIndex = findRackIndexForTile(active.id)
             const toRackIndex = findRackIndexForTile(over.id)
 
-            // This handles the final state update for reordering within the same rack.
-            // The between-rack move is handled by onDragOver for a live preview.
+            // Finalize the state for intra-rack sorting.
             if (fromRackIndex !== -1 && fromRackIndex === toRackIndex) {
-                setRacks((prevRacks) => {
-                    const newRacks = [...prevRacks]
-                    const rackToReorder = newRacks[fromRackIndex]
-                    const oldIndex = rackToReorder.findIndex((t) => t.id === active.id)
-                    const newIndex = rackToReorder.findIndex((t) => t.id === over.id)
+                const rackToReorder = finalRacks[fromRackIndex]
+                const oldIndex = rackToReorder.findIndex((t) => t.id === active.id)
+                const newIndex = rackToReorder.findIndex((t) => t.id === over.id)
 
-                    if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
-                        newRacks[fromRackIndex] = arrayMove(rackToReorder, oldIndex, newIndex)
-                    }
-                    return newRacks
-                })
+                if (oldIndex !== -1 && newIndex !== -1) {
+                    const reorderedRacks = [...finalRacks]
+                    reorderedRacks[fromRackIndex] = arrayMove(rackToReorder, oldIndex, newIndex)
+                    finalRacks = reorderedRacks
+                }
             }
         }
 
+        // Commit the final state to the official racks state.
+        setRacks(finalRacks)
         setActiveTileId(null)
     }
 
@@ -154,7 +161,7 @@ export default function WordRacks(props: WordRacksProps) {
     // `racks` changes frequently during a drag operation.
     let activeTile: Tile | null = null
     if (activeTileId) {
-        for (const rack of racks) {
+        for (const rack of previewRacks) {
             const tile = rack.find((t) => t.id === activeTileId)
             if (tile) {
                 activeTile = tile
@@ -178,7 +185,7 @@ export default function WordRacks(props: WordRacksProps) {
             onDragEnd={handleDragEnd}
         >
             <div className="word-racks">
-                {racks.map((rack, idx) => (
+                {previewRacks.map((rack, idx) => (
                     <SortableContext
                         // biome-ignore lint/suspicious/noArrayIndexKey: The racks are in a fixed order and won't change or have a rack added or removed.  (It's possible that the correct answer is still to changes racks from Array<Array<Tile>> to Array<{ tiles: Tile[], wordLength: number }>.  I'm undecided. -- JDB 2025-07-19)
                         key={idx}

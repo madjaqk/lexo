@@ -131,6 +131,7 @@ TOTAL: 202 (14 over target!)
 - Better mobile touch interactions
 - Comprehensive error handling
 - Loading states and feedback
+- Instructions screen
 
 ## Technical Specifications
 
