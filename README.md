@@ -100,7 +100,7 @@ TOTAL: 202 (14 over target!)
 6. [X] Build static puzzle testing interface (full start-to-finish puzzle cycle)
 7. [X] Implement timer functionality
 8. [X] Use `localStorage` to track completed puzzles
-9. [ ] Implement basic responsive layout (plus better styling)
+9. [X] Implement basic responsive layout (plus better styling)
 10. [ ] Accessibility updates
 11. [ ] Update `ShareButton` to use Web Share API (plus general zhuzh)
 12. [ ] Unit/integration tests for all components (I'll be better about adding these as I go in future phases)
@@ -131,7 +131,14 @@ TOTAL: 202 (14 over target!)
 - Better mobile touch interactions
 - Comprehensive error handling
 - Loading states and feedback
+- Dark mode
+
+**Miscellaneous:**
+
+(This is a to-do list for small tasks I want to take care of before launch.  They all have to be done, but I'm not sure I'd call them "key features".)
+- Download font rather than using link
 - Instructions screen
+- Display history of past games
 
 ## Technical Specifications
 

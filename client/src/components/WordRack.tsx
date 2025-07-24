@@ -84,7 +84,6 @@ export function WordRack({
                     className="drop-placeholder-visual"
                     style={{ display: tiles.length < maxTiles ? "block" : "none" }}
                 />
-                {tiles.length >= maxTiles && <div className="rack-full">Rack Full</div>}
             </div>
             <RackScore rackScore={rackScore} />
         </div>

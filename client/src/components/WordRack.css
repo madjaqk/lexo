@@ -8,55 +8,49 @@
 }
 
 .word-rack {
-    min-height: 5em;
+    min-height: 3.5rem;
     display: flex;
     align-items: center;
     /* On mobile, the rack takes the full width */
     width: 100%;
 }
 
-@media (min-width: 768px) {
-    .word-rack-row {
-        flex-direction: row;
-    }
-
-    .word-rack {
-        flex: 1;
-        width: auto;
-    }
-}
-
 .valid {
-    border: 5px solid green;
+    border: 5px solid var(--valid-color);
 }
 
 .invalid {
-    border: 5px solid red;
-}
-
-/* .drop-zone {
-    display: inline-block;
-    width: 1.2em;
-    height: 4em;
-    vertical-align: middle;
-    background: rgba(0, 128, 0, 0.1);
-    margin: 0 2px;
-} */
-
-.rack-full {
-    color: red;
-    font-weight: bold;
-    margin-left: 10px;
+    border: 5px solid var(--invalid-color);
 }
 
 .tile {
-    border: 0.15em solid black;
-    padding: 0.5em;
-    margin: 0.5em;
-    display: inline-block;
-    height: 2.5em;
-    width: 2.5em;
+    border: 0.1rem solid var(--tile-border-color);
+    padding: 0.2rem;
+    margin: 0.3rem;
+    display: grid; /* Use grid to easily center the letter */
+    place-items: center;
+    height: 2.2rem;
+    width: 2.2rem;
+    position: relative; /* Create a positioning context for the value */
+    font-weight: bold;
+    background-color: var(--tile-bg-color);
+    color: var(--tile-text-color);
+    border-radius: 0.2rem;
+    box-shadow: 0.1rem 0.1rem 0.2rem rgba(0, 0, 0, 0.2);
+    user-select: none; /* Prevent text selection during drag */
 }
+
+.tile-letter {
+    font-size: 1.5em;
+}
+
+.tile-value {
+    position: absolute;
+    bottom: 0.1em;
+    right: 0.25em;
+    font-size: 0.7em;
+}
+
 
 .drop-placeholder-visual {
     flex: 1;
@@ -73,4 +67,23 @@
 .placeholder-tile {
     background: darkslategray;
     border: 1px dotted blue;
+}
+
+/* Larger screen overrides */
+@media (min-width: 768px) {
+    .word-rack-row {
+        flex-direction: row;
+    }
+
+    .word-rack {
+        flex: 1;
+        width: auto;
+        min-height: 5rem;
+    }
+
+    .tile {
+        height: 3rem;
+        width: 3rem;
+        margin: 0.5rem;
+    }
 }

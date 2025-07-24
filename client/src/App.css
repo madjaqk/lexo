@@ -1,0 +1,21 @@
+.app-container {
+    max-width: 61rem;
+    margin-inline: auto;
+    background-color: var(--bg-color-content);
+    min-height: 100vh;
+
+    /* Use flexbox to allow for a sticky footer in the future */
+    display: flex;
+    flex-direction: column;
+}
+
+@media (min-width: 61rem) {
+    .app-container {
+        border-left: 0.5rem solid var(--primary-color);
+        border-right: 0.5rem solid var(--primary-color);
+    }
+}
+
+h1 {
+    text-align: center;
+}

@@ -3,6 +3,10 @@
     flex-direction: column;
     align-items: center; /* Copilot has this as flex-end, presumably to solve some CSS problem, but I don't know what.  If some other alignment breaks, try changing this. */
     width: 100%;
+    padding: 1rem;
+    --score-column-width: 12rem;
+    --timer-font-size: 1.5em;
+    --timer-width: 5ch;
 }
 
 .game-board {
@@ -18,17 +22,12 @@
     width: 100%;
 }
 
-/* Desktop: Timer is to the right of the racks */
-@media (min-width: 768px) {
-    .game-board {
-        flex-direction: row;
-        align-items: stretch;
-    }
+h2 {
+    text-align: center;
+}
 
-    .racks-column {
-        flex: 1;
-        width: auto;
-    }
+.game-board-finished {
+    display: contents;
 }
 
 .total-score-row {
@@ -47,12 +46,57 @@
 }
 
 .score {
-    font-size: 2em;
+    font-size: 1.75em;
     font-weight: bold;
+    text-align: right;;
+}
+
+button {
+    font-family: var(--font-family);
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.75em 1.5em;
+    border-radius: 0.5em;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+button:hover {
+    background-color: var(--primary-color-hover);
 }
 
 @media (min-width: 768px) {
+    /* Desktop: Flex direction row to put timer to left of racks */
+    .game-board {
+        flex-direction: row;
+        align-items: stretch;
+    }
+
+    .racks-column {
+        flex: 1;
+        width: auto;
+    }
+
     .total-score-row {
         flex-direction: row;
+    }
+
+    .score.total-score {
+        min-width: var(--score-column-width);
+        text-align: center;
+    }
+
+    .game-board-finished {
+        display: flex;
+        width: 100%;
+        gap: 1rem;
+    }
+
+    .timer-spacer {
+        width: var(--timer-width);
+        font-size: var(--timer-font-size);
     }
 }

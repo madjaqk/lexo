@@ -81,24 +81,26 @@ export default function Game(props: GameProps) {
                 </div>
             )}
             {gameState === "finished" && (
-                <div className="game-finished racks-column">
-                    <h2>Good job! Here was our answer:</h2>
-                    <WordRacks
-                        racks={puzzle.targetSolution}
-                        rackScores={targetScores}
-                        disabled={true}
-                        setRacks={setWordRacks}
-                    />
-                    <div className="total-score-row">
-                        <div className="rack-score-spacer">
-                            {" "}
-                            <ScoreReport
-                                rackScores={rackScores}
-                                targetScores={targetScores}
-                                date={puzzle.date}
-                            />{" "}
+                <div className="game-board-finished">
+                    <div className="timer-spacer" />
+                    <div className="racks-column">
+                        <h2>Good job! Here was our answer:</h2>
+                        <WordRacks
+                            racks={puzzle.targetSolution}
+                            rackScores={targetScores}
+                            disabled={true}
+                            setRacks={setWordRacks}
+                        />
+                        <div className="total-score-row">
+                            <div className="rack-score-spacer">
+                                <ScoreReport
+                                    rackScores={rackScores}
+                                    targetScores={targetScores}
+                                    date={puzzle.date}
+                                />
+                            </div>
+                            <div className="score total-score">TOTAL: {targetScore}</div>
                         </div>
-                        <div className="score total-score">TOTAL: {targetScore}</div>
                     </div>
                 </div>
             )}

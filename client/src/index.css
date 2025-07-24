@@ -1,0 +1,57 @@
+/* Global Resets and Root Font Sizing */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+:root {
+    --font-family: "Nunito", sans-serif;
+    /* Default theme (Light Mode) */
+    --bg-color-page: #e9edf1;
+    --bg-color-content: #f4f6f8;
+    --text-color: #2c3e50;
+
+    --primary-color: #3498db;
+    --primary-color-hover: #2980b9;
+    --valid-color: #27ae60;
+    --invalid-color: #c0392b;
+    --tile-text-color: #34495e;
+    --tile-border-color: #bdc3c7;
+    --timer-fill-start: #2ecc71;
+    --timer-fill-end: #e74c3c;
+    --tile-bg-color: #ffffff;
+    --timer-bg: #e0e0e0;
+}
+
+/* Dark Mode Overrides */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color-page: #212f3c;
+        --bg-color-content: #2c3e50;
+        --text-color: #ecf0f1;
+        --tile-bg-color: #fdf5e6;
+        --timer-bg: #34495e;
+    }
+}
+
+html {
+    font-size: 16px; /* Default root font size */
+}
+
+/* On very narrow screens, shrink the base font size.
+ * Since tile dimensions are in `rem`, they will scale down proportionally.
+ */
+@media (max-width: 400px) {
+    html {
+        font-size: 14px;
+    }
+}
+
+body {
+    margin: 0;
+    font-family: var(--font-family);
+    background-color: var(--bg-color-page);
+    color: var(--text-color);
+}

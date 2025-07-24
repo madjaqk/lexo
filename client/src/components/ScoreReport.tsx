@@ -17,7 +17,7 @@ export default function ScoreReport({ rackScores, targetScores, date }: ScoreRep
     return (
         <>
             Your score was {scoreDifference} {isOverTarget ? "over" : "under"} the target!{" "}
-            {isOverTarget ? "Nicely done!" : "Better luck next time!"}{" "}
+            {totalScore === targetScore ? "Great minds think alike." : isOverTarget ? "Nicely done!" : "Better luck next time!"}{" "}
             <ShareButton rackScores={rackScores} targetScores={targetScores} date={date} />
         </>
     )

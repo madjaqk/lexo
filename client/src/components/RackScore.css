@@ -7,15 +7,12 @@
 
 @media (min-width: 768px) {
     .rack-score {
-        width: 20%;
+        /* Give it a fixed minimum width to prevent overflow on medium-wide screens */
+        min-width: var(--score-column-width);
     }
 }
 
 .score-piece {
     text-align: center;
     min-width: 2ch;
-}
-
-.multiplier {
-    min-width: 5ch;
 }
