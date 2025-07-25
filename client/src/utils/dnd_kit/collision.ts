@@ -1,4 +1,4 @@
-import {type Collision, pointerWithin, rectIntersection } from "@dnd-kit/core"
+import { type Collision, pointerWithin, rectIntersection } from "@dnd-kit/core"
 
 /**
  * Custom collision detection strategy.
@@ -8,7 +8,9 @@ import {type Collision, pointerWithin, rectIntersection } from "@dnd-kit/core"
  * This prevents the "flickering" and "Maximum update depth" error that can occur when a
  * dragged item is on the boundary of a tile and the empty space of another rack.
  */
-export default function customCollisionDetection(args: Parameters<typeof rectIntersection>[0]): Collision[] {
+export default function customCollisionDetection(
+    args: Parameters<typeof rectIntersection>[0],
+): Collision[] {
     const collisions = rectIntersection(args)
 
     // If the dragged item is still intersecting its own droppable, return only that collision.

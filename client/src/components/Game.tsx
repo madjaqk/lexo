@@ -60,11 +60,7 @@ export default function Game(props: GameProps) {
                 </button>
             )}
             {gameState !== "pre-game" && (
-                <div
-                    className="game-board"
-                    ref={gameBoardRef}
-                    tabIndex={-1}
-                >
+                <div className="game-board" ref={gameBoardRef} tabIndex={-1}>
                     <TimerBar
                         timeRemainingMs={timeRemainingMs}
                         totalTimeMs={gameRules.timerSeconds * 1000}

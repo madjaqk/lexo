@@ -9,7 +9,12 @@ export interface ScoreReportProps {
     date: string
 }
 
-export default function ScoreReport({ rackScores, targetScores, targetSolution, date }: ScoreReportProps) {
+export default function ScoreReport({
+    rackScores,
+    targetScores,
+    targetSolution,
+    date,
+}: ScoreReportProps) {
     const totalScore = sum(rackScores.map((s) => s.baseScore * s.multiplier))
     const targetScore = sum(targetScores.map((s) => s.baseScore * s.multiplier))
     const scoreDifference = Math.abs(totalScore - targetScore)
@@ -20,15 +25,19 @@ export default function ScoreReport({ rackScores, targetScores, targetSolution, 
     return (
         <output aria-live="polite">
             <span className="sr-only">
-                Game completed.  Your final score was {totalScore}.
-
-                The target solution was:
-                {targetScores.map((s, idx) => `${targetWords[idx]} scored ${s.baseScore} times ${s.multiplier} equals ${s.baseScore * s.multiplier} points`)}
+                Game completed. Your final score was {totalScore}. The target solution was:
+                {targetScores.map(
+                    (s, idx) =>
+                        `${targetWords[idx]} scored ${s.baseScore} times ${s.multiplier} equals ${s.baseScore * s.multiplier} points`,
+                )}
                 ...for a total of {targetScore} points.
             </span>
-
             Your score was {scoreDifference} {isOverTarget ? "over" : "under"} the target!{" "}
-            {totalScore === targetScore ? "Great minds think alike." : isOverTarget ? "Nicely done!" : "Better luck next time!"}{" "}
+            {totalScore === targetScore
+                ? "Great minds think alike."
+                : isOverTarget
+                  ? "Nicely done!"
+                  : "Better luck next time!"}{" "}
             <ShareButton rackScores={rackScores} targetScores={targetScores} date={date} />
         </output>
     )

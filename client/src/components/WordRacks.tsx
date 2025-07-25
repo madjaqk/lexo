@@ -11,7 +11,12 @@ import {
     useSensor,
     useSensors,
 } from "@dnd-kit/core"
-import { arrayMove, horizontalListSortingStrategy, SortableContext, sortableKeyboardCoordinates } from "@dnd-kit/sortable"
+import {
+    arrayMove,
+    horizontalListSortingStrategy,
+    SortableContext,
+    sortableKeyboardCoordinates,
+} from "@dnd-kit/sortable"
 import { type Dispatch, type SetStateAction, useCallback, useEffect, useState } from "react"
 import type { Tile, WordRack, WordScore } from "@/types"
 import { WordRackComponent } from "./WordRackComponent"
@@ -38,8 +43,6 @@ export default function WordRacks(props: WordRacksProps) {
     useEffect(() => {
         setPreviewRacks(racks)
     }, [racks])
-
-
 
     function handleDragStart(event: DragStartEvent) {
         setActiveTileId(event.active.id)
@@ -121,7 +124,6 @@ export default function WordRacks(props: WordRacksProps) {
             }
         }
 
-
         // Commit the final state to the official racks state.
         setRacks(finalRacks)
         setActiveTileId(null)
@@ -148,7 +150,7 @@ export default function WordRacks(props: WordRacksProps) {
 
     const sensors = useSensors(
         useSensor(MouseSensor),
-        useSensor(KeyboardSensor, {coordinateGetter: sortableKeyboardCoordinates}),
+        useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
         useSensor(TouchSensor),
     )
 
@@ -160,7 +162,10 @@ export default function WordRacks(props: WordRacksProps) {
             onDragOver={handleDragOver}
             onDragEnd={handleDragEnd}
             onDragCancel={handleDragCancel}
-            accessibility={{announcements: customAnnouncements, screenReaderInstructions: customInstructions}}
+            accessibility={{
+                announcements: customAnnouncements,
+                screenReaderInstructions: customInstructions,
+            }}
         >
             <div className="word-racks">
                 {previewRacks.map((rack, idx) => (
