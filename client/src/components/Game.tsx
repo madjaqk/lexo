@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { useGameScoring } from "@/hooks/useGameScoring"
 import { useTimer } from "@/hooks/useTimer"
 import { saveHistoryForDate } from "@/services/playHistory"
@@ -20,6 +20,7 @@ export default function Game(props: GameProps) {
     const [gameState, setGameState] = useState<GameState>("pre-game")
     const [wordRacks, setWordRacks] = useState(puzzle.initialRacks)
     const [endTime, setEndTime] = useState<Date | null>(null)
+    const gameBoardRef = useRef<HTMLDivElement>(null)
 
     const { rackScores, targetScores, totalScore, targetScore } = useGameScoring(
         wordRacks,
@@ -44,6 +45,12 @@ export default function Game(props: GameProps) {
 
     const timeRemainingMs = useTimer(endTime, endGame, gameRules.timerSeconds * 1000)
 
+    useEffect(() => {
+        if (gameState === "playing" && gameBoardRef.current) {
+            gameBoardRef.current.focus()
+        }
+    }, [gameState])
+
     return (
         <div className="game">
             <p>DATE: {puzzle.date}</p>
@@ -53,7 +60,11 @@ export default function Game(props: GameProps) {
                 </button>
             )}
             {gameState !== "pre-game" && (
-                <div className="game-board">
+                <div
+                    className="game-board"
+                    ref={gameBoardRef}
+                    tabIndex={-1}
+                >
                     <TimerBar
                         timeRemainingMs={timeRemainingMs}
                         totalTimeMs={gameRules.timerSeconds * 1000}

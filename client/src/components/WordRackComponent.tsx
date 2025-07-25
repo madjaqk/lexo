@@ -27,11 +27,13 @@ function TileSortable({ tile, rackIndex, isPlaceholder }: TileSortableProps) {
         zIndex: isDragging ? 2 : 1,
     }
     return (
+        // biome-ignore lint/a11y/useAriaPropsSupportedByRole: dnd-kit's attributes apply role and tab index at runtime
         <div
             ref={setNodeRef}
             style={style}
             {...attributes}
             {...listeners}
+            aria-label={`Tile ${tile.letter} worth ${tile.value} points in rack ${rackIndex + 1}`}
             className={`tile ${isPlaceholder ? "placeholder-tile" : ""}`}
         >
             {!isPlaceholder && (
