@@ -1,5 +1,4 @@
 import {
-    type Collision,
     DndContext,
     type DragEndEvent,
     type DragOverEvent,
@@ -7,9 +6,6 @@ import {
     type DragStartEvent,
     KeyboardSensor,
     MouseSensor,
-    pointerWithin,
-    rectIntersection,
-    type ScreenReaderInstructions,
     TouchSensor,
     type UniqueIdentifier,
     useSensor,
@@ -124,8 +120,14 @@ export default function WordRacks(props: WordRacksProps) {
             }
         }
 
+
         // Commit the final state to the official racks state.
         setRacks(finalRacks)
+        setActiveTileId(null)
+    }
+
+    function handleDragCancel() {
+        setPreviewRacks(racks)
         setActiveTileId(null)
     }
 
@@ -156,6 +158,7 @@ export default function WordRacks(props: WordRacksProps) {
             onDragStart={handleDragStart}
             onDragOver={handleDragOver}
             onDragEnd={handleDragEnd}
+            onDragCancel={handleDragCancel}
             accessibility={{announcements: customAnnouncements}}
         >
             <div className="word-racks">
