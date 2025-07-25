@@ -1,9 +1,9 @@
 import { type UniqueIdentifier, useDroppable } from "@dnd-kit/core"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import type { Tile, WordScore } from "@/types"
+import type { Tile, WordRack, WordScore } from "@/types"
 import RackScore from "./RackScore"
-import "./WordRack.css"
+import "./WordRackComponent.css"
 
 interface TileSortableProps {
     tile: Tile
@@ -17,6 +17,7 @@ function TileSortable({ tile, rackIndex, isPlaceholder }: TileSortableProps) {
         data: {
             type: "tile",
             rackIndex,
+            letter: tile.letter,
         },
     })
     const style = {
@@ -44,14 +45,14 @@ function TileSortable({ tile, rackIndex, isPlaceholder }: TileSortableProps) {
 }
 
 export interface WordRackProps {
-    tiles: Tile[]
+    tiles: WordRack
     rackIndex: number
     maxTiles?: number
     rackScore: WordScore
     activeTileId?: UniqueIdentifier | null
 }
 
-export function WordRack({
+export function WordRackComponent({
     tiles,
     rackIndex,
     maxTiles = 8,
@@ -85,7 +86,7 @@ export function WordRack({
                     style={{ display: tiles.length < maxTiles ? "block" : "none" }}
                 />
             </div>
-            <RackScore rackScore={rackScore} />
+            <RackScore rackScore={rackScore} rackIndex={rackIndex} tiles={tiles} />
         </div>
     )
 }

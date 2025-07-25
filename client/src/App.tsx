@@ -56,10 +56,10 @@ function App() {
     }
 
     return (
-        <div className="app-container">
+        <main className="app-container">
             <h1>Tile Game</h1>
             {renderContent()}
-        </div>
+        </main>
     )
 }
 

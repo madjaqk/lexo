@@ -96,6 +96,7 @@ export default function Game(props: GameProps) {
                                 <ScoreReport
                                     rackScores={rackScores}
                                     targetScores={targetScores}
+                                    targetSolution={puzzle.targetSolution}
                                     date={puzzle.date}
                                 />
                             </div>

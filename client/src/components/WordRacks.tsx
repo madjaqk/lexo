@@ -1,4 +1,5 @@
 import {
+    type Announcements,
     type Collision,
     DndContext,
     type DragEndEvent,
@@ -9,23 +10,49 @@ import {
     MouseSensor,
     pointerWithin,
     rectIntersection,
+    type ScreenReaderInstructions,
     TouchSensor,
     type UniqueIdentifier,
     useSensor,
     useSensors,
 } from "@dnd-kit/core"
-import { arrayMove, horizontalListSortingStrategy, SortableContext } from "@dnd-kit/sortable"
+import { arrayMove, horizontalListSortingStrategy, SortableContext, sortableKeyboardCoordinates } from "@dnd-kit/sortable"
 import { type Dispatch, type SetStateAction, useCallback, useEffect, useState } from "react"
-import type { Tile, WordScore } from "@/types"
-import { WordRack } from "./WordRack"
+import type { Tile, WordRack, WordScore } from "@/types"
+import { WordRackComponent } from "./WordRackComponent"
 import "./WordRacks.css"
 
 export interface WordRacksProps {
-    racks: Tile[][]
-    setRacks: Dispatch<SetStateAction<Tile[][]>>
+    racks: WordRack[]
+    setRacks: Dispatch<SetStateAction<WordRack[]>>
     maxTiles?: number
     rackScores: WordScore[]
     disabled?: boolean
+}
+
+const customAnnouncements: Announcements = {
+    onDragStart({ active }) {
+        return `Picked up tile ${active.data.current?.letter}`
+    },
+    onDragOver({ active, over }) {
+        if (over) {
+            const overType = over.data.current?.type
+            if (overType === "tile") {
+                return `Tile ${active.data.current?.letter} was moved over tile ${over.data.current?.letter}.`
+            }
+            // If over a rack, it's an empty space
+            if (overType === "rack") {
+                return `Tile ${active.data.current?.letter} was moved over an empty space in another rack.`
+            }
+        }
+        return `Tile ${active.data.current?.letter} is no longer over a droppable area.`
+    },
+    onDragEnd({ active }) {
+        return `Tile ${active.data.current?.letter} was dropped.`
+    },
+    onDragCancel({ active }) {
+        return `Dragging was cancelled. Tile ${active.data.current?.letter} was returned to its original position.`
+    },
 }
 
 export default function WordRacks(props: WordRacksProps) {
@@ -172,7 +199,7 @@ export default function WordRacks(props: WordRacksProps) {
 
     const sensors = useSensors(
         useSensor(MouseSensor),
-        useSensor(KeyboardSensor),
+        useSensor(KeyboardSensor, {coordinateGetter: sortableKeyboardCoordinates}),
         useSensor(TouchSensor),
     )
 
@@ -183,17 +210,18 @@ export default function WordRacks(props: WordRacksProps) {
             onDragStart={handleDragStart}
             onDragOver={handleDragOver}
             onDragEnd={handleDragEnd}
+            accessibility={{announcements: customAnnouncements}}
         >
             <div className="word-racks">
                 {previewRacks.map((rack, idx) => (
                     <SortableContext
-                        // biome-ignore lint/suspicious/noArrayIndexKey: The racks are in a fixed order and won't change or have a rack added or removed.  (It's possible that the correct answer is still to changes racks from Array<Array<Tile>> to Array<{ tiles: Tile[], wordLength: number }>.  I'm undecided. -- JDB 2025-07-19)
+                        // biome-ignore lint/suspicious/noArrayIndexKey: The racks are in a fixed order and won't change or have a rack added or removed.  (It's possible that the correct answer is still to changes racks from Array<WordRack> to Array<{ tiles: WordRack, wordLength: number }>.  I'm undecided. -- JDB 2025-07-19)
                         key={idx}
                         items={rack.map((t) => t.id)}
                         strategy={horizontalListSortingStrategy}
                         disabled={disabled}
                     >
-                        <WordRack
+                        <WordRackComponent
                             tiles={rack}
                             rackIndex={idx}
                             maxTiles={maxTiles}

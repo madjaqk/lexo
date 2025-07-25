@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
-import type { DailyPuzzle, GameRules, Tile, WordScore } from "@/types"
+import type { DailyPuzzle, GameRules, WordRack, WordScore } from "@/types"
 import { sum } from "@/utils/math"
 import { isValidWord } from "@/utils/wordValidation"
 
@@ -11,12 +11,12 @@ import { isValidWord } from "@/utils/wordValidation"
  * @param gameRules The current game rules, including scoring multipliers.
  * @returns An object containing the player's rack scores, the target scores, the player's total score, and the target total score.
  */
-export function useGameScoring(wordRacks: Tile[][], puzzle: DailyPuzzle, gameRules: GameRules) {
+export function useGameScoring(wordRacks: WordRack[], puzzle: DailyPuzzle, gameRules: GameRules) {
     const [rackScores, setRackScores] = useState<WordScore[]>([])
     const [targetScores, setTargetScores] = useState<WordScore[]>([])
 
     const scoreRack = useCallback(
-        (rack: Tile[], requiredLength: number): WordScore => {
+        (rack: WordRack, requiredLength: number): WordScore => {
             const word = rack.map((t) => t.letter).join("")
             let baseScore = 0
             const multiplier = gameRules.multipliers[requiredLength] || 1

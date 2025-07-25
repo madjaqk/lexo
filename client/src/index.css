@@ -40,18 +40,30 @@ html {
     font-size: 16px; /* Default root font size */
 }
 
-/* On very narrow screens, shrink the base font size.
- * Since tile dimensions are in `rem`, they will scale down proportionally.
- */
-@media (max-width: 400px) {
-    html {
-        font-size: 14px;
-    }
-}
 
 body {
     margin: 0;
     font-family: var(--font-family);
     background-color: var(--bg-color-page);
     color: var(--text-color);
+}
+
+/* Accessibility utility: Visually hide an element but keep it accessible to screen readers */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* On very narrow screens, shrink the base font size. */
+@media (max-width: 400px) {
+    html {
+        font-size: 14px;
+    }
 }
