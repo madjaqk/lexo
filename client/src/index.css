@@ -40,7 +40,6 @@ html {
     font-size: 16px; /* Default root font size */
 }
 
-
 body {
     margin: 0;
     font-family: var(--font-family);
