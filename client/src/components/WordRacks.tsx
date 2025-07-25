@@ -18,6 +18,7 @@ import { WordRackComponent } from "./WordRackComponent"
 import "./WordRacks.css"
 import { customAnnouncements } from "@/utils/dnd_kit/announcements"
 import customCollisionDetection from "@/utils/dnd_kit/collision"
+import { customInstructions } from "@/utils/dnd_kit/screenReaderInstructions"
 
 export interface WordRacksProps {
     racks: WordRack[]
@@ -159,7 +160,7 @@ export default function WordRacks(props: WordRacksProps) {
             onDragOver={handleDragOver}
             onDragEnd={handleDragEnd}
             onDragCancel={handleDragCancel}
-            accessibility={{announcements: customAnnouncements}}
+            accessibility={{announcements: customAnnouncements, screenReaderInstructions: customInstructions}}
         >
             <div className="word-racks">
                 {previewRacks.map((rack, idx) => (
