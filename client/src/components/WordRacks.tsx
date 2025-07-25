@@ -1,5 +1,4 @@
 import {
-    type Announcements,
     type Collision,
     DndContext,
     type DragEndEvent,
@@ -21,6 +20,8 @@ import { type Dispatch, type SetStateAction, useCallback, useEffect, useState } 
 import type { Tile, WordRack, WordScore } from "@/types"
 import { WordRackComponent } from "./WordRackComponent"
 import "./WordRacks.css"
+import { customAnnouncements } from "@/utils/dnd_kit/announcements"
+import customCollisionDetection from "@/utils/dnd_kit/collision"
 
 export interface WordRacksProps {
     racks: WordRack[]
@@ -28,31 +29,6 @@ export interface WordRacksProps {
     maxTiles?: number
     rackScores: WordScore[]
     disabled?: boolean
-}
-
-const customAnnouncements: Announcements = {
-    onDragStart({ active }) {
-        return `Picked up tile ${active.data.current?.letter}`
-    },
-    onDragOver({ active, over }) {
-        if (over) {
-            const overType = over.data.current?.type
-            if (overType === "tile") {
-                return `Tile ${active.data.current?.letter} was moved over tile ${over.data.current?.letter}.`
-            }
-            // If over a rack, it's an empty space
-            if (overType === "rack") {
-                return `Tile ${active.data.current?.letter} was moved over an empty space in another rack.`
-            }
-        }
-        return `Tile ${active.data.current?.letter} is no longer over a droppable area.`
-    },
-    onDragEnd({ active }) {
-        return `Tile ${active.data.current?.letter} was dropped.`
-    },
-    onDragCancel({ active }) {
-        return `Dragging was cancelled. Tile ${active.data.current?.letter} was returned to its original position.`
-    },
 }
 
 export default function WordRacks(props: WordRacksProps) {
@@ -66,37 +42,7 @@ export default function WordRacks(props: WordRacksProps) {
         setPreviewRacks(racks)
     }, [racks])
 
-    /**
-     * Custom collision detection strategy.
-     * This strategy prioritizes collisions with sortable tiles over the general rack container.
-     * If a dragged item intersects with any tiles, only those collisions are considered.
-     * If there are no tile intersections, it then checks for intersections with the rack containers.
-     * This prevents the "flickering" and "Maximum update depth" error that can occur when a
-     * dragged item is on the boundary of a tile and the empty space of another rack.
-     */
-    function customCollisionDetection(args: Parameters<typeof rectIntersection>[0]): Collision[] {
-        const collisions = rectIntersection(args)
 
-        // If the dragged item is still intersecting its own droppable, return only that collision.
-        const selfCollision = collisions.find((collision) => collision.id === args.active.id)
-        if (selfCollision) {
-            return [selfCollision]
-        }
-
-        // If no self-collision, check for intersections with tiles first.
-        const tileCollisions = collisions.filter(
-            (collision) => collision.data?.droppableContainer?.data?.current?.type === "tile",
-        )
-        if (tileCollisions.length > 0) {
-            return tileCollisions
-        }
-
-        // If no tile collisions, check for pointer intersection with rack containers.
-        const rackContainers = args.droppableContainers.filter(
-            (container) => container.data.current?.type === "rack",
-        )
-        return pointerWithin({ ...args, droppableContainers: rackContainers })
-    }
 
     function handleDragStart(event: DragStartEvent) {
         setActiveTileId(event.active.id)
