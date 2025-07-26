@@ -23,7 +23,7 @@ export default function ScoreReport({
     const targetWords = targetSolution.map((rack) => rack.map((tile) => tile.letter).join(""))
 
     return (
-        <output aria-live="polite">
+        <output className="score-report" aria-live="polite">
             <span className="sr-only">
                 Game completed. Your final score was {totalScore}. The target solution was:
                 {targetScores.map(

@@ -51,6 +51,9 @@ importers:
       globals:
         specifier: ^16.3.0
         version: 16.3.0
+      user-agent-data-types:
+        specifier: ^0.4.2
+        version: 0.4.2
       vite:
         specifier: ^7.0.4
         version: 7.0.4(@types/node@24.0.12)
@@ -695,6 +698,9 @@ packages:
     peerDependencies:
       react: ^16.8.0  || ^17 || ^18 || ^19 || ^19.0.0-rc
 
+  user-agent-data-types@0.4.2:
+    resolution: {integrity: sha512-jXep3kO/dGNmDOkbDa8ccp4QArgxR4I76m3QVcJ1aOF0B9toc+YtSXtX5gLdDTZXyWlpQYQrABr6L1L2GZOghw==}
+
   vite@7.0.4:
     resolution: {integrity: sha512-SkaSguuS7nnmV7mfJ8l81JGBFV7Gvzp8IzgE8A8t23+AxuNX61Q5H1Tpz5efduSN7NHC8nQXD3sKQKZAu5mNEA==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -1277,6 +1283,8 @@ snapshots:
     dependencies:
       lodash.debounce: 4.0.8
       react: 19.1.0
+
+  user-agent-data-types@0.4.2: {}
 
   vite@7.0.4(@types/node@24.0.12):
     dependencies:

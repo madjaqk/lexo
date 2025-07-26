@@ -1,4 +1,7 @@
+import { useState } from "react"
+import { useCopyToClipboard } from "usehooks-ts"
 import type { WordScore } from "@/types"
+import { isMobile } from "@/utils/isMobile"
 import { sum } from "@/utils/math"
 import "./ShareButton.css"
 
@@ -9,34 +12,63 @@ interface ShareButtonProps {
 }
 
 export default function ShareButton({ rackScores, targetScores, date }: ShareButtonProps) {
+    const [buttonText, setButtonText] = useState("Share")
+    const [_copiedText, copy] = useCopyToClipboard()
+
     const totalScore = sum(rackScores.map((s) => s.baseScore * s.multiplier))
     const targetScore = sum(targetScores.map((s) => s.baseScore * s.multiplier))
     const scoreDifference = Math.abs(totalScore - targetScore)
     const isOverTarget = totalScore >= targetScore
 
-    const message = [`[Tile Game Name tk] — ${date}`]
+    const tileColors = ["🟨", "🟩", "🟦", "🟪"]
 
-    for (let i = 0; i < rackScores.length; i++) {
-        const score = rackScores[i]
-        message.push(
-            `${"?".repeat(i + 3)} ${score.baseScore} × ${score.multiplier} = ${score.baseScore * score.multiplier}`,
-        )
-    }
-
-    message.push(
-        `Total: ${totalScore} (${scoreDifference} ${isOverTarget ? "over" : "under"} the target of ${targetScore})`,
+    const scoreLines = rackScores.map(
+        (score, i) =>
+            `${tileColors[i].repeat(i + 3)}${"⬜".repeat(3 - i)} ${score.baseScore} × ${score.multiplier} = ${score.baseScore * score.multiplier}`,
     )
-    message.push("Sharable/shortened URL tk")
 
-    function copyToClipboard() {
-        navigator.clipboard.writeText(message.join("\n"))
-        console.log("Copied to clipboard:", message.join("\n"))
-        alert("Copied to clipboard!") // TODO: Replace with a nicer UI notification
+    const summaryLine = `Total: ${totalScore} / ${targetScore} (${isOverTarget ? "🔥+" : "🧊-"}${scoreDifference})`
+
+    const shareText = [
+        `[Tile Game Name tk] — ${date}`,
+        ...scoreLines,
+        summaryLine,
+        "Sharable/shortened URL tk",
+    ].join("\n")
+
+    async function handleShare() {
+        // Use the web share API on mobile; on desktop, just copy to clipboard
+        const useNativeShare = "share" in navigator && isMobile()
+        console.log(shareText)
+
+        if (useNativeShare) {
+            try {
+                await navigator.share({
+                    title: `[Tile Game Name tk] — ${date}`,
+                    text: shareText,
+                })
+            } catch (error) {
+                // User likely cancelled the share, so we can safely ignore the error.
+                console.log("Web Share API was cancelled or failed.", error)
+            }
+        } else {
+            copy(shareText)
+                .then(() => {
+                    setButtonText("Copied!")
+                    setTimeout(() => setButtonText("Share"), 2000)
+                })
+                .catch((err) => {
+                    console.error("Failed to copy to clipboard:", err)
+                    setButtonText("Failed!")
+                    setTimeout(() => setButtonText("Share"), 2000)
+                })
+        }
     }
 
     return (
-        <button type="button" className="share-button" onClick={copyToClipboard}>
-            Share
+        <button type="button" className="share-button" onClick={handleShare}>
+            <span className="material-symbols-outlined">share</span>
+            <span>{buttonText}</span>
         </button>
     )
 }
