@@ -80,7 +80,11 @@ export default function Game(props: GameProps) {
                         <div className="timer-spacer" />
                         <div className="rack-score-spacer">
                             {rackScores.every((s) => s.baseScore > 0) && (
-                                <button disabled={gameState !== "playing"} type="button" onClick={endGame}>
+                                <button
+                                    disabled={gameState !== "playing"}
+                                    type="button"
+                                    onClick={endGame}
+                                >
                                     Submit Answer
                                 </button>
                             )}

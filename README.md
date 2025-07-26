@@ -102,7 +102,7 @@ TOTAL: 202 (14 over target!)
 8. [X] Use `localStorage` to track completed puzzles
 9. [X] Implement basic responsive layout (plus better styling)
 10. [X] Accessibility updates
-11. [ ] Update `ShareButton` to use Web Share API (plus general zhuzh)
+11. [X] Update `ShareButton` to use Web Share API (plus general zhuzh)
 12. [ ] Unit/integration tests for all components (I'll be better about adding these as I go in future phases)
 
 ### Phase 2: Daily Puzzle Infrastructure (Week 3)

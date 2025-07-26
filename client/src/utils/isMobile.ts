@@ -13,5 +13,7 @@ export function isMobile(): boolean {
 
     // Fallback to a comprehensive regex for older browsers.
     // This regex is a common pattern for detecting a wide range of mobile devices.
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent,
+    )
 }
