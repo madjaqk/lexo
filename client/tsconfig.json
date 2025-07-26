@@ -1,11 +1,10 @@
 {
     "files": [],
-    "include": ["src"],
+    "include": ["src", "vitest.setup.ts"],
     "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }],
     "compilerOptions": {
         "baseUrl": "./src",
         "paths": { "@/*": ["./*"] },
-        "types": ["node"],
         "composite": true,
         "tsBuildInfoFile": "./build/tsconfig.tsbuildinfo"
     }

@@ -23,7 +23,8 @@ export default function ScoreReport({
     return (
         <output className="score-report" aria-live="polite">
             <span className="sr-only">
-                Game completed. Your final score was {scoreSummary.totalScore}. The target solution was:
+                Game completed. Your final score was {scoreSummary.totalScore}. The target solution
+                was:
                 {targetScores.map(
                     (s, idx) =>
                         `${targetWords[idx]} scored ${s.baseScore} times ${s.multiplier} equals ${s.baseScore * s.multiplier} points`,

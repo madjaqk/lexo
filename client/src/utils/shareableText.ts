@@ -8,7 +8,10 @@ export interface ScoreSummary {
     isOverTarget: boolean
 }
 
-export function calculateScoreSummary(rackScores: WordScore[], targetScores: WordScore[]): ScoreSummary {
+export function calculateScoreSummary(
+    rackScores: WordScore[],
+    targetScores: WordScore[],
+): ScoreSummary {
     const totalScore = sum(rackScores.map((s) => s.baseScore * s.multiplier))
     const targetScore = sum(targetScores.map((s) => s.baseScore * s.multiplier))
     const scoreDifference = Math.abs(totalScore - targetScore)
@@ -32,14 +35,21 @@ export function generateShareText(
 
     const summaryLine = `Total: ${totalScore} / ${targetScore} (${isOverTarget ? "🔥+" : "🧊-"}${scoreDifference})`
 
-    return [`[Tile Game Name tk] — ${date}`, ...scoreLines, summaryLine, "Sharable/shortened URL tk"].join(
-        "\n",
-    )
+    return [
+        `[Tile Game Name tk] — ${date}`,
+        ...scoreLines,
+        summaryLine,
+        "Sharable/shortened URL tk",
+    ].join("\n")
 }
 
 export function generateScoreReportText(scoreSummary: ScoreSummary): string {
     const { totalScore, scoreDifference, isOverTarget } = scoreSummary
     const comparison =
-        totalScore === scoreSummary.targetScore ? "Great minds think alike." : isOverTarget ? "Nicely done!" : "Better luck next time!"
+        totalScore === scoreSummary.targetScore
+            ? "Great minds think alike."
+            : isOverTarget
+              ? "Nicely done!"
+              : "Better luck next time!"
     return `Your score was ${scoreDifference} ${isOverTarget ? "over" : "under"} the target! ${comparison}`
 }
