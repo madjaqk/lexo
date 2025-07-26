@@ -60,55 +60,60 @@ export default function Game(props: GameProps) {
                 </button>
             )}
             {gameState !== "pre-game" && (
-                <div className="game-board" ref={gameBoardRef} tabIndex={-1}>
-                    <TimerBar
-                        timeRemainingMs={timeRemainingMs}
-                        totalTimeMs={gameRules.timerSeconds * 1000}
-                    />
-                    <div className="racks-column">
-                        <WordRacks
-                            racks={wordRacks}
-                            setRacks={setWordRacks}
-                            maxTiles={maxTiles}
-                            rackScores={rackScores}
-                            disabled={gameState !== "playing"}
+                <div className="game-content-wrapper">
+                    <div className="game-board" ref={gameBoardRef} tabIndex={-1}>
+                        <TimerBar
+                            timeRemainingMs={timeRemainingMs}
+                            totalTimeMs={gameRules.timerSeconds * 1000}
                         />
-                        <div className="total-score-row">
-                            <div className="rack-score-spacer">
-                                {gameState === "playing" &&
-                                    rackScores.every((s) => s.baseScore > 0) && (
-                                        <button type="button" onClick={endGame}>
-                                            Submit Answer
-                                        </button>
-                                    )}
-                            </div>
-                            <div className="score total-score">TOTAL: {totalScore}</div>
+                        <div className="racks-column">
+                            <WordRacks
+                                racks={wordRacks}
+                                setRacks={setWordRacks}
+                                maxTiles={maxTiles}
+                                rackScores={rackScores}
+                                disabled={gameState !== "playing"}
+                            />
                         </div>
+                    </div>
+                    <div className="total-score-row">
+                        <div className="timer-spacer" />
+                        <div className="rack-score-spacer">
+                            {rackScores.every((s) => s.baseScore > 0) && (
+                                <button disabled={gameState !== "playing"} type="button" onClick={endGame}>
+                                    Submit Answer
+                                </button>
+                            )}
+                        </div>
+                        <div className="score total-score">TOTAL: {totalScore}</div>
                     </div>
                 </div>
             )}
             {gameState === "finished" && (
                 <div className="game-board-finished">
-                    <div className="timer-spacer" />
-                    <div className="racks-column">
-                        <h2>Good job! Here was our answer:</h2>
-                        <WordRacks
-                            racks={puzzle.targetSolution}
-                            rackScores={targetScores}
-                            disabled={true}
-                            setRacks={setWordRacks}
-                        />
-                        <div className="total-score-row">
-                            <div className="rack-score-spacer">
-                                <ScoreReport
-                                    rackScores={rackScores}
-                                    targetScores={targetScores}
-                                    targetSolution={puzzle.targetSolution}
-                                    date={puzzle.date}
-                                />
-                            </div>
-                            <div className="score total-score">TOTAL: {targetScore}</div>
+                    <h2>Good job! Here was our answer:</h2>
+                    <div className="game-board">
+                        <div className="timer-spacer" />
+                        <div className="racks-column">
+                            <WordRacks
+                                racks={puzzle.targetSolution}
+                                rackScores={targetScores}
+                                disabled={true}
+                                setRacks={setWordRacks}
+                            />
                         </div>
+                    </div>
+                    <div className="total-score-row">
+                        <div className="timer-spacer" />
+                        <div className="rack-score-spacer">
+                            <ScoreReport
+                                rackScores={rackScores}
+                                targetScores={targetScores}
+                                targetSolution={puzzle.targetSolution}
+                                date={puzzle.date}
+                            />
+                        </div>
+                        <div className="score total-score">TOTAL: {targetScore}</div>
                     </div>
                 </div>
             )}

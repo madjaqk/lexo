@@ -1,6 +1,7 @@
 import type { WordRack, WordScore } from "@/types"
 import { sum } from "@/utils/math"
 import ShareButton from "./ShareButton"
+import "./ScoreReport.css"
 
 export interface ScoreReportProps {
     rackScores: WordScore[]

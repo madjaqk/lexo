@@ -3,8 +3,6 @@
     /* Mobile-first: Stack the rack and score vertically */
     flex-direction: column;
     gap: 0.5rem;
-    margin-bottom: 1rem;
-    /* align-items: center; */
 }
 
 .word-rack {

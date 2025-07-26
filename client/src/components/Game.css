@@ -9,6 +9,14 @@
     --timer-width: 5ch;
 }
 
+.game-content-wrapper,
+.game-board-finished {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 1rem;
+}
+
 .game-board {
     display: flex;
     width: 100%;
@@ -24,10 +32,6 @@
 
 h2 {
     text-align: center;
-}
-
-.game-board-finished {
-    display: contents;
 }
 
 .total-score-row {
@@ -87,12 +91,6 @@ button:hover {
     .score.total-score {
         min-width: var(--score-column-width);
         text-align: center;
-    }
-
-    .game-board-finished {
-        display: flex;
-        width: 100%;
-        gap: 1rem;
     }
 
     .timer-spacer {
