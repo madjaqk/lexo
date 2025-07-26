@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useCopyToClipboard } from "usehooks-ts"
 import type { WordScore } from "@/types"
 import { isMobile } from "@/utils/isMobile"
-import { sum } from "@/utils/math"
+import { calculateScoreSummary, generateShareText } from "@/utils/shareableText"
 import "./ShareButton.css"
 
 interface ShareButtonProps {
@@ -15,26 +15,8 @@ export default function ShareButton({ rackScores, targetScores, date }: ShareBut
     const [buttonText, setButtonText] = useState("Share")
     const [_copiedText, copy] = useCopyToClipboard()
 
-    const totalScore = sum(rackScores.map((s) => s.baseScore * s.multiplier))
-    const targetScore = sum(targetScores.map((s) => s.baseScore * s.multiplier))
-    const scoreDifference = Math.abs(totalScore - targetScore)
-    const isOverTarget = totalScore >= targetScore
-
-    const tileColors = ["🟨", "🟩", "🟦", "🟪"]
-
-    const scoreLines = rackScores.map(
-        (score, i) =>
-            `${tileColors[i].repeat(i + 3)}${"⬜".repeat(3 - i)} ${score.baseScore} × ${score.multiplier} = ${score.baseScore * score.multiplier}`,
-    )
-
-    const summaryLine = `Total: ${totalScore} / ${targetScore} (${isOverTarget ? "🔥+" : "🧊-"}${scoreDifference})`
-
-    const shareText = [
-        `[Tile Game Name tk] — ${date}`,
-        ...scoreLines,
-        summaryLine,
-        "Sharable/shortened URL tk",
-    ].join("\n")
+    const scoreSummary = calculateScoreSummary(rackScores, targetScores)
+    const shareText = generateShareText(rackScores, scoreSummary, date)
 
     async function handleShare() {
         // Use the web share API on mobile; on desktop, just copy to clipboard

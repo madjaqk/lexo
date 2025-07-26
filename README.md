@@ -103,7 +103,20 @@ TOTAL: 202 (14 over target!)
 9. [X] Implement basic responsive layout (plus better styling)
 10. [X] Accessibility updates
 11. [X] Update `ShareButton` to use Web Share API (plus general zhuzh)
-12. [ ] Unit/integration tests for all components (I'll be better about adding these as I go in future phases)
+12. [ ] **Testing Suite Setup & Implementation**
+    - [ ] **Setup**: Install Vitest, JSDOM, React Testing Library, and related dependencies.
+    - [ ] **Configuration**: Configure Vite (`vite.config.ts`) for the test environment (e.g., globals, set-up files).
+    - [ ] **Unit Test: Scoring Logic**: Test `utils/scoring.ts` to ensure `calculateRackScore` works correctly with various inputs.
+    - [ ] **Unit Test: Shareable Text**: Test `utils/shareableText.ts` to ensure summary and report text is generated correctly.
+    - [ ] **Unit Test: Local Storage**: Test `services/playHistory.ts` by mocking `localStorage` to verify history is saved and retrieved correctly.
+    - [ ] **Hook Test: `useTimer`**: Test the timer hook with fake timers to ensure it counts down and calls back correctly.
+    - [ ] **Hook Test: `useGameScoring`**: Test the scoring hook to verify it computes player and target scores accurately using the scoring utils.
+    - [ ] **Component Test: `TimerBar`**: Test that the component renders the correct time and progress bar value.
+    - [ ] **Component Test: `ScoreReport`**: Test that the final report displays the correct score comparison.
+    - [ ] **Integration Test: `Game` Component**: Test the user flow from the perspective of the main `Game` component. This approach treats child components like `WordRacks` as implementation details, leading to more robust tests that don't break on refactoring.
+        - [ ] **Happy Path**: Test the full game flow: start game, see the board, and submit a valid answer.
+        - [ ] **State Transitions**: Verify the correct UI elements are shown/hidden based on `gameState` ("pre-game", "playing", "finished").
+        - [ ] **Edge Cases**: Test behavior when the timer runs out, or when a user submits an incomplete board.
 
 ### Phase 2: Daily Puzzle Infrastructure (Week 3)
 **Deliverables:**

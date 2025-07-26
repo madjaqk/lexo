@@ -1,5 +1,5 @@
 import type { WordRack, WordScore } from "@/types"
-import { sum } from "@/utils/math"
+import { calculateScoreSummary, generateScoreReportText } from "@/utils/shareableText"
 import ShareButton from "./ShareButton"
 import "./ScoreReport.css"
 
@@ -16,29 +16,21 @@ export default function ScoreReport({
     targetSolution,
     date,
 }: ScoreReportProps) {
-    const totalScore = sum(rackScores.map((s) => s.baseScore * s.multiplier))
-    const targetScore = sum(targetScores.map((s) => s.baseScore * s.multiplier))
-    const scoreDifference = Math.abs(totalScore - targetScore)
-    const isOverTarget = totalScore >= targetScore
-
+    const scoreSummary = calculateScoreSummary(rackScores, targetScores)
+    const reportText = generateScoreReportText(scoreSummary)
     const targetWords = targetSolution.map((rack) => rack.map((tile) => tile.letter).join(""))
 
     return (
         <output className="score-report" aria-live="polite">
             <span className="sr-only">
-                Game completed. Your final score was {totalScore}. The target solution was:
+                Game completed. Your final score was {scoreSummary.totalScore}. The target solution was:
                 {targetScores.map(
                     (s, idx) =>
                         `${targetWords[idx]} scored ${s.baseScore} times ${s.multiplier} equals ${s.baseScore * s.multiplier} points`,
                 )}
-                ...for a total of {targetScore} points.
+                ...for a total of {scoreSummary.targetScore} points.
             </span>
-            Your score was {scoreDifference} {isOverTarget ? "over" : "under"} the target!{" "}
-            {totalScore === targetScore
-                ? "Great minds think alike."
-                : isOverTarget
-                  ? "Nicely done!"
-                  : "Better luck next time!"}{" "}
+            {reportText}{" "}
             <ShareButton rackScores={rackScores} targetScores={targetScores} date={date} />
         </output>
     )
