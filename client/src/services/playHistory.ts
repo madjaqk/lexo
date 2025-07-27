@@ -1,6 +1,6 @@
 import type { WordRack } from "@/types"
 
-const LOCAL_STORAGE_KEY = "tile-game-history"
+export const LOCAL_STORAGE_KEY = "tile-game-history"
 
 export interface PlayHistoryRecord {
     racks: WordRack[]
