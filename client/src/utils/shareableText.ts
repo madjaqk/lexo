@@ -8,6 +8,8 @@ export interface ScoreSummary {
     isOverTarget: boolean
 }
 
+export const TILE_COLORS = ["🟨", "🟩", "🟦", "🟪"]
+
 export function calculateScoreSummary(
     rackScores: WordScore[],
     targetScores: WordScore[],
@@ -26,11 +28,11 @@ export function generateShareText(
     date: string,
 ): string {
     const { totalScore, targetScore, scoreDifference, isOverTarget } = scoreSummary
-    const tileColors = ["🟨", "🟩", "🟦", "🟪"]
+
 
     const scoreLines = rackScores.map(
         (score, i) =>
-            `${tileColors[i].repeat(i + 3)}${"⬜".repeat(3 - i)} ${score.baseScore} × ${score.multiplier} = ${score.baseScore * score.multiplier}`,
+            `${TILE_COLORS[i].repeat(i + 3)}${"⬜".repeat(3 - i)} ${score.baseScore} × ${score.multiplier} = ${score.baseScore * score.multiplier}`,
     )
 
     const summaryLine = `Total: ${totalScore} / ${targetScore} (${isOverTarget ? "🔥+" : "🧊-"}${scoreDifference})`
@@ -39,7 +41,7 @@ export function generateShareText(
         `[Tile Game Name tk] — ${date}`,
         ...scoreLines,
         summaryLine,
-        "Sharable/shortened URL tk",
+        "Shareable/shortened URL tk",
     ].join("\n")
 }
 

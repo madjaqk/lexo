@@ -104,10 +104,10 @@ TOTAL: 202 (14 over target!)
 10. [X] Accessibility updates
 11. [X] Update `ShareButton` to use Web Share API (plus general zhuzh)
 12. [ ] **Testing Suite Setup & Implementation**
-    - [ ] **Setup**: Install Vitest, JSDOM, React Testing Library, and related dependencies.
-    - [ ] **Configuration**: Configure Vite (`vite.config.ts`) for the test environment (e.g., globals, set-up files).
-    - [ ] **Unit Test: Scoring Logic**: Test `utils/scoring.ts` to ensure `calculateRackScore` works correctly with various inputs.
-    - [ ] **Unit Test: Shareable Text**: Test `utils/shareableText.ts` to ensure summary and report text is generated correctly.
+    - [X] **Setup**: Install Vitest, JSDOM, React Testing Library, and related dependencies.
+    - [X] **Configuration**: Configure Vite (`vite.config.ts`) for the test environment (e.g., globals, set-up files).
+    - [X] **Unit Test: Scoring Logic**: Test `utils/scoring.ts` to ensure `calculateRackScore` works correctly with various inputs.
+    - [X] **Unit Test: Shareable Text**: Test `utils/shareableText.ts` to ensure summary and report text is generated correctly.
     - [ ] **Unit Test: Local Storage**: Test `services/playHistory.ts` by mocking `localStorage` to verify history is saved and retrieved correctly.
     - [ ] **Hook Test: `useTimer`**: Test the timer hook with fake timers to ensure it counts down and calls back correctly.
     - [ ] **Hook Test: `useGameScoring`**: Test the scoring hook to verify it computes player and target scores accurately using the scoring utils.
