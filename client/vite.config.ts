@@ -20,5 +20,6 @@ export default defineConfig({
         environment: "jsdom",
         setupFiles: "./vitest.setup.ts",
         css: true, // Possibly remove this for speed, if it turns out I don't have CSS-specific tests
+        disableConsoleIntercept: true,
     },
 })

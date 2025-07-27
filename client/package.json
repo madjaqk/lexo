@@ -7,7 +7,9 @@
         "dev": "vite --port 2000",
         "build": "tsc -b && vite build",
         "lint": "biome check --fix",
-        "preview": "vite preview"
+        "preview": "vite preview",
+        "test": "vitest run",
+        "test:watch": "vitest watch"
     },
     "author": "Jack Brounstein <jack.brounstein@yahoo.com> (https://jackbrounstein.com)",
     "license": "MIT",

@@ -6,6 +6,7 @@
         "baseUrl": "./src",
         "paths": { "@/*": ["./*"] },
         "composite": true,
-        "tsBuildInfoFile": "./build/tsconfig.tsbuildinfo"
+        "tsBuildInfoFile": "./build/tsconfig.tsbuildinfo",
+        "types": ["node", "vitest/globals"]
     }
 }
