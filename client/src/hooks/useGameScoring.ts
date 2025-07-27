@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState, useMemo } from "react"
 import type { DailyPuzzle, GameRules, WordRack, WordScore } from "@/types"
 import { sum } from "@/utils/math"
-import { isValidWord } from "@/utils/wordValidation"
+import { isValidWord } from "@/services/wordValidation"
 import { calculateRackScore } from "@/utils/scoring"
 
 /**
