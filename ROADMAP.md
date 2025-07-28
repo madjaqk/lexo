@@ -109,7 +109,7 @@ TOTAL: 202 (14 over target!)
     - [X] **Unit Test: Scoring Logic**: Test `utils/scoring.ts` to ensure `calculateRackScore` works correctly with various inputs.
     - [X] **Unit Test: Shareable Text**: Test `utils/shareableText.ts` to ensure summary and report text is generated correctly.
     - [X] **Hook Test: Local Storage**: Test `hooks/usePlayHistory.ts` by mocking `localStorage` to verify history is saved and retrieved correctly.
-    - [ ] **Hook Test: `useTimer`**: Test the timer hook with fake timers to ensure it counts down and calls back correctly.
+    - [X] **Hook Test: `useTimer`**: Test the timer hook with fake timers to ensure it counts down and calls back correctly.
     - [ ] **Hook Test: `useGameScoring`**: Test the scoring hook to verify it computes player and target scores accurately using the scoring utils.
     - [ ] **Component Test: `TimerBar`**: Test that the component renders the correct time and progress bar value.
     - [ ] **Component Test: `ScoreReport`**: Test that the final report displays the correct score comparison.
