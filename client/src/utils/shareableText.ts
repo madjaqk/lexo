@@ -29,7 +29,6 @@ export function generateShareText(
 ): string {
     const { totalScore, targetScore, scoreDifference, isOverTarget } = scoreSummary
 
-
     const scoreLines = rackScores.map(
         (score, i) =>
             `${TILE_COLORS[i].repeat(i + 3)}${"⬜".repeat(3 - i)} ${score.baseScore} × ${score.multiplier} = ${score.baseScore * score.multiplier}`,

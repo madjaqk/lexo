@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useGameScoring } from "@/hooks/useGameScoring"
+import { usePlayHistory } from "@/hooks/usePlayHistory"
 import { useTimer } from "@/hooks/useTimer"
-import { saveHistoryForDate } from "@/services/playHistory"
-import type { DailyPuzzle, GameRules, GameState } from "@/types"
+import type { DailyPuzzle, GameRules, GameState, PlayHistoryRecord } from "@/types"
 import "./Game.css"
 import ScoreReport from "./ScoreReport"
 import TimerBar from "./TimerBar"
@@ -11,16 +11,19 @@ import WordRacks from "./WordRacks"
 export interface GameProps {
     puzzle: DailyPuzzle
     gameRules: GameRules
+    initialHistory: PlayHistoryRecord | null
     maxTiles?: number
 }
 
 export default function Game(props: GameProps) {
-    const { puzzle, gameRules, maxTiles = 8 } = props
+    const { puzzle, gameRules, initialHistory, maxTiles = 8 } = props
 
-    const [gameState, setGameState] = useState<GameState>("pre-game")
-    const [wordRacks, setWordRacks] = useState(puzzle.initialRacks)
+    // If there's a history, the game is already finished.
+    const [gameState, setGameState] = useState<GameState>(initialHistory ? "finished" : "pre-game")
+    const [wordRacks, setWordRacks] = useState(initialHistory?.racks ?? puzzle.initialRacks)
     const [endTime, setEndTime] = useState<Date | null>(null)
     const gameBoardRef = useRef<HTMLDivElement>(null)
+    const { saveHistoryForDate } = usePlayHistory()
 
     const { rackScores, targetScores, totalScore, targetScore } = useGameScoring(
         wordRacks,
@@ -41,7 +44,7 @@ export default function Game(props: GameProps) {
             score: totalScore,
             targetScore: targetScore,
         })
-    }, [puzzle.date, wordRacks, totalScore, targetScore])
+    }, [puzzle.date, saveHistoryForDate, wordRacks, totalScore, targetScore])
 
     const timeRemainingMs = useTimer(endTime, endGame, gameRules.timerSeconds * 1000)
 
@@ -79,15 +82,12 @@ export default function Game(props: GameProps) {
                     <div className="total-score-row">
                         <div className="timer-spacer" />
                         <div className="rack-score-spacer">
-                            {rackScores.every((s) => s.baseScore > 0) && (
-                                <button
-                                    disabled={gameState !== "playing"}
-                                    type="button"
-                                    onClick={endGame}
-                                >
-                                    Submit Answer
-                                </button>
-                            )}
+                            {gameState === "playing" &&
+                                rackScores.every((s) => s.baseScore > 0) && (
+                                    <button type="button" onClick={endGame}>
+                                        Submit Answer
+                                    </button>
+                                )}
                         </div>
                         <div className="score total-score">TOTAL: {totalScore}</div>
                     </div>

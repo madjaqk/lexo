@@ -27,3 +27,13 @@ export interface GameRules {
 }
 
 export type GameState = "pre-game" | "playing" | "finished"
+
+export interface PlayHistoryRecord {
+    racks: WordRack[]
+    score: number
+    targetScore: number
+}
+
+export interface PlayHistory {
+    [date: string]: PlayHistoryRecord
+}

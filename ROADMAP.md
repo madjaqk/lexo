@@ -108,7 +108,7 @@ TOTAL: 202 (14 over target!)
     - [X] **Configuration**: Configure Vite (`vite.config.ts`) for the test environment (e.g., globals, set-up files).
     - [X] **Unit Test: Scoring Logic**: Test `utils/scoring.ts` to ensure `calculateRackScore` works correctly with various inputs.
     - [X] **Unit Test: Shareable Text**: Test `utils/shareableText.ts` to ensure summary and report text is generated correctly.
-    - [X] **Unit Test: Local Storage**: Test `services/playHistory.ts` by mocking `localStorage` to verify history is saved and retrieved correctly.
+    - [X] **Hook Test: Local Storage**: Test `hooks/usePlayHistory.ts` by mocking `localStorage` to verify history is saved and retrieved correctly.
     - [ ] **Hook Test: `useTimer`**: Test the timer hook with fake timers to ensure it counts down and calls back correctly.
     - [ ] **Hook Test: `useGameScoring`**: Test the scoring hook to verify it computes player and target scores accurately using the scoring utils.
     - [ ] **Component Test: `TimerBar`**: Test that the component renders the correct time and progress bar value.
@@ -123,12 +123,10 @@ TOTAL: 202 (14 over target!)
 - Date-based puzzle generation
 - Play limiting system
 - Historical puzzle access
-- Shareable results generation
 
 **Key Features:**
 - Seeded random puzzle creation
 - Cookie/localStorage tracking
-- Results formatting and copy-to-clipboard
 - Previous puzzle navigation
 
 ### Phase 3: Polish and Optimization (Week 4)

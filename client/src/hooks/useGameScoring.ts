@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState, useMemo } from "react"
-import type { DailyPuzzle, GameRules, WordRack, WordScore } from "@/types"
-import { sum } from "@/utils/math"
+import { useMemo } from "react"
 import { isValidWord } from "@/services/wordValidation"
+import type { DailyPuzzle, GameRules, WordRack } from "@/types"
+import { sum } from "@/utils/math"
 import { calculateRackScore } from "@/utils/scoring"
 
 /**
@@ -28,11 +28,18 @@ export function useGameScoring(wordRacks: WordRack[], puzzle: DailyPuzzle, gameR
     }, [wordRacks, multipliers])
 
     const targetScores = useMemo(
-        () => puzzle.targetSolution.map((rack) => calculateRackScore(rack, multipliers, true)), [puzzle.targetSolution, multipliers]
+        () => puzzle.targetSolution.map((rack) => calculateRackScore(rack, multipliers, true)),
+        [puzzle.targetSolution, multipliers],
     )
 
-    const totalScore = useMemo(() =>sum(rackScores.map((s) => s.baseScore * s.multiplier)), [rackScores])
-    const targetScore = useMemo(() => sum(targetScores.map((s) => s.baseScore * s.multiplier)), [targetScores])
+    const totalScore = useMemo(
+        () => sum(rackScores.map((s) => s.baseScore * s.multiplier)),
+        [rackScores],
+    )
+    const targetScore = useMemo(
+        () => sum(targetScores.map((s) => s.baseScore * s.multiplier)),
+        [targetScores],
+    )
 
     return { rackScores, targetScores, totalScore, targetScore }
 }

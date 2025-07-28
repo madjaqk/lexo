@@ -1,15 +1,18 @@
 import { useCallback, useEffect, useState } from "react"
 import Game from "./components/Game"
+import { usePlayHistory } from "./hooks/usePlayHistory"
+import { fetchDailyPuzzle, fetchGameRules } from "./services/gameService"
+import { loadWordList } from "./services/wordValidation"
 import type { DailyPuzzle, GameRules } from "./types"
 import "./App.css"
-import { fetchDailyPuzzle, fetchGameRules } from "./services/gameService"
-import { clearAllHistory, getHistoryForDate } from "./services/playHistory"
-import { loadWordList } from "./services/wordValidation"
+
+type SessionStatus = "loading" | "ready"
 
 function App() {
     const [dailyPuzzle, setDailyPuzzle] = useState<DailyPuzzle | null>(null)
     const [gameRules, setGameRules] = useState<GameRules | null>(null)
-    const [hasPlayed, setHasPlayed] = useState(false)
+    const [sessionStatus, setSessionStatus] = useState<SessionStatus>("loading")
+    const { clearAllHistory, getHistoryForDate } = usePlayHistory()
 
     const loadGameData = useCallback(async () => {
         try {
@@ -21,12 +24,7 @@ function App() {
 
             setDailyPuzzle(puzzle)
             setGameRules(rules)
-
-            if (getHistoryForDate(puzzle.date)) {
-                setHasPlayed(true)
-            } else {
-                setHasPlayed(false)
-            }
+            setSessionStatus("ready")
         } catch (error) {
             console.error("Failed to load game data", error)
             // TODO: Render an error message to the user
@@ -40,19 +38,23 @@ function App() {
         }
 
         loadGameData()
-    }, [loadGameData])
+    }, [loadGameData, clearAllHistory])
 
     function renderContent() {
-        if (hasPlayed) {
-            // Maybe TODO: Show the results from localStorage
-            return <h2>You've already played today's puzzle. Come back tomorrow!</h2>
-        }
-
-        if (!dailyPuzzle || !gameRules) {
+        if (sessionStatus === "loading" || !dailyPuzzle || !gameRules) {
             return <p>Loading daily puzzle...</p>
         }
 
-        return <Game puzzle={dailyPuzzle} gameRules={gameRules} maxTiles={7} />
+        const initialHistory = getHistoryForDate(dailyPuzzle.date)
+
+        return (
+            <Game
+                puzzle={dailyPuzzle}
+                gameRules={gameRules}
+                initialHistory={initialHistory}
+                maxTiles={7}
+            />
+        )
     }
 
     return (

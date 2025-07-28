@@ -52,19 +52,34 @@ describe("shareableText utility", () => {
 
     describe("generateScoreReportText", () => {
         it('should generate "over target" message', () => {
-            const summary: ScoreSummary = { totalScore: 120, targetScore: 98, scoreDifference: 22, isOverTarget: true }
+            const summary: ScoreSummary = {
+                totalScore: 120,
+                targetScore: 98,
+                scoreDifference: 22,
+                isOverTarget: true,
+            }
             const reportText = generateScoreReportText(summary)
             expect(reportText).toBe("Your score was 22 over the target! Nicely done!")
         })
 
         it('should generate "under target" message', () => {
-            const summary: ScoreSummary = { totalScore: 70, targetScore: 98, scoreDifference: 28, isOverTarget: false }
+            const summary: ScoreSummary = {
+                totalScore: 70,
+                targetScore: 98,
+                scoreDifference: 28,
+                isOverTarget: false,
+            }
             const reportText = generateScoreReportText(summary)
             expect(reportText).toBe("Your score was 28 under the target! Better luck next time!")
         })
 
         it('should generate "equal scores" message', () => {
-            const summary: ScoreSummary = { totalScore: 120, targetScore: 120, scoreDifference: 0, isOverTarget: true }
+            const summary: ScoreSummary = {
+                totalScore: 120,
+                targetScore: 120,
+                scoreDifference: 0,
+                isOverTarget: true,
+            }
             const reportText = generateScoreReportText(summary)
             expect(reportText).toBe("Your score was 0 over the target! Great minds think alike.")
         })
@@ -78,7 +93,12 @@ describe("shareableText utility", () => {
             { baseScore: 15, multiplier: 3 }, // 45
         ] // Total: 155
 
-        const summary: ScoreSummary = {totalScore: 155, targetScore: 123, scoreDifference: 22, isOverTarget: true}
+        const summary: ScoreSummary = {
+            totalScore: 155,
+            targetScore: 123,
+            scoreDifference: 22,
+            isOverTarget: true,
+        }
         const testDate = "2025-08-15"
         const shareText = generateShareText(playerScores, summary, testDate)
         const lines = shareText.split("\n")
@@ -110,7 +130,12 @@ describe("shareableText utility", () => {
         })
 
         it("should include correct emoji when over target", () => {
-            const summary = {totalScore: 155, targetScore: 123, scoreDifference: 22, isOverTarget: true}
+            const summary = {
+                totalScore: 155,
+                targetScore: 123,
+                scoreDifference: 22,
+                isOverTarget: true,
+            }
             const shareText = generateShareText(playerScoresOver, summary, "2025-07-15")
 
             const expectedText = "🔥+22"
@@ -118,7 +143,12 @@ describe("shareableText utility", () => {
         })
 
         it("should include correct emoji when under target", () => {
-            const summary = {totalScore: 155, targetScore: 165, scoreDifference: 10, isOverTarget: false}
+            const summary = {
+                totalScore: 155,
+                targetScore: 165,
+                scoreDifference: 10,
+                isOverTarget: false,
+            }
             const shareText = generateShareText(playerScoresOver, summary, "2025-07-15")
 
             const expectedText = "🧊-10"
@@ -126,7 +156,12 @@ describe("shareableText utility", () => {
         })
 
         it("should include correct emoji when equal to target", () => {
-            const summary = {totalScore: 155, targetScore: 155, scoreDifference: 0, isOverTarget: true}
+            const summary = {
+                totalScore: 155,
+                targetScore: 155,
+                scoreDifference: 0,
+                isOverTarget: true,
+            }
             const shareText = generateShareText(playerScoresOver, summary, "2025-07-15")
 
             const expectedText = "🔥+0"
