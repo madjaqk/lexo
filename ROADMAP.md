@@ -110,7 +110,7 @@ TOTAL: 202 (14 over target!)
     - [X] **Unit Test: Shareable Text**: Test `utils/shareableText.ts` to ensure summary and report text is generated correctly.
     - [X] **Hook Test: Local Storage**: Test `hooks/usePlayHistory.ts` by mocking `localStorage` to verify history is saved and retrieved correctly.
     - [X] **Hook Test: `useTimer`**: Test the timer hook with fake timers to ensure it counts down and calls back correctly.
-    - [ ] **Hook Test: `useGameScoring`**: Test the scoring hook to verify it computes player and target scores accurately using the scoring utils.
+    - [X] **Hook Test: `useGameScoring`**: Test the scoring hook to verify it computes player and target scores accurately using the scoring utils.
     - [ ] **Component Test: `TimerBar`**: Test that the component renders the correct time and progress bar value.
     - [ ] **Component Test: `ScoreReport`**: Test that the final report displays the correct score comparison.
     - [ ] **Integration Test: `Game` Component**: Test the user flow from the perspective of the main `Game` component. This approach treats child components like `WordRacks` as implementation details, leading to more robust tests that don't break on refactoring.

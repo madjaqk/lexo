@@ -61,7 +61,7 @@ describe("useTimer hook", () => {
         const onEnd = vi.fn()
         const initialDuration = 5000
 
-                // Explicitly define the props type to allow for `null`.
+        // Explicitly define the props type to allow for `null`.
         type TimerProps = { endTime: Date | null }
 
         const { result, rerender } = renderHook<ReturnType<typeof useTimer>, TimerProps>(

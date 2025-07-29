@@ -15,20 +15,22 @@ import { calculateRackScore } from "@/utils/scoring"
 export function useGameScoring(wordRacks: WordRack[], puzzle: DailyPuzzle, gameRules: GameRules) {
     const { multipliers } = gameRules
 
-    // const [rackScores, setRackScores] = useState<WordScore[]>([])
-    // const [targetScores, setTargetScores] = useState<WordScore[]>([])
-
     const rackScores = useMemo(() => {
         return wordRacks.map((rack, idx) => {
             const word = rack.map((tile) => tile.letter).join("")
             const requiredLength = idx + 3
             const isValid = word.length === requiredLength && isValidWord(word)
-            return calculateRackScore(rack, multipliers, isValid)
+            const multiplier = multipliers[requiredLength] ?? 1
+            return calculateRackScore(rack, multiplier, isValid)
         })
     }, [wordRacks, multipliers])
 
     const targetScores = useMemo(
-        () => puzzle.targetSolution.map((rack) => calculateRackScore(rack, multipliers, true)),
+        () =>
+            puzzle.targetSolution.map((rack, idx) => {
+                const multiplier = multipliers[idx + 3] ?? 1
+                return calculateRackScore(rack, multiplier, true)
+            }),
         [puzzle.targetSolution, multipliers],
     )
 
