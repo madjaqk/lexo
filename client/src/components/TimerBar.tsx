@@ -8,7 +8,8 @@ export interface TimerBarProps {
 
 export default function TimerBar({ timeRemainingMs, totalTimeMs }: TimerBarProps) {
     const ratio = Math.max(timeRemainingMs / totalTimeMs, 0)
-    const secondsRemaining = Math.ceil(timeRemainingMs / 1000)
+    // Clamp the time at 0 before calculating seconds to prevent negative display values.
+    const secondsRemaining = Math.ceil(Math.max(timeRemainingMs, 0) / 1000)
 
     return (
         <div className="timer-bar-container" role="timer" aria-live="off">
@@ -21,7 +22,11 @@ export default function TimerBar({ timeRemainingMs, totalTimeMs }: TimerBarProps
                 aria-valuemax={totalTimeMs}
                 aria-valuetext={`Time remaining: ${secondsToTimeString(secondsRemaining)}`}
             >
-                <div className="timer-fill-color" style={{ opacity: ratio }} />
+                <div
+                    className="timer-fill-color"
+                    style={{ opacity: ratio }}
+                    data-testid="timer-fill-visual"
+                />
             </div>
             <span className="timer-bar-text" aria-hidden="true">
                 {secondsToTimeString(secondsRemaining)}

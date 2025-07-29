@@ -9,7 +9,6 @@ const mockRecord: PlayHistoryRecord = {
 }
 
 describe("usePlayHistory hook", () => {
-    let hookResult: RenderHookResult<ReturnType<typeof usePlayHistory>, unknown>
     let usePlayHistoryHook: { current: ReturnType<typeof usePlayHistory> }
 
     const testDate = "2025-08-15"
@@ -19,7 +18,7 @@ describe("usePlayHistory hook", () => {
         // before each test to ensure test isolation.
         window.localStorage.removeItem(LOCAL_STORAGE_KEY)
 
-        hookResult = renderHook(() => usePlayHistory())
+        const hookResult = renderHook(() => usePlayHistory())
         usePlayHistoryHook = hookResult.result
     })
 
