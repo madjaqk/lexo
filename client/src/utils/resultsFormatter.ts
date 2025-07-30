@@ -54,3 +54,26 @@ export function generateScoreReportText(scoreSummary: ScoreSummary): string {
               : "Better luck next time!"
     return `Your score was ${scoreDifference} ${isOverTarget ? "over" : "under"} the target! ${comparison}`
 }
+
+/**
+ * Generates a detailed summary string intended for screen readers.
+ * @param summary The calculated score summary.
+ * @param targetScores The array of target word scores.
+ * @param targetWords The array of target word strings.
+ * @returns A detailed, human-readable string for accessibility.
+ */
+export function generateSrSummaryText(
+	summary: ScoreSummary,
+	targetScores: WordScore[],
+	targetWords: string[],
+): string {
+	const intro = `Game completed. Your final score was ${summary.totalScore}.`
+	const solutionDetails = targetScores
+		.map(
+			(s, idx) =>
+				`${targetWords[idx]} scored ${s.baseScore} times ${s.multiplier} equals ${s.baseScore * s.multiplier} points.`,
+		)
+		.join(" ")
+	const outro = `...for a total of ${summary.targetScore} points.`
+	return `${intro} The target solution was: ${solutionDetails} ${outro}`
+}

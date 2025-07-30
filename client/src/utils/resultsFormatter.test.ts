@@ -3,9 +3,10 @@ import {
     calculateScoreSummary,
     generateScoreReportText,
     generateShareText,
+    generateSrSummaryText,
     type ScoreSummary,
     TILE_COLORS,
-} from "./shareableText"
+} from "./resultsFormatter"
 
 describe("shareableText utility", () => {
     // Mock data for a scenario where the player's score is higher than the target
@@ -170,6 +171,52 @@ describe("shareableText utility", () => {
 
         it("should end with the correct footer line", () => {
             expect(lines[lines.length - 1]).toBe("Shareable/shortened URL tk")
+        })
+    })
+
+    describe("generateSrSummaryText", () => {
+        it("should generate a correct summary for multiple target words", () => {
+            const summary: ScoreSummary = {
+                totalScore: 110,
+                targetScore: 98,
+                scoreDifference: 12,
+                isOverTarget: true,
+            }
+            const targetScores: WordScore[] = [
+                { baseScore: 8, multiplier: 6 }, // 48
+                { baseScore: 10, multiplier: 5 }, // 50
+            ]
+            const targetWords = ["CAT", "BIRD"]
+
+            const text = generateSrSummaryText(summary, targetScores, targetWords)
+
+            const expected =
+                "Game completed. Your final score was 110. The target solution was: CAT scored 8 times 6 equals 48 points. BIRD scored 10 times 5 equals 50 points. ...for a total of 98 points."
+            expect(text).toBe(expected)
+        })
+
+        it("should generate a correct summary for a single target word", () => {
+            const summary: ScoreSummary = {
+                totalScore: 50,
+                targetScore: 48,
+                scoreDifference: 2,
+                isOverTarget: true,
+            }
+            const targetScores: WordScore[] = [{ baseScore: 8, multiplier: 6 }] // 48
+            const targetWords = ["CAT"]
+
+            const text = generateSrSummaryText(summary, targetScores, targetWords)
+
+            const expected =
+                "Game completed. Your final score was 50. The target solution was: CAT scored 8 times 6 equals 48 points. ...for a total of 48 points."
+            expect(text).toBe(expected)
+        })
+
+        it("should handle an empty array of target words gracefully", () => {
+            const summary: ScoreSummary = { totalScore: 0, targetScore: 0, scoreDifference: 0, isOverTarget: true }
+            const text = generateSrSummaryText(summary, [], [])
+            const expected = "Game completed. Your final score was 0. The target solution was:  ...for a total of 0 points."
+            expect(text).toBe(expected)
         })
     })
 })

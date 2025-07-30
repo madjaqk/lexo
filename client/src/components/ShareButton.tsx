@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useCopyToClipboard } from "usehooks-ts"
 import type { WordScore } from "@/types"
 import { isMobile } from "@/utils/isMobile"
-import { calculateScoreSummary, generateShareText } from "@/utils/shareableText"
+import { calculateScoreSummary, generateShareText } from "@/utils/resultsFormatter"
 import "./ShareButton.css"
 
 interface ShareButtonProps {

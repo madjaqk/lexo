@@ -1,5 +1,9 @@
 import type { WordRack, WordScore } from "@/types"
-import { calculateScoreSummary, generateScoreReportText } from "@/utils/shareableText"
+import {
+	calculateScoreSummary,
+	generateScoreReportText,
+	generateSrSummaryText,
+} from "@/utils/resultsFormatter"
 import ShareButton from "./ShareButton"
 import "./ScoreReport.css"
 
@@ -19,20 +23,16 @@ export default function ScoreReport({
     const scoreSummary = calculateScoreSummary(rackScores, targetScores)
     const reportText = generateScoreReportText(scoreSummary)
     const targetWords = targetSolution.map((rack) => rack.map((tile) => tile.letter).join(""))
+    const srSummaryText = generateSrSummaryText(scoreSummary, targetScores, targetWords)
 
     return (
-        <output className="score-report" aria-live="polite">
-            <span className="sr-only">
-                Game completed. Your final score was {scoreSummary.totalScore}. The target solution
-                was:
-                {targetScores.map(
-                    (s, idx) =>
-                        `${targetWords[idx]} scored ${s.baseScore} times ${s.multiplier} equals ${s.baseScore * s.multiplier} points`,
-                )}
-                ...for a total of {scoreSummary.targetScore} points.
-            </span>
-            {reportText}{" "}
+        <section className="score-report" aria-labelledby="score-report-heading">
+            <h3 id="score-report-heading" className="sr-only">
+                Final Score Report
+            </h3>
+            <span className="sr-only">{srSummaryText}</span>{" "}
+            <span>{reportText}</span>
             <ShareButton rackScores={rackScores} targetScores={targetScores} date={date} />
-        </output>
+        </section>
     )
 }
