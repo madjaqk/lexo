@@ -23,6 +23,7 @@ export default function customCollisionDetection(
     const tileCollisions = collisions.filter(
         (collision) => collision.data?.droppableContainer?.data?.current?.type === "tile",
     )
+
     if (tileCollisions.length > 0) {
         return tileCollisions
     }

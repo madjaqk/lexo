@@ -8,10 +8,11 @@ import "./WordRackComponent.css"
 interface TileSortableProps {
     tile: Tile
     rackIndex: number
+    tileIndex: number
     isPlaceholder: boolean
 }
 
-function TileSortable({ tile, rackIndex, isPlaceholder }: TileSortableProps) {
+function TileSortable({ tile, rackIndex, tileIndex, isPlaceholder }: TileSortableProps) {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
         id: tile.id,
         data: {
@@ -34,6 +35,7 @@ function TileSortable({ tile, rackIndex, isPlaceholder }: TileSortableProps) {
             {...attributes}
             {...listeners}
             aria-label={`Tile ${tile.letter} worth ${tile.value} points in rack ${rackIndex + 1}`}
+            data-tile-index={tileIndex}
             className={`tile ${isPlaceholder ? "placeholder-tile" : ""}`}
         >
             {!isPlaceholder && (
@@ -74,12 +76,15 @@ export function WordRackComponent({
             <div
                 ref={setRackNodeRef}
                 className={`word-rack ${rackScore.baseScore > 0 ? "valid" : "invalid"}`}
+				role="toolbar"
+				aria-label={`Word rack ${rackIndex + 1}`}
             >
-                {tiles.map((tile) => (
+                {tiles.map((tile, idx) => (
                     <TileSortable
                         key={tile.id}
                         tile={tile}
                         rackIndex={rackIndex}
+                        tileIndex={idx}
                         isPlaceholder={tile.id === activeTileId}
                     />
                 ))}

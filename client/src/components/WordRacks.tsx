@@ -67,15 +67,18 @@ export default function WordRacks(props: WordRacksProps) {
 
         // The `over.id` can be a tile or a rack container.
         let toRackIndex: number
+        let overRackPlaceholder = false
         if (typeof over.id === "string" && over.id.startsWith("rack-")) {
             toRackIndex = Number.parseInt(over.id.split("-")[1], 10)
+            overRackPlaceholder = true
         } else {
             toRackIndex = findRackIndexForTile(over.id)
         }
 
         // Only handle moves between different racks in onDragOver.
         // Intra-rack sorting is handled by SortableContext's preview and finalized in onDragEnd.
-        if (fromRackIndex === -1 || toRackIndex === -1 || fromRackIndex === toRackIndex) {
+        // However, SortableContext's preview doesn't handle adding to the very end of the rack (represented by the rack placeholder space) correctly.
+        if (fromRackIndex === -1 || toRackIndex === -1 || (fromRackIndex === toRackIndex && !overRackPlaceholder)) {
             return
         }
 

@@ -1,7 +1,7 @@
-import { act } from "react"
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { act } from "react"
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest"
 import { usePlayHistory } from "@/hooks/usePlayHistory"
 import { fetchWordList } from "@/services/gameService"
 import { loadWordList } from "@/services/wordValidation"
@@ -74,6 +74,7 @@ describe("Game Component - Integration Tests", () => {
 	let user: ReturnType<typeof userEvent.setup>
 	const saveHistoryForDate = vi.fn()
 
+
 	beforeAll(async () => {
 		vi.mocked(fetchWordList).mockResolvedValue(new Set(["CAT", "BIRD"]))
 		await loadWordList()
@@ -88,13 +89,14 @@ describe("Game Component - Integration Tests", () => {
 			history: {},
 			saveHistoryForDate,
 			getHistoryForDate: () => null,
-            clearAllHistory: () => null,
+			clearAllHistory: () => null,
 		})
 	})
 
 	afterEach(() => {
 		// Clean up mocks
 		vi.clearAllMocks()
+		vi.restoreAllMocks()
 		vi.useRealTimers()
 	})
 
@@ -147,7 +149,7 @@ describe("Game Component - Integration Tests", () => {
 			expect(screen.getByRole("progressbar")).toBeInTheDocument()
 
 			// Advance the timer to the end
-			await act(async () => {
+			await act(async () => { // `act` ensures all state updates from timers are processed
 				await vi.advanceTimersByTimeAsync(MOCK_RULES.timerSeconds * 1000)
 			})
 
@@ -167,6 +169,159 @@ describe("Game Component - Integration Tests", () => {
 
 			expect(screen.queryByRole("button", { name: /start game/i })).not.toBeInTheDocument()
 			expect(screen.getByRole("region", { name: /final score report/i })).toBeInTheDocument()
+		})
+	})
+
+	describe("Happy Path", () => {
+
+		const originalGetBoundingClientRect = Element.prototype.getBoundingClientRect
+
+		// This variable will be used to track the pointer's position for our stateful mock.
+		let currentPointerCoords = { x: 0, y: 0 }
+
+		beforeAll(() => {
+			// Mock getBoundingClientRect to provide fake geometry for dnd-kit in jsdom.
+			Element.prototype.getBoundingClientRect = function () {
+				const el = this as HTMLElement
+				const label = el.getAttribute("aria-label")
+
+				// Handle the element inside DragOverlay, which has no label.
+				// This is the key to providing a non-zero `collisionRect`.
+				if (el.classList.contains("drag-preview")) {
+					// The drag-preview's rect must be dynamic and follow the pointer.
+					return {
+						width: 45,
+						height: 45,
+						x: currentPointerCoords.x,
+						y: currentPointerCoords.y,
+						top: currentPointerCoords.y,
+						left: currentPointerCoords.x,
+						right: currentPointerCoords.x + 45,
+						bottom: currentPointerCoords.y + 45,
+						toJSON: () => "",
+					} as DOMRect
+				}
+
+
+				// For racks, return a large rectangle with a unique Y position.
+				if (label?.startsWith("Word rack")) {
+					const rackMatch = label.match(/Word rack (\d+)/)
+					// The label is 1-based, so we subtract 1 for a 0-based index.
+					const rackIndex = rackMatch ? Number.parseInt(rackMatch[1], 10) - 1 : -1
+					return {
+						x: 0,
+						y: rackIndex * 100,
+						width: 500,
+						height: 50,
+						top: rackIndex * 100,
+						right: 500,
+						bottom: rackIndex * 100 + 50,
+						left: 0,
+						toJSON: () => "",
+					} as DOMRect
+				}
+
+				// For tiles, use the rack and tile index to calculate a unique position.
+				if (label?.startsWith("Tile")) {
+					const rackMatch = label.match(/rack (\d+)/)
+					const rackIndex = rackMatch ? Number.parseInt(rackMatch[1], 10) - 1 : -1
+					const tileIndex = Number.parseInt(el.getAttribute("data-tile-index") || "-1", 10)
+
+					return {
+						x: tileIndex * 50, // Tiles are laid out horizontally
+						y: rackIndex * 100,
+						width: 45,
+						height: 45,
+						top: rackIndex * 100,
+						right: tileIndex * 50 + 45,
+						bottom: rackIndex * 100 + 45,
+						left: tileIndex * 50,
+						toJSON: () => "",
+					} as DOMRect
+				}
+
+				// For any other element, call the original jsdom implementation.
+				return originalGetBoundingClientRect.call(this)
+			}
+		})
+
+		afterAll(() => {
+			// Restore the original implementation after all tests in this file have run.
+			Element.prototype.getBoundingClientRect = originalGetBoundingClientRect
+		})
+
+		it("should allow a user to start, solve, and submit a puzzle", async () => {
+			// Helper function that uses our mocked geometry to perform a drag.
+			async function drag(source: HTMLElement, target: HTMLElement) {
+				const sourceRect = source.getBoundingClientRect()
+				const targetRect = target.getBoundingClientRect()
+
+				// We must use separate, awaited pointer calls. A single call with an array of
+				// steps is not resilient to the re-renders that dnd-kit triggers mid-drag.
+
+				// Update our stateful mock's coordinates and fire the event.
+				currentPointerCoords = { x: sourceRect.x, y: sourceRect.y }
+				await user.pointer({
+					keys: "[MouseLeft>]",
+					target: source,
+					coords: currentPointerCoords,
+				})
+
+				// Update coordinates for the move and fire the event.
+				// This logic makes the drop position explicit based on the target type.
+				let targetX: number
+				if (target.getAttribute("role") === "toolbar") {
+					// Target is a rack, so we aim for the empty space at the end.
+					// This ensures dragging a tile to another rack places it at the end.
+					targetX = targetRect.x + targetRect.width - 10 // A small offset from the very edge
+				} else {
+					// Target is another tile, so we aim for its beginning to insert before it.
+					targetX = targetRect.x + 5 // A small offset from the left edge
+				}
+
+				currentPointerCoords = { x: targetX, y: targetRect.y }
+				await user.pointer({ target: target, coords: currentPointerCoords })
+
+				// dnd-kit's PointerSensor attaches the 'up' listener to the document.
+				// By firing the event on the body, we avoid stale element references.
+				await user.pointer({ keys: "[/MouseLeft]", target: document.body })
+
+			}
+
+			render(<Game puzzle={MOCK_PUZZLE} gameRules={MOCK_RULES} initialHistory={null} />)
+
+			// 1. Start the game
+			await user.click(screen.getByRole("button", { name: /start game/i }))
+
+			// Initial state: R1:[A,B,C], R2:[D,I,R,T]
+
+			// Move T to Rack 1 -> R1:[A,B,C,T], R2:[D,I,R]
+			await drag(screen.getByLabelText(/Tile T/i), screen.getByRole("toolbar", { name: /word rack 1/i }))
+
+			// Move B to the start of Rack 2 -> R1: [A,C,T], R2:[B,D,I,R]
+			await drag(screen.getByLabelText(/Tile B/i), screen.getByLabelText(/Tile D/i))
+
+			// Reorder Rack 1 to "CAT" (Move C before A) -> R1:[C,A,T]
+			await drag(screen.getByLabelText(/Tile C/i), screen.getByLabelText(/Tile A/i))
+
+			// Reorder Rack 2 to "BIRD" (Move D to end) -> R2:[B,I,R,D]
+			await drag(screen.getByLabelText(/Tile D/i), screen.getByRole("toolbar", { name: /word rack 2/i }))
+
+			// 3. Assert that the submit button is now visible
+			const submitButton = screen.getByRole("button", { name: /submit answer/i })
+			expect(submitButton).toBeInTheDocument()
+
+			// 4. Submit the answer and verify the final state
+			await user.click(submitButton)
+
+			expect(screen.getByRole("region", { name: /final score report/i })).toBeInTheDocument()
+
+			// CAT (base 5 * mult 6) + BIRD (base 6 * mult 5) = 30 + 30 = 60. Target is the same.
+			const scoreText = screen.getByText(/your score was 0 over the target/i)
+			expect(scoreText).toBeInTheDocument()
+
+			expect(saveHistoryForDate).toHaveBeenCalledTimes(1)
+			expect(saveHistoryForDate).toHaveBeenCalledWith(MOCK_PUZZLE.date, expect.any(Object))
 		})
 	})
 })
