@@ -1,2 +1,5 @@
 .venv/
 .envrc.ps1
+**__pycache__**
+*.py[codz]
+db.sqlite3
