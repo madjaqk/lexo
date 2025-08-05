@@ -127,7 +127,7 @@ TOTAL: 202 (14 over target!)
 #### Detailed Steps
 1. [ ] **Backend Project Setup (Python)**
     -   Create a `server` directory within your workspace.
-    -   Install your chosen framework (e.g., `fastapi`, `uvicorn`, `sqlalchemy`).
+    -   Install your chosen framework (e.g., `fastapi`, `uvicorn`, `sqlmodel`).
 2. [ ] **Database and Model Definition**
     -   Define the database schema for a `Puzzle`. This would include fields for the `date`, the `initialRacks` (as JSON), and the `targetSolution` (as JSON).
     -   Set up your ORM (e.g., SQLModel) to interact with an SQLite database file.
@@ -176,6 +176,7 @@ TOTAL: 202 (14 over target!)
 - Download font rather than using link
 - Instructions screen
 - Display history of past games
+- Update `package.json` and `pyproject.toml` with correct project name and version
 
 ## Technical Specifications
 

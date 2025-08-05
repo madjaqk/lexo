@@ -1,0 +1,27 @@
+[project]
+name = "tile-game-server"
+version = "0.1.0"
+description = "Back-end server for the daily tile game"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.116.1",
+    "fastapi-cli>=0.0.8",
+    "pyyaml>=6.0.2",
+    "sqlmodel>=0.0.24",
+    "uvicorn[standard]>=0.35.0",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.12.7",
+]
+
+[tool.ruff]
+line-length = 100
+indent-width = 4
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "native"
