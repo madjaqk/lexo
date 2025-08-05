@@ -78,7 +78,11 @@ export default function WordRacks(props: WordRacksProps) {
         // Only handle moves between different racks in onDragOver.
         // Intra-rack sorting is handled by SortableContext's preview and finalized in onDragEnd.
         // However, SortableContext's preview doesn't handle adding to the very end of the rack (represented by the rack placeholder space) correctly.
-        if (fromRackIndex === -1 || toRackIndex === -1 || (fromRackIndex === toRackIndex && !overRackPlaceholder)) {
+        if (
+            fromRackIndex === -1 ||
+            toRackIndex === -1 ||
+            (fromRackIndex === toRackIndex && !overRackPlaceholder)
+        ) {
             return
         }
 

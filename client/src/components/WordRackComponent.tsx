@@ -76,8 +76,8 @@ export function WordRackComponent({
             <div
                 ref={setRackNodeRef}
                 className={`word-rack ${rackScore.baseScore > 0 ? "valid" : "invalid"}`}
-				role="toolbar"
-				aria-label={`Word rack ${rackIndex + 1}`}
+                role="toolbar"
+                aria-label={`Word rack ${rackIndex + 1}`}
             >
                 {tiles.map((tile, idx) => (
                     <TileSortable

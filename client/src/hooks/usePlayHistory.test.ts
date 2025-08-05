@@ -1,4 +1,4 @@
-import { act, type RenderHookResult, renderHook } from "@testing-library/react"
+import { act, renderHook } from "@testing-library/react"
 import type { PlayHistoryRecord } from "@/types"
 import { LOCAL_STORAGE_KEY, usePlayHistory } from "./usePlayHistory"
 

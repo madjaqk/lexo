@@ -213,9 +213,15 @@ describe("shareableText utility", () => {
         })
 
         it("should handle an empty array of target words gracefully", () => {
-            const summary: ScoreSummary = { totalScore: 0, targetScore: 0, scoreDifference: 0, isOverTarget: true }
+            const summary: ScoreSummary = {
+                totalScore: 0,
+                targetScore: 0,
+                scoreDifference: 0,
+                isOverTarget: true,
+            }
             const text = generateSrSummaryText(summary, [], [])
-            const expected = "Game completed. Your final score was 0. The target solution was:  ...for a total of 0 points."
+            const expected =
+                "Game completed. Your final score was 0. The target solution was:  ...for a total of 0 points."
             expect(text).toBe(expected)
         })
     })

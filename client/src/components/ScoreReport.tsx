@@ -1,8 +1,8 @@
 import type { WordRack, WordScore } from "@/types"
 import {
-	calculateScoreSummary,
-	generateScoreReportText,
-	generateSrSummaryText,
+    calculateScoreSummary,
+    generateScoreReportText,
+    generateSrSummaryText,
 } from "@/utils/resultsFormatter"
 import ShareButton from "./ShareButton"
 import "./ScoreReport.css"
@@ -30,8 +30,7 @@ export default function ScoreReport({
             <h3 id="score-report-heading" className="sr-only">
                 Final Score Report
             </h3>
-            <span className="sr-only">{srSummaryText}</span>{" "}
-            <span>{reportText}</span>
+            <span className="sr-only">{srSummaryText}</span> <span>{reportText}</span>
             <ShareButton rackScores={rackScores} targetScores={targetScores} date={date} />
         </section>
     )
