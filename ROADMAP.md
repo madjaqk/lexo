@@ -22,29 +22,29 @@ Create a daily word puzzle game where players arrange 18 letter tiles into four 
 
 ### Puzzle Generation
 - Server selects 4 valid words from a curated "common words" list
-- Extracts exactly 18 tiles from these words to ensure winnability
-- Uses date-based seeding (UTC/server time) for consistent daily puzzles
+- A script generates puzzles ahead of time and stores them in a persistent database
+- It extracts exactly 18 tiles from these words to ensure winnability
 - Server's solution becomes the "target score" that players try to beat
 
 ### Word Validation
 - Use a comprehensive word list (assume provided) for validation - should include plurals, verb forms, no proper nouns
 - Separate smaller "common words" list for puzzle generation
-- Words only count if placed in correct length position
+- Words only count if placed in the correct length position
 
 ## Technical Requirements
 
 ### Frontend (React/Next.js)
 - Drag-and-drop tile interface
 - Four word "racks" with visual length indicators
-- Real-time word validation and scoring display
+- Real-time word validation and scoring display (client-side)
 - Timer display
 - Responsive design for mobile/desktop
 
 ### Backend
-- Express.js or Python (Flask/FastAPI) - your choice
-- RESTful API endpoints for puzzle data and validation
-- Date-based puzzle generation using seeded randomization
-- Session/cookie-based play tracking (no user accounts needed for MVP)
+- Python (FastAPI) with an SQLite database
+- RESTful API for serving puzzle data and game configuration
+- Puzzles generated and stored in a persistent database
+- Play limiting remains client-side via localStorage
 
 ### User Experience
 - Visual feedback for valid/invalid words
@@ -55,9 +55,9 @@ Create a daily word puzzle game where players arrange 18 letter tiles into four 
 ## Daily Puzzle Features
 
 ### Play Limiting
-- Track completed puzzles using browser localStorage or cookies
-- Prevent multiple plays of same day's puzzle
-- Allow access to previous days' puzzles
+- Remains client-side via `localStorage`
+- Prevents multiple plays of the same day's puzzle
+- Allows access to previous days' puzzles (via API calls for past dates)
 
 ### Shareable Results
 Generate spoiler-free summary in this format:
@@ -120,14 +120,32 @@ TOTAL: 202 (14 over target!)
 
 ### Phase 2: Daily Puzzle Infrastructure (Week 3)
 **Deliverables:**
-- Date-based puzzle generation
-- Play limiting system
-- Historical puzzle access
+- A production-ready API serving daily puzzles from a persistent store.
+- A client application fully integrated with the live API.
+- A script for generating and storing future puzzles.
 
-**Key Features:**
-- Seeded random puzzle creation
-- Cookie/localStorage tracking
-- Previous puzzle navigation
+#### Detailed Steps
+1. [ ] **Backend Project Setup (Python)**
+    -   Create a `server` directory within your workspace.
+    -   Install your chosen framework (e.g., `fastapi`, `uvicorn`, `sqlalchemy`).
+2. [ ] **Database and Model Definition**
+    -   Define the database schema for a `Puzzle`. This would include fields for the `date`, the `initialRacks` (as JSON), and the `targetSolution` (as JSON).
+    -   Set up your ORM (e.g., SQLModel) to interact with an SQLite database file.
+3. [ ] **Create a Puzzle Generation Script**
+    -   Develop a standalone Python script (`generate_puzzles.py`).
+    -   This script will contain the core logic for creating a valid puzzle from your word lists.
+    -   It should be runnable from the command line (e.g., `python generate_puzzles.py --days 30`) to generate and save a batch of future puzzles to the database.
+4. [ ] **Implement API Endpoints**
+    -   **`GET /api/puzzle/:date`**: Fetches a specific puzzle by its date from the database.
+    -   **`GET /api/config`**: Reads the `gameRules.yaml` file and serves its content as JSON. This keeps your game rules easily configurable without a code change.
+    -   **`GET /api/wordlist`**: Serve the complete list of legal words (found in `config/words-full.txt`).
+5. [ ] **Client Integration**
+    -   Update the `Game` component to fetch its data from your new, live API endpoints instead of using the local mock data.
+    -   Ensure loading and error states are handled gracefully (e.g., what happens if the API call fails?).
+6. [ ] **Initial Content Population**
+    -   Run your generation script once to populate the database with puzzles for the next month or two.
+7. [ ] **Deployment Prep (Optional but Recommended)**
+    -   Create a `Dockerfile` for your Python server to make deployment simple and repeatable.
 
 ### Phase 3: Polish and Optimization (Week 4)
 **Deliverables:**
@@ -136,6 +154,7 @@ TOTAL: 202 (14 over target!)
 - Error handling
 - Mobile optimization
 - Branding (name and logo)
+- Deployment (containerization?)
 
 **Key Features:**
 - Improved animations and transitions
@@ -143,6 +162,7 @@ TOTAL: 202 (14 over target!)
 - Comprehensive error handling
 - Loading states and feedback
 - Dark mode
+- Implement server-side caching (e.g., Redis) for API endpoints
 
 **Miscellaneous:**
 
@@ -156,7 +176,7 @@ TOTAL: 202 (14 over target!)
 ### API Endpoints
 - `GET /api/puzzle/:date` - Get puzzle for specific date
 - `GET /api/config` - Get current scoring configuration
-- `POST /api/submit` - Submit completed puzzle
+- `GET /api/wordlist` - Get list of legal words
 
 ### Data Structures
 ```javascript
