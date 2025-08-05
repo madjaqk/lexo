@@ -113,10 +113,10 @@ TOTAL: 202 (14 over target!)
     - [X] **Hook Test: `useGameScoring`**: Test the scoring hook to verify it computes player and target scores accurately using the scoring utils.
     - [X] **Component Test: `TimerBar`**: Test that the component renders the correct time and progress bar value.
     - [X] **Component Test: `ScoreReport`**: Test that the final report displays the correct score comparison.
-    - [ ] **Integration Test: `Game` Component**: Test the user flow from the perspective of the main `Game` component. This approach treats child components like `WordRacks` as implementation details, leading to more robust tests that don't break on refactoring.
+    - [X] **Integration Test: `Game` Component**: Test the user flow from the perspective of the main `Game` component. This approach treats child components like `WordRacks` as implementation details, leading to more robust tests that don't break on refactoring.
         - [X] **Happy Path**: Test the full game flow: start game, see the board, and submit a valid answer.
         - [X] **State Transitions**: Verify the correct UI elements are shown/hidden based on `gameState` ("pre-game", "playing", "finished").
-        - [ ] **Edge Cases**: Test behavior when the timer runs out, or when a user submits an incomplete board.
+        - [X] **Edge Cases**: Test behavior when the timer runs out, or when a user submits an incomplete board.
 
 ### Phase 2: Daily Puzzle Infrastructure (Week 3)
 **Deliverables:**
