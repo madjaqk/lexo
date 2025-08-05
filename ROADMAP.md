@@ -135,16 +135,22 @@ TOTAL: 202 (14 over target!)
     -   Develop a standalone Python script (`generate_puzzles.py`).
     -   This script will contain the core logic for creating a valid puzzle from your word lists.
     -   It should be runnable from the command line (e.g., `python generate_puzzles.py --days 30`) to generate and save a batch of future puzzles to the database.
-4. [ ] **Implement API Endpoints**
+    -   Include unit tests
+4. [ ] **Write API Endpoint Tests (TDD)**
+    -   Use a test client (e.g., FastAPI's `TestClient`) to write tests for the API endpoints before implementing their logic.
+    -   Test success cases (e.g., `200 OK` for a valid puzzle date).
+    -   Test failure cases (e.g., `404 Not Found` for a non-existent puzzle, `422 Unprocessable Entity` for an invalid date format).
+    -   Mock database/file system interactions to isolate the API layer.
+5.  [ ] **Implement API Endpoints**
     -   **`GET /api/puzzle/:date`**: Fetches a specific puzzle by its date from the database.
     -   **`GET /api/config`**: Reads the `gameRules.yaml` file and serves its content as JSON. This keeps your game rules easily configurable without a code change.
     -   **`GET /api/wordlist`**: Serve the complete list of legal words (found in `config/words-full.txt`).
-5. [ ] **Client Integration**
+6. [ ] **Client Integration**
     -   Update the `Game` component to fetch its data from your new, live API endpoints instead of using the local mock data.
     -   Ensure loading and error states are handled gracefully (e.g., what happens if the API call fails?).
-6. [ ] **Initial Content Population**
+7. [ ] **Initial Content Population**
     -   Run your generation script once to populate the database with puzzles for the next month or two.
-7. [ ] **Deployment Prep (Optional but Recommended)**
+8. [ ] **Deployment Prep (Optional but Recommended)**
     -   Create a `Dockerfile` for your Python server to make deployment simple and repeatable.
 
 ### Phase 3: Polish and Optimization (Week 4)
