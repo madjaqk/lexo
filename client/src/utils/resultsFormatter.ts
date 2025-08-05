@@ -63,17 +63,17 @@ export function generateScoreReportText(scoreSummary: ScoreSummary): string {
  * @returns A detailed, human-readable string for accessibility.
  */
 export function generateSrSummaryText(
-	summary: ScoreSummary,
-	targetScores: WordScore[],
-	targetWords: string[],
+    summary: ScoreSummary,
+    targetScores: WordScore[],
+    targetWords: string[],
 ): string {
-	const intro = `Game completed. Your final score was ${summary.totalScore}.`
-	const solutionDetails = targetScores
-		.map(
-			(s, idx) =>
-				`${targetWords[idx]} scored ${s.baseScore} times ${s.multiplier} equals ${s.baseScore * s.multiplier} points.`,
-		)
-		.join(" ")
-	const outro = `...for a total of ${summary.targetScore} points.`
-	return `${intro} The target solution was: ${solutionDetails} ${outro}`
+    const intro = `Game completed. Your final score was ${summary.totalScore}.`
+    const solutionDetails = targetScores
+        .map(
+            (s, idx) =>
+                `${targetWords[idx]} scored ${s.baseScore} times ${s.multiplier} equals ${s.baseScore * s.multiplier} points.`,
+        )
+        .join(" ")
+    const outro = `...for a total of ${summary.targetScore} points.`
+    return `${intro} The target solution was: ${solutionDetails} ${outro}`
 }

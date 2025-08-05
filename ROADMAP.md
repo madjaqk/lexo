@@ -103,7 +103,7 @@ TOTAL: 202 (14 over target!)
 9. [X] Implement basic responsive layout (plus better styling)
 10. [X] Accessibility updates
 11. [X] Update `ShareButton` to use Web Share API (plus general zhuzh)
-12. [ ] **Testing Suite Setup & Implementation**
+12. [X] **Testing Suite Setup & Implementation**
     - [X] **Setup**: Install Vitest, JSDOM, React Testing Library, and related dependencies.
     - [X] **Configuration**: Configure Vite (`vite.config.ts`) for the test environment (e.g., globals, set-up files).
     - [X] **Unit Test: Scoring Logic**: Test `utils/scoring.ts` to ensure `calculateRackScore` works correctly with various inputs.
