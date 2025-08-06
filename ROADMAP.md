@@ -125,7 +125,7 @@ TOTAL: 202 (14 over target!)
 - A script for generating and storing future puzzles.
 
 #### Detailed Steps
-1. [ ] **Backend Project Setup (Python)**
+1. [X] **Backend Project Setup (Python)**
     -   Create a `server` directory within your workspace.
     -   Install your chosen framework (e.g., `fastapi`, `uvicorn`, `sqlmodel`).
 2. [ ] **Database and Model Definition**
