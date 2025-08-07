@@ -128,7 +128,7 @@ TOTAL: 202 (14 over target!)
 1. [X] **Backend Project Setup (Python)**
     -   Create a `server` directory within your workspace.
     -   Install your chosen framework (e.g., `fastapi`, `uvicorn`, `sqlmodel`).
-2. [ ] **Database and Model Definition**
+2. [X] **Database and Model Definition**
     -   Define the database schema for a `Puzzle`. This would include fields for the `date`, the `initialRacks` (as JSON), and the `targetSolution` (as JSON).
     -   Set up your ORM (e.g., SQLModel) to interact with an SQLite database file.
 3. [ ] **Create a Puzzle Generation Script**
