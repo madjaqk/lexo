@@ -30,7 +30,6 @@ class PuzzleWithDate(Puzzle, table=True):
         description="The date of the puzzle, serves as the primary key.",
     )
 
-
     @reconstructor
     def convert_racks_to_tile_instances(self):
         tile_adapter = TypeAdapter(Tile)

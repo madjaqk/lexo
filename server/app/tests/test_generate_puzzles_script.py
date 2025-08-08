@@ -50,9 +50,7 @@ def test_generate_daily_puzzle_skips_generation_if_exists(session: Session, capl
     test_date = datetime.date(2025, 8, 16)
 
     # Create an initial puzzle to simulate an existing entry
-    initial_puzzle = PuzzleWithDate(
-        date=test_date, initial_racks=[[]], target_solution=[[]]
-    )
+    initial_puzzle = PuzzleWithDate(date=test_date, initial_racks=[[]], target_solution=[[]])
     session.add(initial_puzzle)
     session.commit()
     session.refresh(initial_puzzle)
@@ -145,9 +143,7 @@ def test_generate_daily_puzzles_raises_error_for_bad_range():
 
 @patch("app.scripts.generate_puzzles.create_db_and_tables")
 @patch("app.scripts.generate_puzzles.get_session")
-def test_cli_default_generates_for_today(
-    mock_get_session, mock_create_db, session: Session
-):
+def test_cli_default_generates_for_today(mock_get_session, mock_create_db, session: Session):
     """
     GIVEN no command-line arguments
     WHEN the script is run
@@ -189,9 +185,7 @@ def test_cli_with_days_option(mock_get_session, mock_create_db, session: Session
 
 @patch("app.scripts.generate_puzzles.create_db_and_tables")
 @patch("app.scripts.generate_puzzles.get_session")
-def test_cli_with_start_and_end_options(
-    mock_get_session, mock_create_db, session: Session
-):
+def test_cli_with_start_and_end_options(mock_get_session, mock_create_db, session: Session):
     """
     GIVEN --start and --end arguments
     WHEN the script is run
@@ -216,9 +210,7 @@ def test_cli_with_start_and_end_options(
 
 @patch("app.scripts.generate_puzzles.create_db_and_tables")
 @patch("app.scripts.generate_puzzles.get_session")
-def test_cli_with_start_and_days_options(
-    mock_get_session, mock_create_db, session: Session
-):
+def test_cli_with_start_and_days_options(mock_get_session, mock_create_db, session: Session):
     """
     GIVEN --start and --days arguments
     WHEN the script is run
@@ -238,9 +230,7 @@ def test_cli_with_start_and_days_options(
 
 @patch("app.scripts.generate_puzzles.create_db_and_tables")
 @patch("app.scripts.generate_puzzles.get_session")
-def test_cli_with_end_and_days_options(
-    mock_get_session, mock_create_db, session: Session
-):
+def test_cli_with_end_and_days_options(mock_get_session, mock_create_db, session: Session):
     """
     GIVEN --end and --days arguments
     WHEN the script is run

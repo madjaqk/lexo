@@ -5,6 +5,7 @@ This module should be self-contained and not have dependencies on the
 database or the web server. It takes game parameters and returns a
 puzzle data structure.
 """
+
 import random
 import yaml
 

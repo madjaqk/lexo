@@ -24,6 +24,7 @@ The script is idempotent: if a puzzle for a given date already exists in the
 database, it will be skipped. All generated puzzles for a single run are
 committed in a single database transaction.
 """
+
 import datetime
 import logging
 
@@ -79,9 +80,7 @@ def generate_daily_puzzles(start_date: datetime.date, end_date: datetime.date):
         logging.error("Start date cannot be after end date.")
         raise typer.Exit(code=1)
 
-    logging.info(
-        f"Processing puzzles from {start_date.isoformat()} to {end_date.isoformat()}."
-    )
+    logging.info(f"Processing puzzles from {start_date.isoformat()} to {end_date.isoformat()}.")
     # Use a single session and transaction for the entire batch.
 
     sessions, other_sessions = tee(get_session(), 2)
@@ -97,9 +96,7 @@ def generate_daily_puzzles(start_date: datetime.date, end_date: datetime.date):
 
 @app.command()
 def main(
-    days: Annotated[
-        int, typer.Option("--days", "-d", help="Generate puzzles for N days.")
-    ] = 1,
+    days: Annotated[int, typer.Option("--days", "-d", help="Generate puzzles for N days.")] = 1,
     start: Annotated[
         datetime.datetime | None,
         typer.Option(formats=["%Y-%m-%d"], help="Start date (YYYY-MM-DD)."),
