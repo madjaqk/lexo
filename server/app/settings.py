@@ -3,7 +3,10 @@ from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-DEFAULT_DB_FILE_PATH = Path(__file__).parent / "database.db"
+PROJECT_ROOT = Path(__file__).parent.parent
+CONFIG_DIR = PROJECT_ROOT / "config"
+
+DEFAULT_DB_FILE_PATH = PROJECT_ROOT / "db.sqlite3"
 
 
 class Settings(BaseSettings):

@@ -3,11 +3,13 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from .database import create_db_and_tables
+from .logging_config import setup_logging
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Code to run on startup
+    setup_logging()
     create_db_and_tables()
     yield
     # Code to run on shutdown

@@ -12,18 +12,24 @@ class Tile(SQLModel):
     value: int
 
 
-class Puzzle(SQLModel, table=True):
-    date: datetime.date = Field(
-        default_factory=datetime.date.today,
-        primary_key=True,
-        description="The date of the puzzle, serves as the primary key.",
-    )
+class Puzzle(SQLModel):
     initial_racks: list[list[Tile]] = Field(
         sa_column=Column(JSON), description="The list of 18 tiles for the puzzle."
     )
     target_solution: list[list[Tile]] = Field(
         sa_column=Column(JSON), description="The list of tiles in the server's solution."
     )
+
+
+class PuzzleWithDate(Puzzle, table=True):
+    __tablename__: str = "puzzles"  # type: ignore
+
+    date: datetime.date = Field(
+        default_factory=datetime.date.today,
+        primary_key=True,
+        description="The date of the puzzle, serves as the primary key.",
+    )
+
 
     @reconstructor
     def convert_racks_to_tile_instances(self):
