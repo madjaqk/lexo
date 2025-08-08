@@ -131,7 +131,7 @@ TOTAL: 202 (14 over target!)
 2. [X] **Database and Model Definition**
     -   Define the database schema for a `Puzzle`. This would include fields for the `date`, the `initialRacks` (as JSON), and the `targetSolution` (as JSON).
     -   Set up your ORM (e.g., SQLModel) to interact with an SQLite database file.
-3. [ ] **Create a Puzzle Generation Script**
+3. [X] **Create a Puzzle Generation Script**
     -   Develop a standalone Python script (`generate_puzzles.py`).
     -   This script will contain the core logic for creating a valid puzzle from your word lists.
     -   It should be runnable from the command line (e.g., `python generate_puzzles.py --days 30`) to generate and save a batch of future puzzles to the database.
