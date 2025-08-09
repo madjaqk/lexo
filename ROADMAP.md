@@ -136,7 +136,7 @@ TOTAL: 202 (14 over target!)
     -   This script will contain the core logic for creating a valid puzzle from your word lists.
     -   It should be runnable from the command line (e.g., `python generate_puzzles.py --days 30`) to generate and save a batch of future puzzles to the database.
     -   Include unit tests
-4. [ ] **Write API Endpoint Tests (TDD)**
+4. [X] **Write API Endpoint Tests (TDD)**
     -   Use a test client (e.g., FastAPI's `TestClient`) to write tests for the API endpoints before implementing their logic.
     -   Test success cases (e.g., `200 OK` for a valid puzzle date).
     -   Test failure cases (e.g., `404 Not Found` for a non-existent puzzle, `422 Unprocessable Entity` for an invalid date format).

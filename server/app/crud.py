@@ -8,7 +8,3 @@ def get_puzzle_by_date(date: datetime.date) -> PuzzleWithDate | None:
 
 def get_game_rules() -> dict:
     pass
-
-
-def get_full_wordlist():
-    pass
