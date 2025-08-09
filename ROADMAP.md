@@ -144,7 +144,6 @@ TOTAL: 202 (14 over target!)
 5.  [X] **Implement API Endpoints**
     -   **`GET /api/puzzle/:date`**: Fetches a specific puzzle by its date from the database.
     -   **`GET /api/config`**: Reads the `gameRules.yaml` file and serves its content as JSON. This keeps your game rules easily configurable without a code change.
-    -   **`GET /api/wordlist`**: Serve the complete list of legal words (found in `config/words-full.txt`).
 6. [ ] **Client Integration**
     -   Update the `Game` component to fetch its data from your new, live API endpoints instead of using the local mock data.
     -   Ensure loading and error states are handled gracefully (e.g., what happens if the API call fails?).

@@ -41,11 +41,11 @@ def generate_puzzle(seed: int | str | None = None) -> Puzzle:
         ValueError: If the common word list does not contain words of all
             required lengths (3, 4, 5, and 6).
     """
+    settings = get_settings()
     if seed is not None:
-        random.seed(seed)
+        random.seed(str(seed) + settings.puzzle_generation_salt)
 
     # 1. Load words and game rules
-    settings = get_settings()
     words_path = settings.config_directory / "words-common.txt"
     rules_path = settings.config_directory / "game_rules.yaml"
 

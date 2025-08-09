@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     # For SQLite, we need to add connect_args. This is not needed for other DBs.
     database_connect_args: dict = {"check_same_thread": False}
     config_directory: Path = PROJECT_ROOT / "config"
+    puzzle_generation_salt: str = "default-salt-for-dev"
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
