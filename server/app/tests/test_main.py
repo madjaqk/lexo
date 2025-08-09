@@ -8,10 +8,9 @@ from sqlmodel import Session
 
 from app.models import PuzzleWithDate, Tile
 
-#########################
-# get_puzzle_endpoint tests
-#########################
-
+###########################
+# get_puzzle__by_date tests
+###########################
 
 def test_get_puzzle_success(session: Session, client: TestClient):
     """
@@ -19,7 +18,7 @@ def test_get_puzzle_success(session: Session, client: TestClient):
     WHEN a GET request is made to /api/puzzle/{date}
     THEN it should return a 200 OK with the puzzle data including the date.
     """
-    test_date = datetime.date(2025, 8, 22)
+    test_date = datetime.date(2025, 8, 1)
     puzzle_to_save = PuzzleWithDate(
         date=test_date,
         initial_racks=[[Tile(id="tile-1", letter="A", value=1)]],
@@ -27,14 +26,15 @@ def test_get_puzzle_success(session: Session, client: TestClient):
     )
     session.add(puzzle_to_save)
     session.commit()
+    session.expunge_all()  # Necessary so that test behavior bypasses SQLAlchemy Identity Map
 
     response = client.get(f"/api/puzzle/{test_date.isoformat()}")
     assert response.status_code == 200
 
     data = response.json()
     assert data["date"] == test_date.isoformat()
-    assert data["initial_racks"] == [[{"id": "tile-1", "letter": "A", "value": 1}]]
-    assert data["target_solution"] == [[{"id": "tile-1", "letter": "A", "value": 1}]]
+    assert data["initialRacks"] == [[{"id": "tile-1", "letter": "A", "value": 1}]]
+    assert data["targetSolution"] == [[{"id": "tile-1", "letter": "A", "value": 1}]]
 
 
 def test_get_puzzle_not_found(client: TestClient):
@@ -70,6 +70,10 @@ def test_get_puzzle_future_date(client: TestClient):
     assert "No spoilers!" in response.json()["detail"]
 
 
+#########################
+# get_todays_puzzle tests
+#########################
+
 def test_get_todays_puzzle_success(session: Session, client: TestClient):
     """
     GIVEN a puzzle for today exists in the database
@@ -84,13 +88,14 @@ def test_get_todays_puzzle_success(session: Session, client: TestClient):
     )
     session.add(puzzle_to_save)
     session.commit()
+    session.expunge_all()  # Necessary so that test behavior bypasses SQLAlchemy Identity Map
 
     response = client.get("/api/puzzle/today")
     assert response.status_code == 200
     data = response.json()
     assert data["date"] == today.isoformat()
-    assert data["initial_racks"] == [[{"id": "tile-1", "letter": "T", "value": 1}]]
-    assert data["target_solution"] == [[{"id": "tile-1", "letter": "T", "value": 1}]]
+    assert data["initialRacks"] == [[{"id": "tile-1", "letter": "T", "value": 1}]]
+    assert data["targetSolution"] == [[{"id": "tile-1", "letter": "T", "value": 1}]]
 
 
 def test_get_todays_puzzle_not_found(client: TestClient):
@@ -104,9 +109,9 @@ def test_get_todays_puzzle_not_found(client: TestClient):
     assert "Puzzle not found" in response.json()["detail"]
 
 
-######################
-# get_game_rules tests
-######################
+##################
+# get_config tests
+##################
 
 
 @patch("app.main.crud.get_game_rules")
@@ -128,8 +133,8 @@ def test_get_config_success(mock_get_rules, client: TestClient):
     data = response.json()
     # FastAPI's jsonable_encoder will convert integer keys to strings for JSON
     assert data["multipliers"] == {"3": 6, "4": 8}
-    assert data["letter_values"] == {"A": 1, "B": 3}
-    assert data["timer_seconds"] == 300
+    assert data["letterValues"] == {"A": 1, "B": 3}
+    assert data["timerSeconds"] == 300
 
 
 @patch("app.main.crud.get_game_rules", side_effect=FileNotFoundError("File not found"))
