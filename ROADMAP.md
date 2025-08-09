@@ -141,7 +141,7 @@ TOTAL: 202 (14 over target!)
     -   Test success cases (e.g., `200 OK` for a valid puzzle date).
     -   Test failure cases (e.g., `404 Not Found` for a non-existent puzzle, `422 Unprocessable Entity` for an invalid date format).
     -   Mock database/file system interactions to isolate the API layer.
-5.  [ ] **Implement API Endpoints**
+5.  [X] **Implement API Endpoints**
     -   **`GET /api/puzzle/:date`**: Fetches a specific puzzle by its date from the database.
     -   **`GET /api/config`**: Reads the `gameRules.yaml` file and serves its content as JSON. This keeps your game rules easily configurable without a code change.
     -   **`GET /api/wordlist`**: Serve the complete list of legal words (found in `config/words-full.txt`).

@@ -51,53 +51,52 @@ def test_get_puzzle_by_date_not_found(session: Session):
 ######################
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture()
 def clear_get_game_rules_cache():
     """Fixture to clear the cache for get_game_rules before each test."""
     get_game_rules.cache_clear()
 
 
-@patch("builtins.open", new_callable=mock_open, read_data="timer_seconds: 300\n")
-def test_get_game_rules_success(mock_file):
-    """
-    GIVEN a valid game_rules.yaml file
-    WHEN get_game_rules is called
-    THEN it should return the parsed dictionary.
-    """
-    rules = get_game_rules()
-    assert rules == {"timer_seconds": 300}
-    mock_file.assert_called_once()
+@pytest.mark.usefixtures("clear_get_game_rules_cache")
+class TestGetGameRules:
+    @patch("builtins.open", new_callable=mock_open, read_data="timer_seconds: 300\n")
+    def test_get_game_rules_success(self, mock_file):
+        """
+        GIVEN a valid game_rules.yaml file
+        WHEN get_game_rules is called
+        THEN it should return the parsed dictionary.
+        """
+        rules = get_game_rules()
+        assert rules == {"timer_seconds": 300}
+        mock_file.assert_called_once()
 
+    @patch("builtins.open", new_callable=mock_open, read_data="timer_seconds: 300\n")
+    def test_get_game_rules_is_cached(self, mock_file):
+        """
+        GIVEN a game_rules.yaml file
+        WHEN get_game_rules is called multiple times
+        THEN the file should only be read once due to caching.
+        """
+        get_game_rules()  # First call
+        get_game_rules()  # Second call
+        mock_file.assert_called_once()
 
-@patch("builtins.open", new_callable=mock_open, read_data="timer_seconds: 300\n")
-def test_get_game_rules_is_cached(mock_file):
-    """
-    GIVEN a game_rules.yaml file
-    WHEN get_game_rules is called multiple times
-    THEN the file should only be read once due to caching.
-    """
-    get_game_rules()  # First call
-    get_game_rules()  # Second call
-    mock_file.assert_called_once()
+    @patch("builtins.open", side_effect=FileNotFoundError)
+    def test_get_game_rules_file_not_found(self, mock_file):
+        """
+        GIVEN the game_rules.yaml file does not exist
+        WHEN get_game_rules is called
+        THEN it should raise FileNotFoundError.
+        """
+        with pytest.raises(FileNotFoundError):
+            get_game_rules()
 
-
-@patch("builtins.open", side_effect=FileNotFoundError)
-def test_get_game_rules_file_not_found(mock_file):
-    """
-    GIVEN the game_rules.yaml file does not exist
-    WHEN get_game_rules is called
-    THEN it should raise FileNotFoundError.
-    """
-    with pytest.raises(FileNotFoundError):
-        get_game_rules()
-
-
-@patch("builtins.open", new_callable=mock_open, read_data="not: valid: yaml")
-def test_get_game_rules_malformed_yaml(mock_file):
-    """
-    GIVEN a game_rules.yaml file that is not valid YAML
-    WHEN get_game_rules is called
-    THEN it should raise a YAMLError.
-    """
-    with pytest.raises(yaml.YAMLError):
-        get_game_rules()
+    @patch("builtins.open", new_callable=mock_open, read_data="not: valid: yaml")
+    def test_get_game_rules_malformed_yaml(self, mock_file):
+        """
+        GIVEN a game_rules.yaml file that is not valid YAML
+        WHEN get_game_rules is called
+        THEN it should raise a YAMLError.
+        """
+        with pytest.raises(yaml.YAMLError):
+            get_game_rules()
