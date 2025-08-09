@@ -37,9 +37,7 @@ def get_todays_puzzle(db: Session = Depends(get_session)):
     today = datetime.date.today()
     puzzle = crud.get_puzzle_by_date(db, today)
     if puzzle is None:
-        raise HTTPException(
-            status_code=404, detail="Puzzle not found for today's date."
-        )
+        raise HTTPException(status_code=404, detail="Puzzle not found for today's date.")
     return puzzle
 
 
@@ -69,6 +67,4 @@ def get_config():
         rules_dict = crud.get_game_rules()
         return GameRules.model_validate(rules_dict)
     except (FileNotFoundError, yaml.YAMLError):
-        raise HTTPException(
-            status_code=500, detail="Could not load game configuration."
-        )
+        raise HTTPException(status_code=500, detail="Could not load game configuration.")

@@ -1,4 +1,5 @@
-""" Tests for API endpoints found in main.py """
+"""Tests for API endpoints found in main.py"""
+
 import datetime
 from unittest.mock import patch
 
@@ -11,6 +12,7 @@ from app.models import PuzzleWithDate, Tile
 ###########################
 # get_puzzle__by_date tests
 ###########################
+
 
 def test_get_puzzle_success(session: Session, client: TestClient):
     """
@@ -73,6 +75,7 @@ def test_get_puzzle_future_date(client: TestClient):
 #########################
 # get_todays_puzzle tests
 #########################
+
 
 def test_get_todays_puzzle_success(session: Session, client: TestClient):
     """

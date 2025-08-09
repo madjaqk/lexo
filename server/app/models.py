@@ -7,7 +7,6 @@ from sqlalchemy.orm import reconstructor
 from sqlmodel import Field, SQLModel
 
 
-
 class CamelCaseBaseModel(SQLModel):
     """A base model that converts snake_case to camelCase for JSON compatibility."""
 
@@ -48,8 +47,7 @@ class PuzzleWithDate(Puzzle, table=True):
         tile_adapter = TypeAdapter(Tile)
         if isinstance(self.initial_racks[0][0], dict):
             self.initial_racks = [
-                [tile_adapter.validate_python(tile) for tile in rack]
-                for rack in self.initial_racks
+                [tile_adapter.validate_python(tile) for tile in rack] for rack in self.initial_racks
             ]
         if isinstance(self.target_solution[0][0], dict):
             self.target_solution = [
