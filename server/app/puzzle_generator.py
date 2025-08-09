@@ -10,7 +10,7 @@ import random
 import yaml
 
 from .models import Puzzle, Tile
-from .settings import CONFIG_DIR
+from .settings import get_settings
 
 
 def generate_puzzle(seed: int | str | None = None) -> Puzzle:
@@ -45,8 +45,9 @@ def generate_puzzle(seed: int | str | None = None) -> Puzzle:
         random.seed(seed)
 
     # 1. Load words and game rules
-    words_path = CONFIG_DIR / "words-common.txt"
-    rules_path = CONFIG_DIR / "game_rules.yaml"
+    settings = get_settings()
+    words_path = settings.config_directory / "words-common.txt"
+    rules_path = settings.config_directory / "game_rules.yaml"
 
     with open(words_path, "r", encoding="utf-8") as f:
         all_words = {line.strip().upper() for line in f if line.strip()}

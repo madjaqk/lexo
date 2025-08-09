@@ -6,7 +6,7 @@ import yaml
 
 from app.models import Puzzle, Tile
 from app.puzzle_generator import generate_puzzle
-from app.settings import CONFIG_DIR
+from app.settings import get_settings
 
 
 def flatten_racks(racks: list[list[Tile]]) -> list[Tile]:
@@ -77,7 +77,8 @@ def test_target_solution_is_valid():
     THEN it should consist of four valid words of increasing length.
     """
     # Load the valid words to check against
-    words_path = CONFIG_DIR / "words-common.txt"
+    settings = get_settings()
+    words_path = settings.config_directory / "words-common.txt"
     with open(words_path, "r", encoding="utf-8") as f:
         valid_words = {line.strip().upper() for line in f if line.strip()}
 

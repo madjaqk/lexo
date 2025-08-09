@@ -5,9 +5,7 @@ import yaml
 from sqlmodel import Session
 
 from .models import PuzzleWithDate
-from .settings import CONFIG_DIR
-
-from app.models import PuzzleWithDate
+from .settings import get_settings
 
 
 def get_puzzle_by_date(db: Session, date: datetime.date) -> PuzzleWithDate | None:
@@ -36,7 +34,8 @@ def get_game_rules() -> dict:
     Returns:
         A dictionary containing the game rules.
     """
-    rules_path = CONFIG_DIR / "game_rules.yaml"
+    settings = get_settings()
+    rules_path = settings.config_directory / "game_rules.yaml"
     with open(rules_path, "r", encoding="utf-8") as f:
         rules = yaml.safe_load(f)
     return rules

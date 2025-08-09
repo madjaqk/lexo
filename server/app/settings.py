@@ -4,8 +4,6 @@ from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 PROJECT_ROOT = Path(__file__).parent.parent
-CONFIG_DIR = PROJECT_ROOT / "config"
-
 DEFAULT_DB_FILE_PATH = PROJECT_ROOT / "db.sqlite3"
 
 
@@ -14,6 +12,7 @@ class Settings(BaseSettings):
     database_url: str = f"sqlite:///{DEFAULT_DB_FILE_PATH}"
     # For SQLite, we need to add connect_args. This is not needed for other DBs.
     database_connect_args: dict = {"check_same_thread": False}
+    config_directory: Path = PROJECT_ROOT / "config"
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
