@@ -148,35 +148,45 @@ TOTAL: 202 (14 over target!)
     -   Update the `Game` component to fetch its data from your new, live API endpoints instead of using the local mock data.
     -   Ensure loading and error states are handled gracefully (e.g., what happens if the API call fails?).
 
-### Phase 3: Polish and Optimization (Week 4)
+### Phase 3: Polish and Final Features
 **Deliverables:**
-- Enhanced UI/UX
-- Performance optimization
-- Error handling
-- Mobile optimization
-- Branding (name and logo)
-- Deployment (containerization?)
+- Enhanced UI/UX with a polished, professional feel.
+- Final branding and essential user-facing features.
 
 **Key Features:**
-- Improved animations and transitions
-- Better mobile touch interactions
-- Comprehensive error handling
-- Loading states and feedback
-- Dark mode
-- Implement server-side caching (e.g., Redis) for API endpoints
-- Automatic generation in advance of future puzzles (AWS Lambda?  Cron job in server Docker container?)
+- Updated color scheme, including dark mode
+- Error handling
+- Instructions screen
+- Play history display
 
 #### Detailed Steps
 
+1. [ ] Create an "Instructions" screen or modal.
+2. [ ] Implement a view to display the history of past games.
+3. [ ] Enhance keyboard and mobile touch interactions.
+4. [ ] Implement comprehensive error handling and loading states for API calls.
+5. [ ] Download the primary font and serve it locally.
+6. [ ] Finalize the game name and create a logo.
+7. [ ] Finalize the color scheme and implement a dark mode toggle.
+8. [ ] Add a favicon based on the new logo.
+9. [ ] Update `package.json` and `pyproject.toml` with the final project name, version, and author details.
+10. [ ] Write the project `README.md`.
 
-**Miscellaneous:**
+### Phase 4: Deployment & Operations
+**Deliverables:**
+- A fully containerized application ready for production deployment.
+- Automated operational tasks for puzzle generation.
 
-(This is a to-do list for small tasks I want to take care of before launch.  They all have to be done, but I'm not sure I'd call them "key features".)
-- Download font rather than using link
-- Instructions screen
-- Display history of past games
-- Update `package.json` and `pyproject.toml` with correct project name and version
-- Favicon
+**Key Features:**
+- **Containerization (Deployment Prep)**:
+    - Create the `Dockerfile` for the FastAPI server.
+    - Create the `Dockerfile` for the Nginx frontend server.
+    - Write the `docker-compose.yaml` to orchestrate the containers.
+- **Performance Optimization**:
+    - Implement server-side caching (e.g., Redis) for API endpoints.
+- **Automation & Operations**:
+    - Set up a recurring job (e.g., a cron job in the Docker container) to automatically generate future puzzles.
+    - (Optional) Configure a CI/CD pipeline (e.g., GitHub Actions) to automate testing and deployment.
 
 ## Technical Specifications
 
