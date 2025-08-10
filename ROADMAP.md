@@ -144,13 +144,9 @@ TOTAL: 202 (14 over target!)
 5.  [X] **Implement API Endpoints**
     -   **`GET /api/puzzle/:date`**: Fetches a specific puzzle by its date from the database.
     -   **`GET /api/config`**: Reads the `gameRules.yaml` file and serves its content as JSON. This keeps your game rules easily configurable without a code change.
-6. [ ] **Client Integration**
+6. [X] **Client Integration**
     -   Update the `Game` component to fetch its data from your new, live API endpoints instead of using the local mock data.
     -   Ensure loading and error states are handled gracefully (e.g., what happens if the API call fails?).
-7. [ ] **Initial Content Population**
-    -   Run your generation script once to populate the database with puzzles for the next month or two.
-8. [ ] **Deployment Prep (Optional but Recommended)**
-    -   Create a `Dockerfile` for your Python server to make deployment simple and repeatable.
 
 ### Phase 3: Polish and Optimization (Week 4)
 **Deliverables:**
@@ -168,6 +164,10 @@ TOTAL: 202 (14 over target!)
 - Loading states and feedback
 - Dark mode
 - Implement server-side caching (e.g., Redis) for API endpoints
+- Automatic generation in advance of future puzzles (AWS Lambda?  Cron job in server Docker container?)
+
+#### Detailed Steps
+
 
 **Miscellaneous:**
 
@@ -176,6 +176,7 @@ TOTAL: 202 (14 over target!)
 - Instructions screen
 - Display history of past games
 - Update `package.json` and `pyproject.toml` with correct project name and version
+- Favicon
 
 ## Technical Specifications
 

@@ -3,12 +3,14 @@ from contextlib import asynccontextmanager
 
 import yaml
 from fastapi import Depends, FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
 from sqlmodel import Session
 
 from . import crud
 from .database import create_db_and_tables, get_session
 from .logging_config import setup_logging
 from .models import GameRules, PuzzleWithDate
+from .settings import get_settings
 
 
 @asynccontextmanager
@@ -22,11 +24,6 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Tile Game API", lifespan=lifespan)
-
-
-@app.get("/")
-async def read_root():
-    return {"message": "Welcome to the Tile Game API!"}
 
 
 @app.get("/api/puzzle/today", response_model=PuzzleWithDate, tags=["Puzzles"])
@@ -68,3 +65,15 @@ def get_config():
         return GameRules.model_validate(rules_dict)
     except (FileNotFoundError, yaml.YAMLError):
         raise HTTPException(status_code=500, detail="Could not load game configuration.")
+
+
+settings = get_settings()
+
+if settings.environment == "dev":
+    # In development, we serve the built front-end files from FastAPI.
+    # In production, Nginx will serve these files.
+    # The `html=True` argument tells StaticFiles to serve `index.html` for
+    # any path that doesn't otherwise match. This is perfect for SPAs.
+    config_directory = settings.config_directory
+    client_directory = config_directory.parent.parent / "client" / "build" / "dist"
+    app.mount("/", StaticFiles(directory=client_directory, html=True), name="static")

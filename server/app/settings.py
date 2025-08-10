@@ -1,7 +1,8 @@
 from functools import cache
 from pathlib import Path
+from typing import Literal
 
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings
 
 PROJECT_ROOT = Path(__file__).parent.parent
 DEFAULT_DB_FILE_PATH = PROJECT_ROOT / "db.sqlite3"
@@ -14,8 +15,7 @@ class Settings(BaseSettings):
     database_connect_args: dict = {"check_same_thread": False}
     config_directory: Path = PROJECT_ROOT / "config"
     puzzle_generation_salt: str = "default-salt-for-dev"
-
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+    environment: Literal["dev", "prod"] = "dev"
 
 
 @cache
