@@ -54,11 +54,10 @@ export default function InstructionsModal({ isOpen, onClose }: InstructionsModal
                 aria-modal="true"
                 aria-labelledby="instructions-heading"
             >
-                <button type="button" className="closeButton" onClick={onClose} aria-label="Close">
+                <button type="button" className="close-button" onClick={onClose} aria-label="Close">
                     &times;
                 </button>
-                <h2 id="instructions-heading">How to Play</h2>
-                <div className="logoPlaceholder" role="img" aria-label="Game Logo Placeholder" />
+                <h2 id="instructions-heading" className="instructions-heading">How to Play</h2>
                 <div className="content">
                     <p>The goal is to arrange all 18 letter tiles into four valid English words.</p>
                     <ul>
@@ -68,6 +67,11 @@ export default function InstructionsModal({ isOpen, onClose }: InstructionsModal
                     </ul>
                     <p>Drag and drop tiles between the racks to form your words. Good luck!</p>
                 </div>
+                <img
+                    src="/path/to/mascot.png" // Replace with the actual path to your image
+                    alt="A friendly mascot character for the game" // Describe the image for accessibility
+                    className="logo-placeholder"
+                />
             </div>
         </div>,
         modalRoot,
