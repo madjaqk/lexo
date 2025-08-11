@@ -77,9 +77,11 @@ export default function Game(props: GameProps) {
                 </button>
             </div>
             {gameState === "pre-game" && (
-                <button type="button" onClick={startGame}>
-                    Start Game!
-                </button>
+                <div className="pre-game-container">
+                    <button type="button" onClick={startGame}>
+                        Start Game!
+                    </button>
+                </div>
             )}
             {gameState !== "pre-game" && (
                 <div className="game-content-wrapper">

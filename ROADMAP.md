@@ -161,7 +161,7 @@ TOTAL: 202 (14 over target!)
 
 #### Detailed Steps
 
-1. [ ] Create an "Instructions" screen or modal.
+1. [X] Create an "Instructions" screen or modal.
 2. [ ] Implement a view to display the history of past games.
 3. [ ] Enhance keyboard and mobile touch interactions.
 4. [ ] Implement comprehensive error handling and loading states for API calls.

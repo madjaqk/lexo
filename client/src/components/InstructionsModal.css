@@ -12,7 +12,7 @@
 }
 
 .modal {
-    background: var(--background-color);
+    background-color: var(--bg-color-page);
     color: var(--text-color);
     padding: 2rem;
     border-radius: 8px;
@@ -23,7 +23,11 @@
     text-align: center;
 }
 
-.closeButton {
+.instructions-heading {
+    margin: 0;
+}
+
+.close-button {
     position: absolute;
     top: 10px;
     right: 15px;
@@ -33,14 +37,16 @@
     cursor: pointer;
     color: var(--text-color);
     line-height: 1;
+    padding: 1rem;
 }
 
-.logoPlaceholder {
+.logo-placeholder {
     width: 100px;
     height: 100px;
-    border: 2px dashed var(--subtle-text-color);
+    border: 2px dashed var(--text-color);
     margin: 0 auto 1rem;
     display: flex;
+    object-fit: contain; /* Ensures the image scales nicely within the box */
     align-items: center;
     justify-content: center;
     color: var(--subtle-text-color);
