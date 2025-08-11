@@ -1,0 +1,5 @@
+client/public/words-full.txt
+server/config/words-common.txt
+server/.venv/
+client/build/
+client/node_modules/

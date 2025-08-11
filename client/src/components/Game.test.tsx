@@ -183,6 +183,12 @@ describe("Game Component - Integration Tests", () => {
         user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
 
         currentPointerCoords = { x: 0, y: 0 }
+
+        // The modal uses a portal, so we need to add the portal root to the DOM
+        // for tests that render the modal.
+        const modalRoot = document.createElement("div")
+        modalRoot.id = "modal-root"
+        document.body.appendChild(modalRoot)
     })
 
     afterEach(() => {
@@ -190,6 +196,12 @@ describe("Game Component - Integration Tests", () => {
         vi.clearAllMocks()
         vi.restoreAllMocks()
         vi.useRealTimers()
+
+        // Clean up the portal root
+        const modalRoot = document.getElementById("modal-root")
+        if (modalRoot) {
+            document.body.removeChild(modalRoot)
+        }
     })
 
     afterAll(() => {
@@ -355,6 +367,60 @@ describe("Game Component - Integration Tests", () => {
         })
     })
 
+    describe("Instructions Modal", () => {
+        it("should automatically show the instructions modal for a new player", () => {
+            // Mock usePlayHistory to return an empty history object
+            vi.mocked(usePlayHistory).mockReturnValue({
+                history: {},
+                saveHistoryForDate,
+                getHistoryForDate: () => null,
+                clearAllHistory: () => null,
+            })
+
+            render(<Game puzzle={MOCK_PUZZLE} gameRules={MOCK_RULES} initialHistory={null} />)
+
+            expect(screen.getByRole("dialog", { name: /how to play/i })).toBeInTheDocument()
+        })
+
+        it("should NOT automatically show the instructions modal for a returning player", () => {
+            // The default mock from beforeEach already simulates a returning player
+            vi.mocked(usePlayHistory).mockReturnValue({
+                history: { "2025-01-01": MOCK_HISTORY_RECORD }, // Non-empty history
+                saveHistoryForDate,
+                getHistoryForDate: () => null,
+                clearAllHistory: () => null,
+            })
+            render(<Game puzzle={MOCK_PUZZLE} gameRules={MOCK_RULES} initialHistory={null} />)
+            expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+        })
+
+        it("should allow a user to manually open and close the instructions modal", async () => {
+            // Define the history object once to ensure a stable reference across re-renders.
+            const mockHistory = { "2025-01-01": MOCK_HISTORY_RECORD }
+            vi.mocked(usePlayHistory).mockReturnValue({
+                history: mockHistory,
+                saveHistoryForDate,
+                getHistoryForDate: () => null,
+                clearAllHistory: () => null,
+            })
+
+            render(<Game puzzle={MOCK_PUZZLE} gameRules={MOCK_RULES} initialHistory={null} />)
+            // Modal should not be visible initially for a returning player
+            expect(screen.queryByRole("dialog", { name: /how to play/i })).not.toBeInTheDocument()
+
+            await user.click(document.body)
+
+            // Manually open the modal
+            await user.click(screen.getByRole("button", { name: /instructions/i }))
+            const dialog = await screen.findByRole("dialog", { name: /how to play/i })
+            expect(dialog).toBeInTheDocument()
+
+            // Manually close the modal by clicking the close button
+            await user.click(within(dialog).getByRole("button", { name: /close/i }))
+            expect(screen.queryByRole("dialog", { name: /how to play/i })).not.toBeInTheDocument()
+        })
+    })
+
     describe("Other", () => {
         // Helper to get the text content of tiles in a specific rack.
         function getRackTiles(rackNumber: number) {
@@ -414,6 +480,16 @@ describe("Game Component - Integration Tests", () => {
         })
 
         it("should cancel a drag and revert racks on Escape key press", async () => {
+            // NOTE: Something about this test—and specifically the line `await user.pointer({
+            // keys: "[MouseLeft>]", target: sourceTile, coords: sourceRect })`—seems to pollute
+            // the global testing environment, so that tests that run after this that rely on
+            // user.click fail.  As far as I can tell, it's not about the user-event state itself
+            // (as the user is replaced each test), but rather that this test generates some
+            // event listener that isn't being properly cleaned up (possibly `stopPropagation` on
+            // `click` events, but it seems like other tests using dnd-kit also leave a
+            // `stopPropagation` listener on `click` without interfering with other tests, so
+            // maybe that's a red herring).  In any case, the tests pass as long as this is the
+            // last test in the file; change that at your peril.--JDB 2025-08-11
             render(<Game puzzle={MOCK_PUZZLE} gameRules={MOCK_RULES} initialHistory={null} />)
             await user.click(screen.getByRole("button", { name: /start game/i }))
 
@@ -431,6 +507,9 @@ describe("Game Component - Integration Tests", () => {
 
             // Assert that the rack has reverted to its initial state
             expect(getRackTiles(1)).toEqual(initialRack1State)
+
+            // Clean up the user-event pointer state by releasing the mouse button.
+            await user.pointer({ keys: "[/MouseLeft]" })
         })
     })
 })

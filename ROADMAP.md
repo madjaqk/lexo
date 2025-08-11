@@ -165,12 +165,13 @@ TOTAL: 202 (14 over target!)
 2. [ ] Implement a view to display the history of past games.
 3. [ ] Enhance keyboard and mobile touch interactions.
 4. [ ] Implement comprehensive error handling and loading states for API calls.
-5. [ ] Download the primary font and serve it locally.
-6. [ ] Finalize the game name and create a logo.
-7. [ ] Finalize the color scheme and implement a dark mode toggle.
-8. [ ] Add a favicon based on the new logo.
-9. [ ] Update `package.json` and `pyproject.toml` with the final project name, version, and author details.
-10. [ ] Write the project `README.md`.
+5. [ ] Credits/copyright information (footer?)
+6. [ ] Download the primary font and serve it locally.
+7. [ ] Finalize the game name and create a logo.
+8. [ ] Finalize the color scheme and implement a dark mode toggle.
+9. [ ] Add a favicon based on the new logo.
+10. [ ] Update `package.json` and `pyproject.toml` with the final project name, version, and author details.
+11. [ ] Write the project `README.md`.
 
 ### Phase 4: Deployment & Operations
 **Deliverables:**

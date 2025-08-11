@@ -4,6 +4,7 @@ import { usePlayHistory } from "@/hooks/usePlayHistory"
 import { useTimer } from "@/hooks/useTimer"
 import type { DailyPuzzle, GameRules, GameState, PlayHistoryRecord } from "@/types"
 import "./Game.css"
+import InstructionsModal from "./InstructionsModal"
 import ScoreReport from "./ScoreReport"
 import TimerBar from "./TimerBar"
 import WordRacks from "./WordRacks"
@@ -21,9 +22,10 @@ export default function Game(props: GameProps) {
     // If there's a history, the game is already finished.
     const [gameState, setGameState] = useState<GameState>(initialHistory ? "finished" : "pre-game")
     const [wordRacks, setWordRacks] = useState(initialHistory?.racks ?? puzzle.initialRacks)
+    const [isInstructionsOpen, setIsInstructionsOpen] = useState(false)
     const [endTime, setEndTime] = useState<Date | null>(null)
     const gameBoardRef = useRef<HTMLDivElement>(null)
-    const { saveHistoryForDate } = usePlayHistory()
+    const { history, saveHistoryForDate } = usePlayHistory()
 
     const { rackScores, targetScores, totalScore, targetScore } = useGameScoring(
         wordRacks,
@@ -46,6 +48,10 @@ export default function Game(props: GameProps) {
         })
     }, [puzzle.date, saveHistoryForDate, wordRacks, totalScore, targetScore])
 
+    // Memoize modal handlers to ensure stable function references are passed as props.
+    const openInstructions = useCallback(() => setIsInstructionsOpen(true), [])
+    const closeInstructions = useCallback(() => setIsInstructionsOpen(false), [])
+
     const timeRemainingMs = useTimer(endTime, endGame, gameRules.timerSeconds * 1000)
 
     useEffect(() => {
@@ -54,9 +60,22 @@ export default function Game(props: GameProps) {
         }
     }, [gameState])
 
+    // Show instructions for new players
+    useEffect(() => {
+        // Check if history is loaded and if it's empty
+        if (history && Object.keys(history).length === 0) {
+            setIsInstructionsOpen(true)
+        }
+    }, [history])
+
     return (
         <div className="game">
-            <p>DATE: {puzzle.date}</p>
+            <div className="game-header">
+                <p>DATE: {puzzle.date}</p>
+                <button type="button" onClick={openInstructions}>
+                    Instructions
+                </button>
+            </div>
             {gameState === "pre-game" && (
                 <button type="button" onClick={startGame}>
                     Start Game!
@@ -121,6 +140,7 @@ export default function Game(props: GameProps) {
                     </div>
                 </div>
             )}
+            <InstructionsModal isOpen={isInstructionsOpen} onClose={closeInstructions} />
         </div>
     )
 }
