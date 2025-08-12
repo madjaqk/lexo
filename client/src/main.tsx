@@ -9,6 +9,7 @@ const router = createBrowserRouter([
         path: "/",
         element: <App />,
         loader: appLoader,
+        hydrateFallbackElement: <p>Loading puzzle...</p>,
         // TODO: Add a dedicated error page component for a better user experience
         // errorElement: <ErrorPage />,
     },

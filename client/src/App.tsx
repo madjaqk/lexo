@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { useLoaderData, useSearchParams } from "react-router"
+import { useLoaderData, useSearchParams, type LoaderFunctionArgs } from "react-router"
 import Game from "./components/Game"
 import { usePlayHistory } from "./hooks/usePlayHistory"
 import { fetchDailyPuzzle, fetchGameRules } from "./services/gameService"
@@ -7,20 +7,38 @@ import { loadWordList } from "./services/wordValidation"
 import type { DailyPuzzle, GameRules } from "./types"
 import "./App.css"
 /**
+ * We can cache the results of one-time fetches at the module level.
+ * This prevents re-fetching on every navigation.
+ */
+let gameRulesCache: GameRules | null = null;
+
+/**
  * The loader function runs before the component renders.
  * It fetches all the necessary data for the main application view.
- * For now, it only fetches the puzzle for the current day.
  */
-export async function loader() {
-    // Fetch all initial data in parallel for performance.
-    // If any of these promises reject, React Router will catch it and render the nearest `errorElement`.
-    const [puzzle, rules] = await Promise.all([
-        fetchDailyPuzzle(),
-        fetchGameRules(),
-        loadWordList(),
-    ])
+export async function loader({ request }: LoaderFunctionArgs) {
+    const url = new URL(request.url)
+    const date = url.searchParams.get("date")
 
-    return { puzzle, rules }
+    // `loadWordList` is idempotent (it won't re-fetch if already loaded),
+    // so we can fire it off in parallel.
+    const wordListPromise = loadWordList()
+
+    // For now, game rules are global and can be cached.
+    // If rules become puzzle-specific in the future, this logic would change.
+    const rulesPromise = gameRulesCache ? Promise.resolve(gameRulesCache) : fetchGameRules()
+
+    const puzzlePromise = fetchDailyPuzzle(date || undefined);
+
+    // Await all promises. This ensures all necessary data is loaded before rendering.
+    const [puzzle, rules] = await Promise.all([puzzlePromise, rulesPromise]);
+    await wordListPromise; // Ensure word list is also ready.
+
+    if (!gameRulesCache) {
+        gameRulesCache = rules;
+    }
+
+    return { puzzle, rules };
 }
 
 function App() {
