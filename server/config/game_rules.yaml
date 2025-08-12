@@ -11,17 +11,17 @@ letter_values:
     C: 2
     D: 1
     E: 1
-    F: 2
-    G: 1
+    F: 3
+    G: 2
     H: 2
     I: 1
     J: 4
     K: 3
     L: 1
-    M: 1
+    M: 2
     N: 1   # TODO: In the distant past, `N` was a YAML shortcut for "false".  I don't think that's the case anymore, but if this causes problems, change the key here to `"N"` (that is, with quotes) to force it to be a string. -- JDB 2025-07-14
     O: 1
-    P: 1
+    P: 2
     Q: 4
     R: 1
     S: 1
