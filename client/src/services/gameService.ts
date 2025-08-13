@@ -5,7 +5,7 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api"
 export async function fetchWordList(): Promise<Set<string>> {
     const response = await fetch("/words-full.txt")
     if (!response.ok) {
-        throw new Error(`Failed to fetch word list: ${response.status}`)
+        throw response
     }
     const text = await response.text()
     // Split by newline, trim whitespace, convert to uppercase, and filter out empty lines
@@ -19,7 +19,7 @@ export async function fetchWordList(): Promise<Set<string>> {
 export async function fetchGameRules(): Promise<GameRules> {
     const response = await fetch(`${BASE_URL}/config`)
     if (!response.ok) {
-        throw new Error(`Failed to fetch game rules: ${response.status}`)
+        throw response
     }
     return response.json()
 }
@@ -29,7 +29,7 @@ export async function fetchDailyPuzzle(date?: string): Promise<DailyPuzzle> {
     const response = await fetch(url)
 
     if (!response.ok) {
-        throw new Error(`Failed to fetch daily puzzle: ${response.status}`)
+        throw response
     }
     return response.json()
 }

@@ -1,14 +1,15 @@
 import { useEffect, useRef } from "react"
 import ReactDOM from "react-dom"
 import "./Modal.css"
-import "./InstructionsModal.css"
+import "./ArchivesModal.css"
 
-interface InstructionsModalProps {
+interface ArchivesModalProps {
     isOpen: boolean
     onClose: () => void
+    onDateSelect: (date: string) => void
 }
 
-export default function InstructionsModal({ isOpen, onClose }: InstructionsModalProps) {
+export default function ArchivesModal({ isOpen, onClose, onDateSelect }: ArchivesModalProps) {
     const modalRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
@@ -29,12 +30,19 @@ export default function InstructionsModal({ isOpen, onClose }: InstructionsModal
             document.addEventListener("mouseup", handleClickOutside)
         }
 
-        // Cleanup function to remove the event listener
         return () => {
             document.removeEventListener("keydown", handleKeyDown)
             document.removeEventListener("mouseup", handleClickOutside)
         }
     }, [isOpen, onClose])
+
+    function handleDateChange(event: React.ChangeEvent<HTMLInputElement>) {
+        const newDate = event.target.value
+        if (newDate) {
+            onDateSelect(newDate)
+            onClose()
+        }
+    }
 
     if (!isOpen) {
         return null
@@ -42,7 +50,6 @@ export default function InstructionsModal({ isOpen, onClose }: InstructionsModal
 
     const modalRoot = document.getElementById("modal-root")
     if (!modalRoot) {
-        // This should not happen if the portal root is in index.html
         return null
     }
 
@@ -53,26 +60,20 @@ export default function InstructionsModal({ isOpen, onClose }: InstructionsModal
                 className="modal"
                 role="dialog"
                 aria-modal="true"
-                aria-labelledby="instructions-heading"
+                aria-labelledby="archives-heading"
             >
                 <button type="button" className="close-button" onClick={onClose} aria-label="Close">
                     &times;
                 </button>
-                <h2 id="instructions-heading" className="instructions-heading">How to Play</h2>
-                <div className="content">
-                    <p>The goal is to arrange all 18 letter tiles into four valid English words.</p>
-                    <ul>
-                        <li>Each rack must contain exactly one word.</li>
-                        <li>The words must be 3, 4, 5, and 6 letters long.</li>
-                        <li>You have a limited time to solve the puzzle!</li>
-                    </ul>
-                    <p>Drag and drop tiles between the racks to form your words. Good luck!</p>
+                <h2 id="archives-heading">Past Puzzles</h2>
+                <div className="date-picker-container">
+                    <label htmlFor="date-picker-input">Select a date:</label>
+                    <input
+                        id="date-picker-input"
+                        type="date"
+                        onChange={handleDateChange}
+                    />
                 </div>
-                <img
-                    src="/path/to/mascot.png" // Replace with the actual path to your image
-                    alt="A friendly mascot character for the game" // Describe the image for accessibility
-                    className="logo-placeholder"
-                />
             </div>
         </div>,
         modalRoot,

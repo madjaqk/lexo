@@ -1,10 +1,10 @@
 import { useEffect } from "react"
 import { useLoaderData, useSearchParams, type LoaderFunctionArgs } from "react-router"
 import Game from "./components/Game"
-import { usePlayHistory } from "./hooks/usePlayHistory"
+import { usePlayHistory, LOCAL_STORAGE_KEY } from "./hooks/usePlayHistory"
 import { fetchDailyPuzzle, fetchGameRules } from "./services/gameService"
 import { loadWordList } from "./services/wordValidation"
-import type { DailyPuzzle, GameRules } from "./types"
+import type { DailyPuzzle, GameRules, PlayHistoryRecord } from "./types"
 import "./App.css"
 /**
  * We can cache the results of one-time fetches at the module level.
@@ -18,7 +18,7 @@ let gameRulesCache: GameRules | null = null;
  */
 export async function loader({ request }: LoaderFunctionArgs) {
     const url = new URL(request.url)
-    const date = url.searchParams.get("date")
+    const dateFromUrl = url.searchParams.get("date")
 
     // `loadWordList` is idempotent (it won't re-fetch if already loaded),
     // so we can fire it off in parallel.
@@ -28,25 +28,45 @@ export async function loader({ request }: LoaderFunctionArgs) {
     // If rules become puzzle-specific in the future, this logic would change.
     const rulesPromise = gameRulesCache ? Promise.resolve(gameRulesCache) : fetchGameRules()
 
-    const puzzlePromise = fetchDailyPuzzle(date || undefined);
+    const puzzlePromise = fetchDailyPuzzle(dateFromUrl || undefined)
 
     // Await all promises. This ensures all necessary data is loaded before rendering.
     const [puzzle, rules] = await Promise.all([puzzlePromise, rulesPromise]);
     await wordListPromise; // Ensure word list is also ready.
 
+    // Now that we have the puzzle, we know the correct date (either from the URL or "today").
+    // We can now fetch the play history for that specific date from localStorage.
+    // This logic is duplicated from the `usePlayHistory` hook, as hooks can't be used in loaders.
+    const historyRaw = localStorage.getItem(LOCAL_STORAGE_KEY)
+    const history = historyRaw ? JSON.parse(historyRaw) : {}
+    const initialHistory = history[puzzle.date] || null
+
     if (!gameRulesCache) {
         gameRulesCache = rules;
     }
 
-    return { puzzle, rules };
+    return { puzzle, rules, initialHistory }
 }
 
 function App() {
     // Data from the loader is provided here. We can safely cast the type
     // because the router would have rendered an error boundary if data was missing.
-    const { puzzle, rules } = useLoaderData() as { puzzle: DailyPuzzle; rules: GameRules }
+    const { puzzle, rules, initialHistory } = useLoaderData() as {
+        puzzle: DailyPuzzle;
+        rules: GameRules;
+        initialHistory: PlayHistoryRecord | null;
+    }
     const [searchParams, setSearchParams] = useSearchParams()
-    const { clearAllHistory, getHistoryForDate } = usePlayHistory()
+    const { clearAllHistory } = usePlayHistory()
+
+    /**
+     * This function will be passed down to the Archives modal.
+     * When a date is selected, it updates the URL search params,
+     * which triggers React Router to re-run the loader and fetch the new puzzle.
+     */
+    function handleDateSelect(date: string) {
+        setSearchParams({ date })
+    }
 
     useEffect(() => {
         // This effect runs on mount to handle the one-time `reset` parameter.
@@ -59,12 +79,16 @@ function App() {
         }
     }, [searchParams, setSearchParams, clearAllHistory])
 
-    const initialHistory = getHistoryForDate(puzzle.date)
-
     return (
         <main className="app-container">
             <h1>Tile Game</h1>
-            <Game puzzle={puzzle} gameRules={rules} initialHistory={initialHistory} maxTiles={7} />
+            <Game
+                puzzle={puzzle}
+                gameRules={rules}
+                initialHistory={initialHistory}
+                onDateSelect={handleDateSelect}
+                maxTiles={7}
+            />
         </main>
     )
 }

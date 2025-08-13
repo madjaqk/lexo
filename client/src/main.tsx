@@ -2,6 +2,7 @@ import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 import { createBrowserRouter, RouterProvider } from "react-router"
 import "./index.css"
+import ErrorPage from "@/components/ErrorPage"
 import App, { loader as appLoader } from "./App.tsx"
 
 const router = createBrowserRouter([
@@ -10,8 +11,7 @@ const router = createBrowserRouter([
         element: <App />,
         loader: appLoader,
         hydrateFallbackElement: <p>Loading puzzle...</p>,
-        // TODO: Add a dedicated error page component for a better user experience
-        // errorElement: <ErrorPage />,
+        errorElement: <ErrorPage />,
     },
 ])
 

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { useGameScoring } from "@/hooks/useGameScoring"
 import { usePlayHistory } from "@/hooks/usePlayHistory"
 import { useTimer } from "@/hooks/useTimer"
+import ArchivesModal from "./ArchivesModal"
 import type { DailyPuzzle, GameRules, GameState, PlayHistoryRecord } from "@/types"
 import "./Game.css"
 import InstructionsModal from "./InstructionsModal"
@@ -13,16 +14,18 @@ export interface GameProps {
     puzzle: DailyPuzzle
     gameRules: GameRules
     initialHistory: PlayHistoryRecord | null
+    onDateSelect: (date: string) => void
     maxTiles?: number
 }
 
 export default function Game(props: GameProps) {
-    const { puzzle, gameRules, initialHistory, maxTiles = 8 } = props
+    const { puzzle, gameRules, initialHistory, onDateSelect, maxTiles = 8 } = props
 
     // If there's a history, the game is already finished.
     const [gameState, setGameState] = useState<GameState>(initialHistory ? "finished" : "pre-game")
     const [wordRacks, setWordRacks] = useState(initialHistory?.racks ?? puzzle.initialRacks)
     const [isInstructionsOpen, setIsInstructionsOpen] = useState(false)
+    const [isArchivesOpen, setIsArchivesOpen] = useState(false)
     const [endTime, setEndTime] = useState<Date | null>(null)
     const gameBoardRef = useRef<HTMLDivElement>(null)
     const { history, saveHistoryForDate } = usePlayHistory()
@@ -51,6 +54,8 @@ export default function Game(props: GameProps) {
     // Memoize modal handlers to ensure stable function references are passed as props.
     const openInstructions = useCallback(() => setIsInstructionsOpen(true), [])
     const closeInstructions = useCallback(() => setIsInstructionsOpen(false), [])
+    const openArchives = useCallback(() => setIsArchivesOpen(true), [])
+    const closeArchives = useCallback(() => setIsArchivesOpen(false), [])
 
     const timeRemainingMs = useTimer(endTime, endGame, gameRules.timerSeconds * 1000)
 
@@ -68,13 +73,28 @@ export default function Game(props: GameProps) {
         }
     }, [history])
 
+    useEffect(() => {
+        if (initialHistory) {
+            setWordRacks(initialHistory.racks)
+            setGameState("finished")
+        } else {
+            setWordRacks(puzzle.initialRacks)
+            setGameState("pre-game")
+        }
+    }, [initialHistory, puzzle.initialRacks])
+
     return (
         <div className="game">
             <div className="game-header">
-                <p>DATE: {puzzle.date}</p>
-                <button type="button" onClick={openInstructions}>
-                    Instructions
-                </button>
+                <p className="game-date">DATE: {puzzle.date}</p>
+                <div className="header-buttons">
+                    <button type="button" onClick={openInstructions}>
+                        Instructions
+                    </button>
+                    <button type="button" onClick={openArchives}>
+                        Archives
+                    </button>
+                </div>
             </div>
             {gameState === "pre-game" && (
                 <div className="pre-game-container">
@@ -143,6 +163,11 @@ export default function Game(props: GameProps) {
                 </div>
             )}
             <InstructionsModal isOpen={isInstructionsOpen} onClose={closeInstructions} />
+            <ArchivesModal
+                isOpen={isArchivesOpen}
+                onClose={closeArchives}
+                onDateSelect={onDateSelect}
+            />
         </div>
     )
 }

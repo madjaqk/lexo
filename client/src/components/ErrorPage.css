@@ -1,0 +1,20 @@
+.error-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+    flex-grow: 1;
+}
+
+.error-page-link {
+    display: inline-block;
+    margin-top: 1.5rem;
+    padding: 0.75em 1.5em;
+    background-color: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 0.5em;
+    font-weight: bold;
+}

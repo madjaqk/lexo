@@ -1,0 +1,25 @@
+.date-picker-container {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.date-picker-container label {
+    font-weight: bold;
+}
+
+.date-picker-container input[type="date"] {
+    font-family: var(--font-family);
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    border: 1px solid var(--tile-border-color);
+    background-color: var(--bg-color-content);
+    color: var(--text-color);
+}
+
+.date-picker-form button:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+}
