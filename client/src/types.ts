@@ -21,9 +21,11 @@ export interface DailyPuzzle {
     date: string // ISO date string
 }
 
-export interface GameRules {
+export interface GameConfig {
     timerSeconds: number
     multipliers: { [length: number]: number }
+    earliestDate: string // ISO date string
+    currentDate: string // ISO date string
 }
 
 export type GameState = "pre-game" | "playing" | "finished"

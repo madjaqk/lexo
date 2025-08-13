@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 import { isValidWord } from "@/services/wordValidation"
-import type { DailyPuzzle, GameRules, WordRack } from "@/types"
+import type { DailyPuzzle, GameConfig, WordRack } from "@/types"
 import { sum } from "@/utils/math"
 import { calculateRackScore } from "@/utils/scoring"
 
@@ -12,7 +12,7 @@ import { calculateRackScore } from "@/utils/scoring"
  * @param gameRules The current game rules, including scoring multipliers.
  * @returns An object containing the player's rack scores, the target scores, the player's total score, and the target total score.
  */
-export function useGameScoring(wordRacks: WordRack[], puzzle: DailyPuzzle, gameRules: GameRules) {
+export function useGameScoring(wordRacks: WordRack[], puzzle: DailyPuzzle, gameRules: GameConfig) {
     const { multipliers } = gameRules
 
     const rackScores = useMemo(() => {

@@ -1,7 +1,7 @@
 import { renderHook } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { isValidWord } from "@/services/wordValidation"
-import type { DailyPuzzle, GameRules, WordRack } from "@/types"
+import type { DailyPuzzle, GameConfig, WordRack } from "@/types"
 import { useGameScoring } from "./useGameScoring"
 
 // Mock the word validation service, as we are not testing the dictionary here.
@@ -10,9 +10,11 @@ vi.mock("@/services/wordValidation", () => ({
 }))
 
 // Test Data based on your project's types and game rules.
-const mockGameRules: GameRules = {
+const mockGameRules: GameConfig = {
     timerSeconds: 300,
     multipliers: { 3: 6, 4: 5, 5: 4, 6: 3 },
+    earliestDate: "2025-01-01",
+    currentDate: "2025-02-01",
 }
 
 const CAT_RACK: WordRack = [

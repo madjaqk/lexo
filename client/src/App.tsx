@@ -2,15 +2,15 @@ import { useEffect } from "react"
 import { useLoaderData, useSearchParams, type LoaderFunctionArgs } from "react-router"
 import Game from "./components/Game"
 import { usePlayHistory, LOCAL_STORAGE_KEY } from "./hooks/usePlayHistory"
-import { fetchDailyPuzzle, fetchGameRules } from "./services/gameService"
+import { fetchDailyPuzzle, fetchGameConfig } from "./services/gameService"
 import { loadWordList } from "./services/wordValidation"
-import type { DailyPuzzle, GameRules, PlayHistoryRecord } from "./types"
+import type { DailyPuzzle, GameConfig, PlayHistoryRecord } from "./types"
 import "./App.css"
 /**
  * We can cache the results of one-time fetches at the module level.
  * This prevents re-fetching on every navigation.
  */
-let gameRulesCache: GameRules | null = null;
+let gameConfigCache: GameConfig | null = null;
 
 /**
  * The loader function runs before the component renders.
@@ -26,12 +26,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
     // For now, game rules are global and can be cached.
     // If rules become puzzle-specific in the future, this logic would change.
-    const rulesPromise = gameRulesCache ? Promise.resolve(gameRulesCache) : fetchGameRules()
+    const configPromise = gameConfigCache ? Promise.resolve(gameConfigCache) : fetchGameConfig()
 
     const puzzlePromise = fetchDailyPuzzle(dateFromUrl || undefined)
 
     // Await all promises. This ensures all necessary data is loaded before rendering.
-    const [puzzle, rules] = await Promise.all([puzzlePromise, rulesPromise]);
+    const [puzzle, config] = await Promise.all([puzzlePromise, configPromise]);
     await wordListPromise; // Ensure word list is also ready.
 
     // Now that we have the puzzle, we know the correct date (either from the URL or "today").
@@ -41,19 +41,19 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const history = historyRaw ? JSON.parse(historyRaw) : {}
     const initialHistory = history[puzzle.date] || null
 
-    if (!gameRulesCache) {
-        gameRulesCache = rules;
+    if (!gameConfigCache) {
+        gameConfigCache = config;
     }
 
-    return { puzzle, rules, initialHistory }
+    return { puzzle, config, initialHistory }
 }
 
 function App() {
     // Data from the loader is provided here. We can safely cast the type
     // because the router would have rendered an error boundary if data was missing.
-    const { puzzle, rules, initialHistory } = useLoaderData() as {
+    const { puzzle, config, initialHistory } = useLoaderData() as {
         puzzle: DailyPuzzle;
-        rules: GameRules;
+        config: GameConfig;
         initialHistory: PlayHistoryRecord | null;
     }
     const [searchParams, setSearchParams] = useSearchParams()
@@ -84,7 +84,7 @@ function App() {
             <h1>Tile Game</h1>
             <Game
                 puzzle={puzzle}
-                gameRules={rules}
+                gameConfig={config}
                 initialHistory={initialHistory}
                 onDateSelect={handleDateSelect}
                 maxTiles={7}

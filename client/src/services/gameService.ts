@@ -1,4 +1,4 @@
-import type { DailyPuzzle, GameRules } from "@/types"
+import type { DailyPuzzle, GameConfig } from "@/types"
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api"
 
@@ -16,7 +16,7 @@ export async function fetchWordList(): Promise<Set<string>> {
     return new Set(words)
 }
 
-export async function fetchGameRules(): Promise<GameRules> {
+export async function fetchGameConfig(): Promise<GameConfig> {
     const response = await fetch(`${BASE_URL}/config`)
     if (!response.ok) {
         throw response

@@ -3,7 +3,7 @@ import { useGameScoring } from "@/hooks/useGameScoring"
 import { usePlayHistory } from "@/hooks/usePlayHistory"
 import { useTimer } from "@/hooks/useTimer"
 import ArchivesModal from "./ArchivesModal"
-import type { DailyPuzzle, GameRules, GameState, PlayHistoryRecord } from "@/types"
+import type { DailyPuzzle, GameConfig, GameState, PlayHistoryRecord } from "@/types"
 import "./Game.css"
 import InstructionsModal from "./InstructionsModal"
 import ScoreReport from "./ScoreReport"
@@ -12,14 +12,14 @@ import WordRacks from "./WordRacks"
 
 export interface GameProps {
     puzzle: DailyPuzzle
-    gameRules: GameRules
+    gameConfig: GameConfig
     initialHistory: PlayHistoryRecord | null
     onDateSelect: (date: string) => void
     maxTiles?: number
 }
 
 export default function Game(props: GameProps) {
-    const { puzzle, gameRules, initialHistory, onDateSelect, maxTiles = 8 } = props
+    const { puzzle, gameConfig, initialHistory, onDateSelect, maxTiles = 8 } = props
 
     // If there's a history, the game is already finished.
     const [gameState, setGameState] = useState<GameState>(initialHistory ? "finished" : "pre-game")
@@ -33,13 +33,13 @@ export default function Game(props: GameProps) {
     const { rackScores, targetScores, totalScore, targetScore } = useGameScoring(
         wordRacks,
         puzzle,
-        gameRules,
+        gameConfig,
     )
 
     const startGame = useCallback(() => {
         setGameState("playing")
-        setEndTime(new Date(Date.now() + gameRules.timerSeconds * 1000))
-    }, [gameRules.timerSeconds])
+        setEndTime(new Date(Date.now() + gameConfig.timerSeconds * 1000))
+    }, [gameConfig.timerSeconds])
 
     const endGame = useCallback(() => {
         setGameState("finished")
@@ -57,7 +57,7 @@ export default function Game(props: GameProps) {
     const openArchives = useCallback(() => setIsArchivesOpen(true), [])
     const closeArchives = useCallback(() => setIsArchivesOpen(false), [])
 
-    const timeRemainingMs = useTimer(endTime, endGame, gameRules.timerSeconds * 1000)
+    const timeRemainingMs = useTimer(endTime, endGame, gameConfig.timerSeconds * 1000)
 
     useEffect(() => {
         if (gameState === "playing" && gameBoardRef.current) {
@@ -108,7 +108,7 @@ export default function Game(props: GameProps) {
                     <div className="game-board" ref={gameBoardRef} tabIndex={-1}>
                         <TimerBar
                             timeRemainingMs={timeRemainingMs}
-                            totalTimeMs={gameRules.timerSeconds * 1000}
+                            totalTimeMs={gameConfig.timerSeconds * 1000}
                         />
                         <div className="racks-column">
                             <WordRacks
