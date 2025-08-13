@@ -62,3 +62,5 @@ class GameRules(CamelCaseBaseModel):
     multipliers: dict[int, int]
     letter_values: dict[str, int]
     timer_seconds: int
+    earliest_date: str
+    current_date: str

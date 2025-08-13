@@ -5,6 +5,7 @@ from unittest.mock import patch
 
 import yaml
 from fastapi.testclient import TestClient
+from sqlalchemy.exc import NoResultFound
 from sqlmodel import Session
 
 from app.models import PuzzleWithDate, Tile
@@ -128,22 +129,39 @@ def test_get_config_success(mock_get_rules, client: TestClient):
         "multipliers": {3: 6, 4: 8},
         "letter_values": {"A": 1, "B": 3},
         "timer_seconds": 300,
+        "earliest_date": "2025-01-01",
+        "current_date": "2025-08-15",
     }
     mock_get_rules.return_value = mock_config
 
     response = client.get("/api/config")
     assert response.status_code == 200
     data = response.json()
+
     # FastAPI's jsonable_encoder will convert integer keys to strings for JSON
     assert data["multipliers"] == {"3": 6, "4": 8}
     assert data["letterValues"] == {"A": 1, "B": 3}
     assert data["timerSeconds"] == 300
+    assert data["earliestDate"] == "2025-01-01"
+    assert data["currentDate"] == "2025-08-15"
 
 
 @patch("app.main.crud.get_game_rules", side_effect=FileNotFoundError("File not found"))
 def test_get_config_file_not_found(mock_get_rules, client: TestClient):
     """
     GIVEN crud.get_game_rules raises FileNotFoundError
+    WHEN a GET request is made to /api/config
+    THEN it should return a 500 Internal Server Error.
+    """
+    response = client.get("/api/config")
+    assert response.status_code == 500
+    assert "Could not load game configuration" in response.json()["detail"]
+
+
+@patch("app.main.crud.get_game_rules", side_effect=NoResultFound("No puzzles in DB"))
+def test_get_config_no_puzzles_in_db(mock_get_rules, client: TestClient):
+    """
+    GIVEN crud.get_game_rules raises NoResultFound (because DB is empty)
     WHEN a GET request is made to /api/config
     THEN it should return a 500 Internal Server Error.
     """

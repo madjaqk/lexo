@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 
 import yaml
 from fastapi import Depends, FastAPI, HTTPException
-from fastapi.staticfiles import StaticFiles
+from sqlalchemy.exc import NoResultFound, MultipleResultsFound
 from sqlmodel import Session
 
 from . import crud
@@ -56,14 +56,14 @@ def get_puzzle_by_date(date: datetime.date, db: Session = Depends(get_session)):
 
 
 @app.get("/api/config", tags=["Configuration"])
-def get_config():
+def get_config(db: Session = Depends(get_session)):
     """
     Get the game configuration rules.
     """
     try:
-        rules_dict = crud.get_game_rules()
+        rules_dict = crud.get_game_rules(db)
         return GameRules.model_validate(rules_dict)
-    except (FileNotFoundError, yaml.YAMLError):
+    except (FileNotFoundError, yaml.YAMLError, NoResultFound, MultipleResultsFound):
         raise HTTPException(status_code=500, detail="Could not load game configuration.")
 
 
@@ -74,6 +74,8 @@ if settings.environment == "dev":
     # In production, Nginx will serve these files.
     # The `html=True` argument tells StaticFiles to serve `index.html` for
     # any path that doesn't otherwise match. This is perfect for SPAs.
+    from fastapi.staticfiles import StaticFiles
+
     config_directory = settings.config_directory
     client_directory = config_directory.parent.parent / "client" / "build" / "dist"
     app.mount("/", StaticFiles(directory=client_directory, html=True), name="static")
