@@ -2,6 +2,8 @@ import { useEffect, useRef } from "react"
 import ReactDOM from "react-dom"
 import "./Modal.css"
 import "./ArchivesModal.css"
+import type { PlayHistory } from "@/types"
+import { diff } from "util"
 
 interface ArchivesModalProps {
     isOpen: boolean
@@ -9,9 +11,10 @@ interface ArchivesModalProps {
     onDateSelect: (date: string) => void
     earliestDate: string
     currentDate: string
+    history: PlayHistory | null
 }
 
-export default function ArchivesModal({ isOpen, onClose, onDateSelect, earliestDate, currentDate }: ArchivesModalProps) {
+export default function ArchivesModal({ isOpen, onClose, onDateSelect, earliestDate, currentDate, history }: ArchivesModalProps) {
     const modalRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
@@ -37,6 +40,9 @@ export default function ArchivesModal({ isOpen, onClose, onDateSelect, earliestD
             document.removeEventListener("mouseup", handleClickOutside)
         }
     }, [isOpen, onClose])
+
+    // Sort in reverse chronological order
+    const sortedHistory = history ? Object.entries(history).sort(([dateA], [dateB]) => dateB.localeCompare(dateA)) : []
 
     function handleDateChange(event: React.ChangeEvent<HTMLInputElement>) {
         const newDate = event.target.value
@@ -78,6 +84,50 @@ export default function ArchivesModal({ isOpen, onClose, onDateSelect, earliestD
                         max={currentDate}
                     />
                 </div>
+                {sortedHistory.length > 0 && (
+                    <div className="history-list-container">
+                        <h3>Your History</h3>
+                        <ul className="history-list">
+                            {sortedHistory.map(([date, record]) => {
+                                const difference = record.score - record.targetScore
+                                let differenceSign: string, differenceClass: string, emoji: string
+
+                                if (difference > 0) {
+                                    differenceSign = "+"
+                                    differenceClass = "positive"
+                                    emoji = "✅"
+                                } else if (difference < 0) {
+                                    differenceSign = ""
+                                    differenceClass = "negative"
+                                    emoji = "❌"
+                                } else {
+                                    differenceSign = ""
+                                    differenceClass = ""
+                                    emoji = "↔️"
+                                }
+
+                                return (
+                                    <li key={date}>
+                                        <button
+                                            type="button"
+                                            className="history-item-button"
+                                            onClick={() => {
+                                                onDateSelect(date)
+                                                onClose()
+                                            }}
+                                        >
+                                            <span className="history-date">{date}</span>
+                                            <span className="history-score">Score: {record.score}</span>
+                                            <span className={`history-difference ${differenceClass}`}>
+                                                {emoji} ({differenceSign}{difference})
+                                            </span>
+                                        </button>
+                                    </li>
+                                )
+                            })}
+                        </ul>
+                    </div>
+                )}
             </div>
         </div>,
         modalRoot,

@@ -42,7 +42,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const initialHistory = history[puzzle.date] || null
 
     if (!gameConfigCache) {
-        gameConfigCache = config;
+        gameConfigCache = config
     }
 
     return { puzzle, config, initialHistory }

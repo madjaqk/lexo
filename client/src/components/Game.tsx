@@ -91,9 +91,11 @@ export default function Game(props: GameProps) {
                     <button type="button" onClick={openInstructions}>
                         Instructions
                     </button>
-                    <button type="button" onClick={openArchives}>
-                        Archives
-                    </button>
+                    {history && Object.keys(history).length > 0 && (
+                        <button type="button" onClick={openArchives}>
+                            Archives
+                        </button>
+                    )}
                 </div>
             </div>
             {gameState === "pre-game" && (
@@ -169,6 +171,7 @@ export default function Game(props: GameProps) {
                 onDateSelect={onDateSelect}
                 earliestDate={gameConfig.earliestDate}
                 currentDate={gameConfig.currentDate}
+                history={history}
             />
         </div>
     )
