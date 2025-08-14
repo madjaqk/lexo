@@ -167,6 +167,8 @@ export default function Game(props: GameProps) {
                 isOpen={isArchivesOpen}
                 onClose={closeArchives}
                 onDateSelect={onDateSelect}
+                earliestDate={gameConfig.earliestDate}
+                currentDate={gameConfig.currentDate}
             />
         </div>
     )

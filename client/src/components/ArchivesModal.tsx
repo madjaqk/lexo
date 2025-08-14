@@ -7,9 +7,11 @@ interface ArchivesModalProps {
     isOpen: boolean
     onClose: () => void
     onDateSelect: (date: string) => void
+    earliestDate: string
+    currentDate: string
 }
 
-export default function ArchivesModal({ isOpen, onClose, onDateSelect }: ArchivesModalProps) {
+export default function ArchivesModal({ isOpen, onClose, onDateSelect, earliestDate, currentDate }: ArchivesModalProps) {
     const modalRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
@@ -72,6 +74,8 @@ export default function ArchivesModal({ isOpen, onClose, onDateSelect }: Archive
                         id="date-picker-input"
                         type="date"
                         onChange={handleDateChange}
+                        min={earliestDate}
+                        max={currentDate}
                     />
                 </div>
             </div>
