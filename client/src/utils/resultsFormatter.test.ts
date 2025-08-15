@@ -105,7 +105,7 @@ describe("shareableText utility", () => {
         const lines = shareText.split("\n")
 
         it("should start with the correct header line", () => {
-            expect(lines[0]).toBe(`[Tile Game Name tk] — ${testDate}`)
+            expect(lines[0]).toBe(`${import.meta.env.VITE_APP_NAME} — ${testDate}`)
         })
 
         it("should include the correct score for each rack", () => {
@@ -170,7 +170,9 @@ describe("shareableText utility", () => {
         })
 
         it("should end with the correct footer line", () => {
-            expect(lines[lines.length - 1]).toBe("Shareable/shortened URL tk")
+            const expectedURL = new URL(import.meta.env.VITE_APP_URL)
+            expectedURL.searchParams.set("date", testDate)
+            expect(lines[lines.length - 1]).toBe(expectedURL.toString())
         })
     })
 

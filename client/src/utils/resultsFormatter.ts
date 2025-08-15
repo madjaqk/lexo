@@ -36,11 +36,14 @@ export function generateShareText(
 
     const summaryLine = `Total: ${totalScore} / ${targetScore} (${isOverTarget ? "🔥+" : "🧊-"}${scoreDifference})`
 
+    const url = new URL(import.meta.env.VITE_APP_URL)
+    url.searchParams.set("date", date)
+
     return [
-        `[Tile Game Name tk] — ${date}`,
+        `${import.meta.env.VITE_APP_NAME} — ${date}`,
         ...scoreLines,
         summaryLine,
-        "Shareable/shortened URL tk",
+        url.toString(),
     ].join("\n")
 }
 

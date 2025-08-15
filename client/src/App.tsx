@@ -87,7 +87,7 @@ function App() {
 
     return (
         <main className="app-container">
-            <h1>Tile Game</h1>
+            <h1>{import.meta.env.VITE_APP_NAME}</h1>
             <Game
                 puzzle={puzzle}
                 gameConfig={config}
