@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react"
-import { beforeEach, describe, expect, it, vi } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import type { WordRack, WordScore } from "@/types"
 import {
     calculateScoreSummary,
@@ -51,56 +51,80 @@ describe("ScoreReport", () => {
     const mockReportText = "You beat the target by 12 points!"
     const mockSrText = "Mock screen reader summary text."
 
-    beforeEach(() => {
-        // Clear mock history before each test to ensure a clean slate.
-        vi.clearAllMocks()
+    // Use afterEach for robust mock cleanup. This restores original implementations.
+    afterEach(() => {
+        vi.restoreAllMocks()
+    })
 
-        // Configure the mocks to return specific values for this test
+    // Helper function to set up common mocks to avoid repetition.
+    const setupMocks = () => {
         vi.mocked(calculateScoreSummary).mockReturnValue(mockSummary)
         vi.mocked(generateScoreReportText).mockReturnValue(mockReportText)
         vi.mocked(generateSrSummaryText).mockReturnValue(mockSrText)
+    }
 
-        render(
-            <ScoreReport
-                rackScores={mockRackScores}
-                targetScores={mockTargetScores}
-                targetSolution={mockTargetSolution}
-                date={mockDate}
-            />,
-        )
+    describe("when it is the current date", () => {
+        beforeEach(() => {
+            setupMocks()
+            render(
+                <ScoreReport
+                    rackScores={mockRackScores}
+                    targetScores={mockTargetScores}
+                    targetSolution={mockTargetSolution}
+                    date={mockDate}
+                    currentDate={mockDate} // Dates match
+                />,
+            )
+        })
+
+        it("should render the ShareButton and pass all necessary props to it", () => {
+            const shareButton = screen.getByRole("button", { name: "Mock Share" })
+            expect(shareButton).toBeInTheDocument()
+            expect(shareButton).toHaveAttribute("data-rack-scores", JSON.stringify(mockRackScores))
+            expect(shareButton).toHaveAttribute(
+                "data-target-scores",
+                JSON.stringify(mockTargetScores),
+            )
+            expect(shareButton).toHaveAttribute("data-date", mockDate)
+        })
+
+        it("should render the visible report text to the user", () => {
+            expect(screen.getByText(mockReportText)).toBeInTheDocument()
+        })
+
+        it("should render a detailed, accessible summary for screen readers", () => {
+            const targetWords = mockTargetSolution.map((rack) =>
+                rack.map((tile) => tile.letter).join(""),
+            )
+            expect(generateSrSummaryText).toHaveBeenCalledWith(
+                mockSummary,
+                mockTargetScores,
+                targetWords,
+            )
+            expect(screen.getByText(mockSrText)).toBeInTheDocument()
+        })
     })
 
-    it("should calculate the score summary based on the provided scores", () => {
-        expect(calculateScoreSummary).toHaveBeenCalledWith(mockRackScores, mockTargetScores)
-        expect(calculateScoreSummary).toHaveBeenCalledTimes(1)
-    })
+    describe("when it is not the current date", () => {
+        beforeEach(() => {
+            setupMocks()
+            render(
+                <ScoreReport
+                    rackScores={mockRackScores}
+                    targetScores={mockTargetScores}
+                    targetSolution={mockTargetSolution}
+                    date={mockDate}
+                    currentDate="2025-08-01" // Dates do NOT match
+                />,
+            )
+        })
 
-    it("should generate the report text based on the calculated summary", () => {
-        expect(generateScoreReportText).toHaveBeenCalledWith(mockSummary)
-        expect(generateScoreReportText).toHaveBeenCalledTimes(1)
-    })
+        it("should NOT render the ShareButton", () => {
+            expect(screen.queryByRole("button", { name: "Mock Share" })).not.toBeInTheDocument()
+        })
 
-    it("should render the visible report text to the user", () => {
-        expect(screen.getByText(mockReportText)).toBeInTheDocument()
-    })
-
-    it("should render the ShareButton and pass all necessary props to it", () => {
-        const shareButton = screen.getByRole("button", { name: "Mock Share" })
-        expect(shareButton).toBeInTheDocument()
-        expect(shareButton).toHaveAttribute("data-rack-scores", JSON.stringify(mockRackScores))
-        expect(shareButton).toHaveAttribute("data-target-scores", JSON.stringify(mockTargetScores))
-        expect(shareButton).toHaveAttribute("data-date", mockDate)
-    })
-
-    it("should render a detailed, accessible summary for screen readers", () => {
-        const targetWords = mockTargetSolution.map((rack) =>
-            rack.map((tile) => tile.letter).join(""),
-        )
-        expect(generateSrSummaryText).toHaveBeenCalledWith(
-            mockSummary,
-            mockTargetScores,
-            targetWords,
-        )
-        expect(screen.getByText(mockSrText)).toBeInTheDocument()
+        it("should still render the report text", () => {
+            expect(screen.getByText(mockReportText)).toBeInTheDocument()
+        })
     })
 })

@@ -99,6 +99,7 @@ describe("Game Component - Integration Tests", () => {
     // userEvent must be initialized within beforeEach, after fake timers are enabled.
     let user: ReturnType<typeof userEvent.setup>
     const saveHistoryForDate = vi.fn()
+    const onDateSelect = vi.fn()
     const originalGetBoundingClientRect = Element.prototype.getBoundingClientRect
 
     // This variable will be used to track the pointer's position for the stateful getBoundingClientRect mock.
@@ -249,7 +250,14 @@ describe("Game Component - Integration Tests", () => {
 
     describe("State Transitions", () => {
         it('should start in the "pre-game" state and show the start button', () => {
-            render(<Game puzzle={MOCK_PUZZLE} gameConfig={MOCK_RULES} initialHistory={null} />)
+            render(
+                <Game
+                    puzzle={MOCK_PUZZLE}
+                    gameConfig={MOCK_RULES}
+                    initialHistory={null}
+                    onDateSelect={onDateSelect}
+                />,
+            )
 
             expect(screen.getByRole("button", { name: /start game/i })).toBeInTheDocument()
             expect(screen.queryByRole("progressbar")).not.toBeInTheDocument()
@@ -259,7 +267,14 @@ describe("Game Component - Integration Tests", () => {
         })
 
         it('should transition to the "playing" state when the start button is clicked', async () => {
-            render(<Game puzzle={MOCK_PUZZLE} gameConfig={MOCK_RULES} initialHistory={null} />)
+            render(
+                <Game
+                    puzzle={MOCK_PUZZLE}
+                    gameConfig={MOCK_RULES}
+                    initialHistory={null}
+                    onDateSelect={onDateSelect}
+                />,
+            )
 
             await user.click(screen.getByRole("button", { name: /start game/i }))
 
@@ -272,7 +287,12 @@ describe("Game Component - Integration Tests", () => {
         it('should transition to the "finished" state when a valid answer is submitted', async () => {
             // We use a puzzle that is already solved to test the submission logic
             render(
-                <Game puzzle={MOCK_SOLVED_PUZZLE} gameConfig={MOCK_RULES} initialHistory={null} />,
+                <Game
+                    puzzle={MOCK_SOLVED_PUZZLE}
+                    gameConfig={MOCK_RULES}
+                    initialHistory={null}
+                    onDateSelect={onDateSelect}
+                />,
             )
 
             // Start the game
@@ -292,7 +312,14 @@ describe("Game Component - Integration Tests", () => {
         })
 
         it('should transition to the "finished" state when the timer runs out', async () => {
-            render(<Game puzzle={MOCK_PUZZLE} gameConfig={MOCK_RULES} initialHistory={null} />)
+            render(
+                <Game
+                    puzzle={MOCK_PUZZLE}
+                    gameConfig={MOCK_RULES}
+                    initialHistory={null}
+                    onDateSelect={onDateSelect}
+                />,
+            )
 
             await user.click(screen.getByRole("button", { name: /start game/i }))
 
@@ -316,6 +343,7 @@ describe("Game Component - Integration Tests", () => {
                     puzzle={MOCK_PUZZLE}
                     gameConfig={MOCK_RULES}
                     initialHistory={MOCK_HISTORY_RECORD}
+                    onDateSelect={onDateSelect}
                 />,
             )
 
@@ -326,7 +354,14 @@ describe("Game Component - Integration Tests", () => {
 
     describe("Happy Path", () => {
         it("should allow a user to start, solve, and submit a puzzle", async () => {
-            render(<Game puzzle={MOCK_PUZZLE} gameConfig={MOCK_RULES} initialHistory={null} />)
+            render(
+                <Game
+                    puzzle={MOCK_PUZZLE}
+                    gameConfig={MOCK_RULES}
+                    initialHistory={null}
+                    onDateSelect={onDateSelect}
+                />,
+            )
 
             // 1. Start the game
             await user.click(screen.getByRole("button", { name: /start game/i }))
@@ -379,7 +414,14 @@ describe("Game Component - Integration Tests", () => {
                 clearAllHistory: () => null,
             })
 
-            render(<Game puzzle={MOCK_PUZZLE} gameConfig={MOCK_RULES} initialHistory={null} />)
+            render(
+                <Game
+                    puzzle={MOCK_PUZZLE}
+                    gameConfig={MOCK_RULES}
+                    initialHistory={null}
+                    onDateSelect={onDateSelect}
+                />,
+            )
 
             expect(screen.getByRole("dialog", { name: /how to play/i })).toBeInTheDocument()
         })
@@ -392,7 +434,14 @@ describe("Game Component - Integration Tests", () => {
                 getHistoryForDate: () => null,
                 clearAllHistory: () => null,
             })
-            render(<Game puzzle={MOCK_PUZZLE} gameConfig={MOCK_RULES} initialHistory={null} />)
+            render(
+                <Game
+                    puzzle={MOCK_PUZZLE}
+                    gameConfig={MOCK_RULES}
+                    initialHistory={null}
+                    onDateSelect={onDateSelect}
+                />,
+            )
             expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
         })
 
@@ -406,7 +455,14 @@ describe("Game Component - Integration Tests", () => {
                 clearAllHistory: () => null,
             })
 
-            render(<Game puzzle={MOCK_PUZZLE} gameConfig={MOCK_RULES} initialHistory={null} />)
+            render(
+                <Game
+                    puzzle={MOCK_PUZZLE}
+                    gameConfig={MOCK_RULES}
+                    initialHistory={null}
+                    onDateSelect={onDateSelect}
+                />,
+            )
             // Modal should not be visible initially for a returning player
             expect(screen.queryByRole("dialog", { name: /how to play/i })).not.toBeInTheDocument()
 
@@ -423,6 +479,59 @@ describe("Game Component - Integration Tests", () => {
         })
     })
 
+    describe("Archives Modal", () => {
+        it("should NOT show the Archives button if the user has no play history", () => {
+            // The default mock from beforeEach has an empty history object.
+            render(
+                <Game
+                    puzzle={MOCK_PUZZLE}
+                    gameConfig={MOCK_RULES}
+                    initialHistory={null}
+                    onDateSelect={onDateSelect}
+                />,
+            )
+            expect(screen.queryByRole("button", { name: /archives/i })).not.toBeInTheDocument()
+        })
+
+        it("should show the Archives button if the user has play history", () => {
+            vi.mocked(usePlayHistory).mockReturnValue({
+                history: { "2025-01-15": MOCK_HISTORY_RECORD },
+                saveHistoryForDate,
+                getHistoryForDate: () => null,
+                clearAllHistory: () => null,
+            })
+
+            render(
+                <Game
+                    puzzle={MOCK_PUZZLE}
+                    gameConfig={MOCK_RULES}
+                    initialHistory={null}
+                    onDateSelect={onDateSelect}
+                />,
+            )
+            expect(screen.getByRole("button", { name: /archives/i })).toBeInTheDocument()
+        })
+
+        it("should open the Archives modal when the button is clicked", async () => {
+            vi.mocked(usePlayHistory).mockReturnValue({
+                history: { "2025-01-15": MOCK_HISTORY_RECORD },
+                saveHistoryForDate,
+                getHistoryForDate: () => null,
+                clearAllHistory: () => null,
+            })
+            render(
+                <Game
+                    puzzle={MOCK_PUZZLE}
+                    gameConfig={MOCK_RULES}
+                    initialHistory={null}
+                    onDateSelect={onDateSelect}
+                />,
+            )
+            await user.click(screen.getByRole("button", { name: /archives/i }))
+            expect(await screen.findByRole("dialog", { name: /past puzzles/i })).toBeInTheDocument()
+        })
+    })
+
     describe("Other", () => {
         // Helper to get the text content of tiles in a specific rack.
         function getRackTiles(rackNumber: number) {
@@ -432,7 +541,14 @@ describe("Game Component - Integration Tests", () => {
         }
 
         it("should not display the submit button for a completely unsolved board", async () => {
-            render(<Game puzzle={MOCK_PUZZLE} gameConfig={MOCK_RULES} initialHistory={null} />)
+            render(
+                <Game
+                    puzzle={MOCK_PUZZLE}
+                    gameConfig={MOCK_RULES}
+                    initialHistory={null}
+                    onDateSelect={onDateSelect}
+                />,
+            )
 
             await user.click(screen.getByRole("button", { name: /start game/i }))
             expect(screen.queryByRole("button", { name: /submit answer/i })).not.toBeInTheDocument()
@@ -444,6 +560,7 @@ describe("Game Component - Integration Tests", () => {
                     puzzle={MOCK_PARTIALLY_SOLVED_PUZZLE}
                     gameConfig={MOCK_RULES}
                     initialHistory={null}
+                    onDateSelect={onDateSelect}
                 />,
             )
 
@@ -458,6 +575,7 @@ describe("Game Component - Integration Tests", () => {
                     puzzle={MOCK_PUZZLE}
                     gameConfig={MOCK_RULES}
                     initialHistory={null}
+                    onDateSelect={onDateSelect}
                     maxTiles={5}
                 />,
             )
@@ -492,7 +610,14 @@ describe("Game Component - Integration Tests", () => {
             // `stopPropagation` listener on `click` without interfering with other tests, so
             // maybe that's a red herring).  In any case, the tests pass as long as this is the
             // last test in the file; change that at your peril.--JDB 2025-08-11
-            render(<Game puzzle={MOCK_PUZZLE} gameConfig={MOCK_RULES} initialHistory={null} />)
+            render(
+                <Game
+                    puzzle={MOCK_PUZZLE}
+                    gameConfig={MOCK_RULES}
+                    initialHistory={null}
+                    onDateSelect={onDateSelect}
+                />,
+            )
             await user.click(screen.getByRole("button", { name: /start game/i }))
 
             const initialRack1State = getRackTiles(1)

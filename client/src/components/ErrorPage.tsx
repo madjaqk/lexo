@@ -13,6 +13,9 @@ export default function ErrorPage() {
         } else if (error.status === 403) {
             heading = "No spoilers!"
             message = "Please select a date that has already happened."
+        } else if (error.status === 422) {
+            heading = "Invalid Date Format"
+            message = "The date in the URL is not valid. Please check the format (YYYY-MM-DD)."
         } else {
             heading = `Error: ${error.status}`
             message = error.statusText
