@@ -163,7 +163,7 @@ TOTAL: 202 (14 over target!)
 
 1. [X] Create an "Instructions" screen or modal.
 2. [X] Implement a view to display the history of past games.
-3. [ ] Add `.env` file for client configuration
+3. [X] Add `.env` file for client configuration
 4. [ ] Enhance keyboard and mobile touch interactions.
 5. [ ] Implement comprehensive error handling and loading states for API calls.
 6. [ ] Credits/copyright information (footer?)
