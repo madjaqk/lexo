@@ -2,7 +2,7 @@ import datetime
 from contextlib import asynccontextmanager
 
 import yaml
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, status
 from sqlalchemy.exc import NoResultFound, MultipleResultsFound
 from sqlmodel import Session
 
@@ -25,6 +25,11 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Tile Game API", lifespan=lifespan)
 
+settings = get_settings()
+if settings.environment == "dev":
+    from fastapi.middleware.cors import CORSMiddleware
+    app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
+
 
 @app.get("/api/puzzle/today", response_model=PuzzleWithDate, tags=["Puzzles"])
 def get_todays_puzzle(db: Session = Depends(get_session)):
@@ -33,8 +38,8 @@ def get_todays_puzzle(db: Session = Depends(get_session)):
     """
     today = datetime.date.today()
     puzzle = crud.get_puzzle_by_date(db, today)
-    if puzzle is None:
-        raise HTTPException(status_code=404, detail="Puzzle not found for today's date.")
+    if not puzzle:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Puzzle not found for today's date.")
     return puzzle
 
 
@@ -45,12 +50,12 @@ def get_puzzle_by_date(date: datetime.date, db: Session = Depends(get_session)):
     """
     today = datetime.date.today()
     if date > today:
-        raise HTTPException(status_code=403, detail="No spoilers!")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No spoilers!")
 
     puzzle = crud.get_puzzle_by_date(db, date)
-    if puzzle is None:
+    if not puzzle:
         raise HTTPException(
-            status_code=404, detail=f"Puzzle not found for date {date.isoformat()}."
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"Puzzle not found for date {date.isoformat()}."
         )
     return puzzle
 
@@ -64,7 +69,7 @@ def get_config(db: Session = Depends(get_session)):
         rules_dict = crud.get_game_rules(db)
         return GameRules.model_validate(rules_dict)
     except (FileNotFoundError, yaml.YAMLError, NoResultFound, MultipleResultsFound):
-        raise HTTPException(status_code=500, detail="Could not load game configuration.")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Could not load game configuration.")
 
 
 settings = get_settings()
