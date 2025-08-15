@@ -144,7 +144,14 @@ describe("ArchivesModal", () => {
     it("should call onClose when the close button is clicked", async () => {
         const user = userEvent.setup()
         render(
-            <ArchivesModal isOpen={true} onClose={onClose} onDateSelect={onDateSelect} earliestDate={earliestDate} currentDate={currentDate} history={null} />,
+            <ArchivesModal
+                isOpen={true}
+                onClose={onClose}
+                onDateSelect={onDateSelect}
+                earliestDate={earliestDate}
+                currentDate={currentDate}
+                history={null}
+            />,
         )
         await user.click(screen.getByRole("button", { name: "Close" }))
         expect(onClose).toHaveBeenCalledTimes(1)

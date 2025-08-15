@@ -22,6 +22,7 @@ def get_puzzle_by_date(db: Session, date: datetime.date) -> PuzzleWithDate | Non
     """
     return db.get(PuzzleWithDate, date)
 
+
 @cache
 def get_stable_game_rules(db: Session) -> dict:
     """

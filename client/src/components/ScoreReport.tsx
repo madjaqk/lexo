@@ -33,7 +33,9 @@ export default function ScoreReport({
                 Final Score Report
             </h3>
             <span className="sr-only">{srSummaryText}</span> <span>{reportText}</span>
-            {date === currentDate && <ShareButton rackScores={rackScores} targetScores={targetScores} date={date} />}
+            {date === currentDate && (
+                <ShareButton rackScores={rackScores} targetScores={targetScores} date={date} />
+            )}
         </section>
     )
 }

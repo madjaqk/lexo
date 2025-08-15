@@ -96,7 +96,9 @@ describe("App Loader and Routing", () => {
         renderWithRouter("/?date=2025-07-21")
 
         expect(await screen.findByRole("heading", { name: "Puzzle Not Found" })).toBeInTheDocument()
-        expect(screen.getByText(/Sorry, we couldn't find a puzzle for that date/)).toBeInTheDocument()
+        expect(
+            screen.getByText(/Sorry, we couldn't find a puzzle for that date/),
+        ).toBeInTheDocument()
     })
 
     it("should display the 403 error page for a future date", async () => {
@@ -110,7 +112,9 @@ describe("App Loader and Routing", () => {
         vi.mocked(fetchDailyPuzzle).mockRejectedValue(new Response(null, { status: 422 }))
         renderWithRouter("/?date=not-a-date")
 
-        expect(await screen.findByRole("heading", { name: "Invalid Date Format" })).toBeInTheDocument()
+        expect(
+            await screen.findByRole("heading", { name: "Invalid Date Format" }),
+        ).toBeInTheDocument()
         expect(screen.getByText(/The date in the URL is not valid/)).toBeInTheDocument()
     })
 })

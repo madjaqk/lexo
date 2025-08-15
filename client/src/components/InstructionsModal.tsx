@@ -58,7 +58,9 @@ export default function InstructionsModal({ isOpen, onClose }: InstructionsModal
                 <button type="button" className="close-button" onClick={onClose} aria-label="Close">
                     &times;
                 </button>
-                <h2 id="instructions-heading" className="instructions-heading">How to Play</h2>
+                <h2 id="instructions-heading" className="instructions-heading">
+                    How to Play
+                </h2>
                 <div className="content">
                     <p>The goal is to arrange all 18 letter tiles into four valid English words.</p>
                     <ul>

@@ -1,7 +1,7 @@
 import { useEffect } from "react"
-import { redirect, useLoaderData, useSearchParams, type LoaderFunctionArgs } from "react-router"
+import { type LoaderFunctionArgs, redirect, useLoaderData, useSearchParams } from "react-router"
 import Game from "./components/Game"
-import { usePlayHistory, LOCAL_STORAGE_KEY } from "./hooks/usePlayHistory"
+import { LOCAL_STORAGE_KEY, usePlayHistory } from "./hooks/usePlayHistory"
 import { fetchDailyPuzzle, fetchGameConfig } from "./services/gameService"
 import { loadWordList } from "./services/wordValidation"
 import type { DailyPuzzle, GameConfig, PlayHistoryRecord } from "./types"
@@ -10,7 +10,7 @@ import "./App.css"
  * We can cache the results of one-time fetches at the module level.
  * This prevents re-fetching on every navigation.
  */
-let gameConfigCache: GameConfig | null = null;
+let gameConfigCache: GameConfig | null = null
 
 /**
  * The loader function runs before the component renders.
@@ -31,8 +31,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const puzzlePromise = fetchDailyPuzzle(dateFromUrl || undefined)
 
     // Await all promises. This ensures all necessary data is loaded before rendering.
-    const [puzzle, config] = await Promise.all([puzzlePromise, configPromise]);
-    await wordListPromise; // Ensure word list is also ready.
+    const [puzzle, config] = await Promise.all([puzzlePromise, configPromise])
+    await wordListPromise // Ensure word list is also ready.
 
     // If the user explicitly navigates to today's date via the URL,
     // redirect them to the cleaner root path.
@@ -58,9 +58,9 @@ function App() {
     // Data from the loader is provided here. We can safely cast the type
     // because the router would have rendered an error boundary if data was missing.
     const { puzzle, config, initialHistory } = useLoaderData() as {
-        puzzle: DailyPuzzle;
-        config: GameConfig;
-        initialHistory: PlayHistoryRecord | null;
+        puzzle: DailyPuzzle
+        config: GameConfig
+        initialHistory: PlayHistoryRecord | null
     }
     const [searchParams, setSearchParams] = useSearchParams()
     const { clearAllHistory } = usePlayHistory()

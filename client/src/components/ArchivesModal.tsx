@@ -13,7 +13,14 @@ interface ArchivesModalProps {
     history: PlayHistory | null
 }
 
-export default function ArchivesModal({ isOpen, onClose, onDateSelect, earliestDate, currentDate, history }: ArchivesModalProps) {
+export default function ArchivesModal({
+    isOpen,
+    onClose,
+    onDateSelect,
+    earliestDate,
+    currentDate,
+    history,
+}: ArchivesModalProps) {
     const modalRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
@@ -41,7 +48,9 @@ export default function ArchivesModal({ isOpen, onClose, onDateSelect, earliestD
     }, [isOpen, onClose])
 
     // Sort in reverse chronological order
-    const sortedHistory = history ? Object.entries(history).sort(([dateA], [dateB]) => dateB.localeCompare(dateA)) : []
+    const sortedHistory = history
+        ? Object.entries(history).sort(([dateA], [dateB]) => dateB.localeCompare(dateA))
+        : []
 
     function handleDateChange(event: React.ChangeEvent<HTMLInputElement>) {
         const newDate = event.target.value
@@ -89,7 +98,9 @@ export default function ArchivesModal({ isOpen, onClose, onDateSelect, earliestD
                         <ul className="history-list">
                             {sortedHistory.map(([date, record]) => {
                                 const difference = record.score - record.targetScore
-                                let differenceSign: string, differenceClass: string, emoji: string
+                                let differenceSign: string
+                                let differenceClass: string
+                                let emoji: string
 
                                 if (difference > 0) {
                                     differenceSign = "+"
@@ -116,9 +127,14 @@ export default function ArchivesModal({ isOpen, onClose, onDateSelect, earliestD
                                             }}
                                         >
                                             <span className="history-date">{date}</span>
-                                            <span className="history-score">Score: {record.score}</span>
-                                            <span className={`history-difference ${differenceClass}`}>
-                                                {emoji} ({differenceSign}{difference})
+                                            <span className="history-score">
+                                                Score: {record.score}
+                                            </span>
+                                            <span
+                                                className={`history-difference ${differenceClass}`}
+                                            >
+                                                {emoji} ({differenceSign}
+                                                {difference})
                                             </span>
                                         </button>
                                     </li>
