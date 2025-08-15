@@ -162,16 +162,18 @@ TOTAL: 202 (14 over target!)
 #### Detailed Steps
 
 1. [X] Create an "Instructions" screen or modal.
-2. [ ] Implement a view to display the history of past games.
-3. [ ] Enhance keyboard and mobile touch interactions.
-4. [ ] Implement comprehensive error handling and loading states for API calls.
-5. [ ] Credits/copyright information (footer?)
-6. [ ] Download the primary font and serve it locally.
-7. [ ] Finalize the game name and create a logo.
-8. [ ] Finalize the color scheme and implement a dark mode toggle.
-9. [ ] Add a favicon based on the new logo.
-10. [ ] Update `package.json` and `pyproject.toml` with the final project name, version, and author details.
-11. [ ] Write the project `README.md`.
+2. [X] Implement a view to display the history of past games.
+3. [ ] Add `.env` file for client configuration
+4. [ ] Enhance keyboard and mobile touch interactions.
+5. [ ] Implement comprehensive error handling and loading states for API calls.
+6. [ ] Credits/copyright information (footer?)
+7. [ ] MAYBE: Front-end refactor (break header into its own component, divide `client/src/components/` into subfolders)
+8. [ ] Download the primary font and serve it locally.
+9. [ ] Finalize the game name and create a logo.
+10. [ ] Finalize the color scheme and implement a dark mode toggle.
+11. [ ] Add a favicon based on the new logo.
+12. [ ] Update `package.json` and `pyproject.toml` with the final project name, version, and author details.
+13. [ ] Write the project `README.md`.
 
 ### Phase 4: Deployment & Operations
 **Deliverables:**
