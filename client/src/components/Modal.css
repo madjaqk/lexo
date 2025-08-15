@@ -21,6 +21,13 @@
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     position: relative;
     text-align: center;
+
+    /*
+     * Ensure the modal never gets taller than the viewport and becomes
+     * scrollable if its content overflows.
+     */
+    max-height: 85vh;
+    overflow-y: auto;
 }
 
 .close-button {

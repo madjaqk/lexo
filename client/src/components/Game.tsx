@@ -158,6 +158,7 @@ export default function Game(props: GameProps) {
                                 targetScores={targetScores}
                                 targetSolution={puzzle.targetSolution}
                                 date={puzzle.date}
+                                currentDate={gameConfig.currentDate}
                             />
                         </div>
                         <div className="score total-score">TOTAL: {targetScore}</div>

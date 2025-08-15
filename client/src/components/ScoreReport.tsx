@@ -12,6 +12,7 @@ export interface ScoreReportProps {
     targetScores: WordScore[]
     targetSolution: WordRack[]
     date: string
+    currentDate: string
 }
 
 export default function ScoreReport({
@@ -19,6 +20,7 @@ export default function ScoreReport({
     targetScores,
     targetSolution,
     date,
+    currentDate,
 }: ScoreReportProps) {
     const scoreSummary = calculateScoreSummary(rackScores, targetScores)
     const reportText = generateScoreReportText(scoreSummary)
@@ -31,7 +33,7 @@ export default function ScoreReport({
                 Final Score Report
             </h3>
             <span className="sr-only">{srSummaryText}</span> <span>{reportText}</span>
-            <ShareButton rackScores={rackScores} targetScores={targetScores} date={date} />
+            {date === currentDate && <ShareButton rackScores={rackScores} targetScores={targetScores} date={date} />}
         </section>
     )
 }

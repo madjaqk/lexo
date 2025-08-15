@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { useLoaderData, useSearchParams, type LoaderFunctionArgs } from "react-router"
+import { redirect, useLoaderData, useSearchParams, type LoaderFunctionArgs } from "react-router"
 import Game from "./components/Game"
 import { usePlayHistory, LOCAL_STORAGE_KEY } from "./hooks/usePlayHistory"
 import { fetchDailyPuzzle, fetchGameConfig } from "./services/gameService"
@@ -33,6 +33,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
     // Await all promises. This ensures all necessary data is loaded before rendering.
     const [puzzle, config] = await Promise.all([puzzlePromise, configPromise]);
     await wordListPromise; // Ensure word list is also ready.
+
+    // If the user explicitly navigates to today's date via the URL,
+    // redirect them to the cleaner root path.
+    if (dateFromUrl && dateFromUrl === config.currentDate) {
+        return redirect("/")
+    }
 
     // Now that we have the puzzle, we know the correct date (either from the URL or "today").
     // We can now fetch the play history for that specific date from localStorage.

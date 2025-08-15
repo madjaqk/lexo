@@ -3,7 +3,6 @@ import ReactDOM from "react-dom"
 import "./Modal.css"
 import "./ArchivesModal.css"
 import type { PlayHistory } from "@/types"
-import { diff } from "util"
 
 interface ArchivesModalProps {
     isOpen: boolean
