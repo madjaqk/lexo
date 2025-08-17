@@ -11,11 +11,7 @@ import {
     useSensor,
     useSensors,
 } from "@dnd-kit/core"
-import {
-    arrayMove,
-    horizontalListSortingStrategy,
-    SortableContext,
-} from "@dnd-kit/sortable"
+import { arrayMove, horizontalListSortingStrategy, SortableContext } from "@dnd-kit/sortable"
 import { type Dispatch, type SetStateAction, useCallback, useEffect, useState } from "react"
 import type { Tile, WordRack, WordScore } from "@/types"
 import { WordRackComponent } from "./WordRackComponent"

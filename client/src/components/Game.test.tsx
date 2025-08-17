@@ -275,18 +275,18 @@ describe("Game Component - Integration Tests", () => {
 
         dragPreviewOrigin = dragPreviewOriginFromSource()
         await act(async () => fireEvent.focus(source()))
-        await act(async () => fireEvent.keyDown(source(), { key: " ", code: "Space"}))
-        await act(async () => fireEvent.keyUp(source(), { key: " ", code: "Space"}))
+        await act(async () => fireEvent.keyDown(source(), { key: " ", code: "Space" }))
+        await act(async () => fireEvent.keyUp(source(), { key: " ", code: "Space" }))
         dragPreviewOrigin = dragPreviewOriginFromSource()
 
         for (const move of moves) {
-            await act(async () => fireEvent.keyDown(source(), { key: move, code: move}))
-            await act(async () => fireEvent.keyUp(source(), { key: move, code: move}))
+            await act(async () => fireEvent.keyDown(source(), { key: move, code: move }))
+            await act(async () => fireEvent.keyUp(source(), { key: move, code: move }))
             dragPreviewOrigin = dragPreviewOriginFromSource()
         }
 
-        await act(async () => fireEvent.keyDown(source(), { key: " ", code: "Space"}))
-        await act(async () => fireEvent.keyUp(source(), { key: " ", code: "Space"}))
+        await act(async () => fireEvent.keyDown(source(), { key: " ", code: "Space" }))
+        await act(async () => fireEvent.keyUp(source(), { key: " ", code: "Space" }))
         // The move is complete, the drag preview shouldn't still be on screen, so this line
         // _probably_ isn't necessary?
         dragPreviewOrigin = dragPreviewOriginFromSource()

@@ -21,7 +21,7 @@ type KeyboardCoordinatesParameters = Parameters<KeyboardCoordinateGetter>
 export function customKeyboardCoordinates(
     event: KeyboardEvent,
     { active: activeId, context }: KeyboardCoordinatesParameters[1],
-){
+) {
     if (!activeId || !context.active || !context.collisionRect || !context.droppableRects) {
         return
     }
@@ -38,7 +38,9 @@ export function customKeyboardCoordinates(
     // Get all tiles in the current rack and sort them by their index in the rack
     const currentRackTiles = droppableContainers
         .filter(
-            (container) => container.data.current?.type === "tile" && container.data.current?.rackIndex === currentRackIndex,
+            (container) =>
+                container.data.current?.type === "tile" &&
+                container.data.current?.rackIndex === currentRackIndex,
         )
         .sort((tile1, tile2) => {
             const [rect1, rect2] = [droppableRects.get(tile1.id), droppableRects.get(tile2.id)]
@@ -81,10 +83,15 @@ export function customKeyboardCoordinates(
                 event.code === "ArrowDown" ? currentRackIndex + 1 : currentRackIndex - 1
 
             // Find any tile in that rack, or the end-of-rack placeholder drop target
-            const target = droppableContainers.find(container => container.data.current?.rackIndex === nextRackIndex)
+            const target = droppableContainers.find(
+                (container) => container.data.current?.rackIndex === nextRackIndex,
+            )
 
             if (target) {
-                return { x: collisionRect.left, y: droppableRects.get(target.id)?.top ?? collisionRect.top}
+                return {
+                    x: collisionRect.left,
+                    y: droppableRects.get(target.id)?.top ?? collisionRect.top,
+                }
             }
         }
     }
