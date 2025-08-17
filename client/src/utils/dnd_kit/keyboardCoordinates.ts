@@ -84,7 +84,7 @@ export function customKeyboardCoordinates(
             const target = droppableContainers.find(container => container.data.current?.rackIndex === nextRackIndex)
 
             if (target) {
-                return { x: collisionRect.left, y: droppableRects.get(target.id)?.top || collisionRect.top}
+                return { x: collisionRect.left, y: droppableRects.get(target.id)?.top ?? collisionRect.top}
             }
         }
     }

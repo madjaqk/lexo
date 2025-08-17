@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react"
+import { fireEvent, render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { act } from "react"
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest"
@@ -102,8 +102,13 @@ describe("Game Component - Integration Tests", () => {
     const onDateSelect = vi.fn()
     const originalGetBoundingClientRect = Element.prototype.getBoundingClientRect
 
-    // This variable will be used to track the pointer's position for the stateful getBoundingClientRect mock.
-    let currentPointerCoords = { x: 0, y: 0 }
+    // This variable is used to define the upper-left corner of the dnd-kit drag preview, which
+    // in turn is used to determine the collisionRect passed into the custom collision detection
+    // and keyboard coordinate functions.  (Normally dnd-kit would do this automatically, but
+    // jsdom doesn't actually generate any layout, so we have to manually track it.)  For
+    // mouse-based tests, this will be the same as the pointer's current coordinates; for
+    // keyboard tests, it will be the same as the "source" element being dragged.
+    let dragPreviewOrigin = { x: 0, y: 0 }
 
     beforeAll(async () => {
         vi.mocked(fetchWordList).mockResolvedValue(new Set(["CAT", "BIRD", "CAB", "DIRT"]))
@@ -121,12 +126,12 @@ describe("Game Component - Integration Tests", () => {
                 return {
                     width: 45,
                     height: 45,
-                    x: currentPointerCoords.x,
-                    y: currentPointerCoords.y,
-                    top: currentPointerCoords.y,
-                    left: currentPointerCoords.x,
-                    right: currentPointerCoords.x + 45,
-                    bottom: currentPointerCoords.y + 45,
+                    x: dragPreviewOrigin.x,
+                    y: dragPreviewOrigin.y,
+                    top: dragPreviewOrigin.y,
+                    left: dragPreviewOrigin.x,
+                    right: dragPreviewOrigin.x + 45,
+                    bottom: dragPreviewOrigin.y + 45,
                     toJSON: () => "",
                 } as DOMRect
             }
@@ -185,7 +190,7 @@ describe("Game Component - Integration Tests", () => {
 
         user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
 
-        currentPointerCoords = { x: 0, y: 0 }
+        dragPreviewOrigin = { x: 0, y: 0 }
 
         // The modal uses a portal, so we need to add the portal root to the DOM
         // for tests that render the modal.
@@ -221,11 +226,11 @@ describe("Game Component - Integration Tests", () => {
         // steps is not resilient to the re-renders that dnd-kit triggers mid-drag.
 
         // Update our stateful mock's coordinates and fire the event.
-        currentPointerCoords = { x: sourceRect.x, y: sourceRect.y }
+        dragPreviewOrigin = { x: sourceRect.x, y: sourceRect.y }
         await user.pointer({
             keys: "[MouseLeft>]",
             target: source,
-            coords: currentPointerCoords,
+            coords: dragPreviewOrigin,
         })
 
         // Update coordinates for the move and fire the event.
@@ -240,12 +245,58 @@ describe("Game Component - Integration Tests", () => {
             targetX = targetRect.x + 5 // A small offset from the left edge
         }
 
-        currentPointerCoords = { x: targetX, y: targetRect.y }
-        await user.pointer({ target: target, coords: currentPointerCoords })
+        dragPreviewOrigin = { x: targetX, y: targetRect.y }
+        await user.pointer({ target: target, coords: dragPreviewOrigin })
 
         // dnd-kit's PointerSensor attaches the 'up' listener to the document.
         // By firing the event on the body, we avoid stale element references.
         await user.pointer({ keys: "[/MouseLeft]", target: document.body })
+    }
+
+    // Helper function to simulate a full keyboard-based drag-and-drop action.
+    async function keyboardDragByLabel(label: RegExp, moves: string[]) {
+        // I had a lot of trouble getting these tests working, but this is the configuration that
+        // did it.  As far as I can tell, using User Event's .keyboard won't work, it has to be
+        // the lower-level fireEvent API.  Similarly, just wrapping everything in a single act
+        // block failed, but wrapping each event individually didn't, and same with selecting the
+        // source element rather than finding it once and saving the reference.  It's possible
+        // that some of this was misdiagnosis, that some later changes I made fixed the
+        // underlying problem that had required using fireEvent, but I am confident that the
+        // current structure works and am hesitant to experiment now.--JDB 2025-08-17
+
+        function source() {
+            return screen.getByLabelText(label)
+        }
+
+        function dragPreviewOriginFromSource() {
+            const sourceRect = source().getBoundingClientRect()
+            return { x: sourceRect.x, y: sourceRect.y }
+        }
+
+        dragPreviewOrigin = dragPreviewOriginFromSource()
+        await act(async () => fireEvent.focus(source()))
+        await act(async () => fireEvent.keyDown(source(), { key: " ", code: "Space"}))
+        await act(async () => fireEvent.keyUp(source(), { key: " ", code: "Space"}))
+        dragPreviewOrigin = dragPreviewOriginFromSource()
+
+        for (const move of moves) {
+            await act(async () => fireEvent.keyDown(source(), { key: move, code: move}))
+            await act(async () => fireEvent.keyUp(source(), { key: move, code: move}))
+            dragPreviewOrigin = dragPreviewOriginFromSource()
+        }
+
+        await act(async () => fireEvent.keyDown(source(), { key: " ", code: "Space"}))
+        await act(async () => fireEvent.keyUp(source(), { key: " ", code: "Space"}))
+        // The move is complete, the drag preview shouldn't still be on screen, so this line
+        // _probably_ isn't necessary?
+        dragPreviewOrigin = dragPreviewOriginFromSource()
+    }
+
+    // Helper to get the text content of tiles in a specific rack.
+    function getRackTiles(rackNumber: number) {
+        const rack = screen.getByRole("toolbar", { name: `Word rack ${rackNumber}` })
+        const tiles = within(rack).getAllByLabelText(/Tile .*/)
+        return tiles.map((t) => t.textContent)
     }
 
     describe("State Transitions", () => {
@@ -529,6 +580,93 @@ describe("Game Component - Integration Tests", () => {
             )
             await user.click(screen.getByRole("button", { name: /archives/i }))
             expect(await screen.findByRole("dialog", { name: /past puzzles/i })).toBeInTheDocument()
+        })
+    })
+
+    describe("Keyboard Navigation", () => {
+        beforeEach(async () => {
+            // Start the game before each keyboard test
+            render(
+                <Game
+                    puzzle={MOCK_PUZZLE}
+                    gameConfig={MOCK_RULES}
+                    initialHistory={null}
+                    onDateSelect={onDateSelect}
+                />,
+            )
+            await user.click(screen.getByRole("button", { name: /start game/i }))
+        })
+
+        it("should move a tile to the right within the same rack", async () => {
+            const initialRack1 = getRackTiles(1) // ["A1", "B3", "C3"]
+
+            await keyboardDragByLabel(/Tile B/i, ["ArrowRight"])
+
+            const finalRack1 = getRackTiles(1)
+            // Expected: ["A1", "C3", "B3"]
+            expect(finalRack1).toEqual([initialRack1[0], initialRack1[2], initialRack1[1]])
+        })
+
+        it("should move a tile to the left within the same rack", async () => {
+            const initialRack1 = getRackTiles(1) // ["A1", "B3", "C3"]
+
+            await keyboardDragByLabel(/Tile C/i, ["ArrowLeft"])
+
+            const finalRack1 = getRackTiles(1)
+            // Expected: ["A1", "C3", "B3"]
+            expect(finalRack1).toEqual([initialRack1[0], initialRack1[2], initialRack1[1]])
+        })
+
+        it("should move a tile down to the next rack", async () => {
+            await keyboardDragByLabel(/Tile A/i, ["ArrowDown"])
+
+            // Assert tile A is no longer in rack 1
+            expect(getRackTiles(1)).not.toContain("A1")
+            // Assert tile A is now in rack 2, at the beginning
+            expect(getRackTiles(2)).toEqual(["A1", "D1", "I1", "R1", "T1"])
+        })
+
+        it("should move a tile up to the previous rack", async () => {
+            await keyboardDragByLabel(/Tile D/i, ["ArrowUp"])
+
+            // Assert tile D is no longer in rack 2
+            expect(getRackTiles(2)).not.toContain("D1")
+            // Assert tile D is now in rack 1, at the beginning
+            expect(getRackTiles(1)).toEqual(["D1", "A1", "B3", "C3"])
+        })
+
+        it("should not move a tile past the right edge of a rack", async () => {
+            const initialRack1 = getRackTiles(1)
+
+            await keyboardDragByLabel(/Tile C/i, ["ArrowRight"])
+
+            // The rack should be unchanged
+            expect(getRackTiles(1)).toEqual(initialRack1)
+        })
+
+        it("should move a tile up or down to the end of the rack if not enough tiles in destination", async () => {
+            await keyboardDragByLabel(/Tile T/i, ["ArrowUp"])
+
+            // Assert tile T is no longer in rack 2
+            expect(getRackTiles(2)).not.toContain("T1")
+            // Assert tile T is now in rack 1, at the end
+            expect(getRackTiles(1)).toEqual(["A1", "B3", "C3", "T1"])
+
+            await keyboardDragByLabel(/Tile T/i, ["ArrowDown"])
+
+            // Assert tile T is no longer in rack 1
+            expect(getRackTiles(1)).not.toContain("T1")
+            // Assert tile T is now in rack 2, at the end
+            expect(getRackTiles(2)).toEqual(["D1", "I1", "R1", "T1"])
+        })
+
+        it("should handle a complex sequence of moves", async () => {
+            await keyboardDragByLabel(/Tile B/i, ["ArrowRight", "ArrowDown"])
+
+            // After ArrowRight, preview is [A, C, B]
+            // After ArrowDown, B moves to rack 2 at visual index 2
+            expect(getRackTiles(1)).toEqual(["A1", "C3"])
+            expect(getRackTiles(2)).toEqual(["D1", "I1", "B3", "R1", "T1"])
         })
     })
 
