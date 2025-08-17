@@ -18,6 +18,7 @@ function TileSortable({ tile, rackIndex, tileIndex, isPlaceholder }: TileSortabl
         data: {
             type: "tile",
             rackIndex,
+            tileIndex,
             letter: tile.letter,
         },
     })

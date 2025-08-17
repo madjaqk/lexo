@@ -1,4 +1,4 @@
-import { type Collision, pointerWithin, rectIntersection } from "@dnd-kit/core"
+import { type Collision, closestCorners, rectIntersection } from "@dnd-kit/core"
 
 /**
  * Custom collision detection strategy.
@@ -28,9 +28,9 @@ export default function customCollisionDetection(
         return tileCollisions
     }
 
-    // If no tile collisions, check for pointer intersection with rack containers.
+    // If no tile collisions, use closest corners intersections with rack containers.
     const rackContainers = args.droppableContainers.filter(
         (container) => container.data.current?.type === "rack",
     )
-    return pointerWithin({ ...args, droppableContainers: rackContainers })
+    return closestCorners({ ...args, droppableContainers: rackContainers })
 }

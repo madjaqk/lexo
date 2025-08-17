@@ -15,7 +15,6 @@ import {
     arrayMove,
     horizontalListSortingStrategy,
     SortableContext,
-    sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable"
 import { type Dispatch, type SetStateAction, useCallback, useEffect, useState } from "react"
 import type { Tile, WordRack, WordScore } from "@/types"
@@ -23,6 +22,7 @@ import { WordRackComponent } from "./WordRackComponent"
 import "./WordRacks.css"
 import { customAnnouncements } from "@/utils/dnd_kit/announcements"
 import customCollisionDetection from "@/utils/dnd_kit/collision"
+import { customKeyboardCoordinates } from "@/utils/dnd_kit/keyboardCoordinates"
 import { customInstructions } from "@/utils/dnd_kit/screenReaderInstructions"
 
 export interface WordRacksProps {
@@ -157,7 +157,9 @@ export default function WordRacks(props: WordRacksProps) {
 
     const sensors = useSensors(
         useSensor(MouseSensor),
-        useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: customKeyboardCoordinates,
+        }),
         useSensor(TouchSensor),
     )
 
