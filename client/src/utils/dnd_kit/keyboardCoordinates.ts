@@ -48,51 +48,33 @@ export function customKeyboardCoordinates(
             return rect1.left - rect2.left
         })
 
+    let target: ClientRect | null = null
+
     switch (event.code) {
-        case "ArrowRight": {
-                let target = null
-                // Walk list of current rack tiles, returning the first one to the right of the active tile (as defined by collisionRect)
-                for (let i = 0; i < currentRackTiles.length; i++) {
-                    const tile = currentRackTiles[i]
-                    const rect = droppableRects.get(tile.id)
-                    if (!rect) {
-                        continue
-                    }
-
-                    if (rect.left > collisionRect.left) {
-                        target = rect
-                        break
-                    }
-                }
-
-                 if (target) {
-                    return rectToXY(target)
-                 }
-
-                 return
-
-            }
+        case "ArrowRight":
         case "ArrowLeft": {
-                let target = null
-                // Walk list of current rack tiles right to left, returning the first one to the left of the active tile (as defined by collisionRect)
-                for (let i = currentRackTiles.length - 1; i >= 0; i--) {
-                    const tile = currentRackTiles[i]
-                    const rect = droppableRects.get(tile.id)
-                    if (!rect) { continue }
+            const isRight = event.code === "ArrowRight"
+            // If moving left, we search the reversed array to find the first valid target.
+            const searchArray = isRight ? currentRackTiles : [...currentRackTiles].reverse()
 
-                    if (rect.left < collisionRect.left) {
-                        target = rect
-                        break
-                    }
+            for (const tile of searchArray) {
+                const rect = droppableRects.get(tile.id)
+                if (!rect) {
+                    continue
                 }
 
-                if (target) {
-                    return rectToXY(target)
+                // Check if the tile is to the right (for ArrowRight) or left (for ArrowLeft)
+                // of the current collision rectangle.
+                if (isRight ? rect.left > collisionRect.left : rect.left < collisionRect.left) {
+                    target = rect
+                    break // Found the closest tile in the desired direction.
                 }
-
-                return
             }
-
+            if (target) {
+                return rectToXY(target)
+            }
+            return
+        }
         case "ArrowUp":
         case "ArrowDown": {
             const nextRackIndex =
