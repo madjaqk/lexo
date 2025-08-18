@@ -4,13 +4,14 @@ import { createBrowserRouter, RouterProvider } from "react-router"
 import "./index.css"
 import ErrorPage from "@/components/ErrorPage"
 import App, { loader as appLoader } from "./App.tsx"
+import LoadingPage from "./components/LoadingPage"
 
 const router = createBrowserRouter([
     {
         path: "/",
         element: <App />,
         loader: appLoader,
-        hydrateFallbackElement: <p>Loading puzzle...</p>,
+        hydrateFallbackElement: <LoadingPage />,
         errorElement: <ErrorPage />,
     },
 ])

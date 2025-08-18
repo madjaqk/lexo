@@ -1,0 +1,20 @@
+.loading-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Allow this container to grow and fill the vertical space of its flex parent */
+    flex-grow: 1;
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
+}

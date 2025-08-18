@@ -1,4 +1,5 @@
-import { render, screen, waitFor } from "@testing-library/react"
+import { act, render, screen, waitFor } from "@testing-library/react"
+import userEvent from "@testing-library/user-event"
 import { createMemoryRouter, RouterProvider } from "react-router"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { usePlayHistory } from "@/hooks/usePlayHistory"
@@ -35,6 +36,8 @@ const MOCK_PUZZLE: DailyPuzzle = {
 }
 
 describe("App Loader and Routing", () => {
+    let user: ReturnType<typeof userEvent.setup>
+
     // Helper to create and render the router for a specific path
     const renderWithRouter = (initialPath: string) => {
         const router = createMemoryRouter(
@@ -43,7 +46,7 @@ describe("App Loader and Routing", () => {
                     path: "/",
                     element: <App />,
                     loader: appLoader,
-                    hydrateFallbackElement: <p>Loading...</p>,
+                    hydrateFallbackElement: <p>Loading...</p>, // Using a simple fallback for tests
                     errorElement: <ErrorPage />,
                 },
             ],
@@ -56,6 +59,8 @@ describe("App Loader and Routing", () => {
     }
 
     beforeEach(() => {
+        user = userEvent.setup()
+
         // Set up default successful mocks
         vi.mocked(fetchGameConfig).mockResolvedValue(MOCK_CONFIG)
         vi.mocked(fetchDailyPuzzle).mockResolvedValue(MOCK_PUZZLE)
@@ -116,5 +121,57 @@ describe("App Loader and Routing", () => {
             await screen.findByRole("heading", { name: "Invalid Date Format" }),
         ).toBeInTheDocument()
         expect(screen.getByText(/The date in the URL is not valid/)).toBeInTheDocument()
+    })
+
+    it("should display the 500 error page and a retry button for a server error", async () => {
+        vi.mocked(fetchDailyPuzzle).mockRejectedValue(new Response(null, { status: 500 }))
+        renderWithRouter("/")
+
+        expect(await screen.findByRole("heading", { name: "Server Error: 500" })).toBeInTheDocument()
+        expect(screen.getByRole("button", { name: "Try Again" })).toBeInTheDocument()
+    })
+
+    it("should display a generic error page and a retry button for a network error", async () => {
+        const networkError = new Error("Network request failed")
+        vi.mocked(fetchDailyPuzzle).mockRejectedValue(networkError)
+        renderWithRouter("/")
+
+        expect(await screen.findByRole("heading", { name: "An error occurred!" })).toBeInTheDocument()
+        expect(screen.getByText(networkError.message)).toBeInTheDocument()
+        expect(screen.getByRole("button", { name: "Try Again" })).toBeInTheDocument()
+    })
+
+    it("should successfully reload the data when the 'Try Again' button is clicked", async () => {
+        // To test the intermediate loading state, we need to control the resolution
+        // of the second API call manually.
+        let resolveSecondCall: (value: DailyPuzzle) => void
+        const secondCallPromise = new Promise<DailyPuzzle>((resolve) => {
+            resolveSecondCall = resolve
+        })
+
+        vi.mocked(fetchDailyPuzzle)
+            .mockRejectedValueOnce(new Response(null, { status: 500 }))
+            .mockImplementationOnce(() => secondCallPromise)
+
+        renderWithRouter("/")
+
+        // 1. Verify the error page is shown initially.
+        const tryAgainButton = await screen.findByRole("button", { name: "Try Again" })
+        expect(tryAgainButton).toBeInTheDocument()
+
+        // 2. Click the retry button.
+        await user.click(tryAgainButton)
+
+        // 3. Verify the button enters its loading state while the promise is pending.
+        expect(screen.getByRole("button", { name: "Retrying..." })).toBeDisabled()
+
+        // 4. Now, resolve the promise and wait for the UI to update.
+        await act(async () => {
+            resolveSecondCall(MOCK_PUZZLE)
+        })
+
+        // 5. Verify that the app successfully loads the puzzle data after the retry.
+        expect(await screen.findByText(`DATE: ${MOCK_PUZZLE.date}`)).toBeInTheDocument()
+        expect(fetchDailyPuzzle).toHaveBeenCalledTimes(2)
     })
 })

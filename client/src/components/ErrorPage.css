@@ -4,17 +4,35 @@
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding: 2rem;
+    padding: 1rem;
     flex-grow: 1;
 }
 
-.error-page-link {
-    display: inline-block;
-    margin-top: 1.5rem;
-    padding: 0.75em 1.5em;
-    background-color: var(--primary-color);
-    color: white;
+.error-page h1 {
+    color: var(--error-color, #c0392b);
+    margin-bottom: 1rem;
+}
+
+.error-page p {
+    margin-bottom: 2rem;
+}
+
+.error-page-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+/* Shared styles for both the Link and the button */
+.error-page-link,
+.error-page button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
     text-decoration: none;
-    border-radius: 0.5em;
     font-weight: bold;
+}
+
+.error-page button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
