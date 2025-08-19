@@ -15,9 +15,14 @@
 .footer-link {
     background: none;
     border: none;
-    color: var(--link-color, #2980b9);
+    color: var(--primary-color);
     cursor: pointer;
     text-decoration: underline;
     font-size: inherit;
     padding: 0;
+}
+
+.footer-link:hover {
+    background: none;
+    color: var(--primary-color-hover)
 }

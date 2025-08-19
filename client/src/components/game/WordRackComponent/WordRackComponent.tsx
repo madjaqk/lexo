@@ -28,6 +28,8 @@ function TileSortable({ tile, rackIndex, tileIndex, isPlaceholder }: TileSortabl
         opacity: isDragging ? 0.5 : 1,
         zIndex: isDragging ? 2 : 1,
     }
+    const tileColorClass = `tile-${tile.value}-point`
+
     return (
         // biome-ignore lint/a11y/useAriaPropsSupportedByRole: dnd-kit's attributes apply role and tab index at runtime
         <div
@@ -37,7 +39,7 @@ function TileSortable({ tile, rackIndex, tileIndex, isPlaceholder }: TileSortabl
             {...listeners}
             aria-label={`Tile ${tile.letter} worth ${tile.value} points in rack ${rackIndex + 1}`}
             data-tile-index={tileIndex}
-            className={`tile ${isPlaceholder ? "placeholder-tile" : ""}`}
+            className={`tile ${isPlaceholder ? "placeholder-tile" : tileColorClass}`}
         >
             {!isPlaceholder && (
                 <>

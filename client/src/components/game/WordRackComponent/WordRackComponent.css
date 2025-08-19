@@ -31,11 +31,26 @@
     width: 2.2rem;
     position: relative; /* Create a positioning context for the value */
     font-weight: bold;
-    background-color: var(--tile-bg-color);
     color: var(--tile-text-color);
     border-radius: 0.2rem;
     box-shadow: 0.1rem 0.1rem 0.2rem rgba(0, 0, 0, 0.2);
     user-select: none; /* Prevent text selection during drag */
+}
+
+.tile-1-point {
+    background-color: var(--tile-bg-color-1-point);
+}
+
+.tile-2-point {
+    background-color: var(--tile-bg-color-2-point);
+}
+
+.tile-3-point {
+    background-color: var(--tile-bg-color-3-point);
+}
+
+.tile-4-point {
+    background-color: var(--tile-bg-color-4-point);
 }
 
 .tile-letter {

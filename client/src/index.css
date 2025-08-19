@@ -9,19 +9,25 @@
 :root {
     --font-family: "Nunito", sans-serif;
     /* Default theme (Light Mode) */
-    --bg-color-page: #e9edf1;
-    --bg-color-content: #f4f6f8;
-    --text-color: #2c3e50;
+    --bg-color-page: #f8f6f4;
+    --bg-color-content: #ffffff;
+    --text-color: #2c2c2c;
+    --link-color: #5a7a8c;
 
-    --primary-color: #3498db;
-    --primary-color-hover: #2980b9;
-    --valid-color: #27ae60;
-    --invalid-color: #c0392b;
-    --tile-text-color: #34495e;
-    --tile-border-color: #bdc3c7;
-    --timer-fill-start: #2ecc71;
-    --timer-fill-end: #e74c3c;
-    --tile-bg-color: #ffffff;
+    --primary-color: #4a90b8;
+    --primary-color-hover: #3a7a9c;
+    --valid-color: #2e7d32;
+    --invalid-color: #d32f2f;
+
+    --tile-text-color: #2c2c2c;
+    --tile-border-color: #4a5a62;
+    --tile-bg-color-1-point: #f6f9ff;
+    --tile-bg-color-2-point: #d1dde6;
+    --tile-bg-color-3-point: #a8bcc8;
+    --tile-bg-color-4-point: #7a95a3;
+
+    --timer-fill-start: #4caf50;
+    --timer-fill-end: #f44336;
     --timer-bg: #e0e0e0;
 }
 
@@ -45,6 +51,10 @@ body {
     font-family: var(--font-family);
     background-color: var(--bg-color-page);
     color: var(--text-color);
+}
+
+a:link {
+    color: var(--link-color);
 }
 
 /* Accessibility utility: Visually hide an element but keep it accessible to screen readers */

@@ -2,6 +2,7 @@ import ReactDOM from "react-dom"
 import { useModalCloseEvents } from "@/hooks/useModalCloseEvents"
 import "./InstructionsModal.css"
 import "@/components/ui/modals/Modal.css"
+import walrus from "@/assets/gemini_walrus_transparent_trimmed.png"
 
 interface InstructionsModalProps {
     isOpen: boolean
@@ -46,7 +47,7 @@ export default function InstructionsModal({ isOpen, onClose }: InstructionsModal
                     <p>Drag and drop tiles between the racks to form your words. Good luck!</p>
                 </div>
                 <img
-                    src="/path/to/mascot.png" // Replace with the actual path to your image
+                    src={walrus}
                     alt="A friendly mascot character for the game" // Describe the image for accessibility
                     className="logo-placeholder"
                 />

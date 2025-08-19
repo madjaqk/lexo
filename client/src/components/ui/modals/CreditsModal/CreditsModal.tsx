@@ -60,7 +60,7 @@ export default function CreditsModal({ isOpen, onClose }: CreditsModalProps) {
                             .
                         </li>
                         <li>"Share" icon from Google's Material Symbols.</li>
-                        <li>Logo, favicon, and character art generated with Google Gemini.</li>
+                        <li>Logo, favicon, and walrus art generated with Google Gemini.</li>
                     </ul>
                 </div>
             </div>
