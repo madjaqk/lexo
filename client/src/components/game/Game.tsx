@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react"
+import FooterComponent from "@/components/ui/Footer/Footer"
+import ArchivesModal from "@/components/ui/modals/ArchivesModal/ArchivesModal"
+import CreditsModal from "@/components/ui/modals/CreditsModal/CreditsModal"
+import InstructionsModal from "@/components/ui/modals/InstructionsModal/InstructionsModal"
 import { useGameScoring } from "@/hooks/useGameScoring"
 import { usePlayHistory } from "@/hooks/usePlayHistory"
 import { useTimer } from "@/hooks/useTimer"
 import type { DailyPuzzle, GameConfig, GameState, PlayHistoryRecord } from "@/types"
-import ArchivesModal from "../ui/modals/ArchivesModal/ArchivesModal"
 import "./Game.css"
-import CreditsModal from "../ui/modals/CreditsModal/CreditsModal"
-import FooterComponent from "../ui/Footer/Footer"
-import InstructionsModal from "../ui/modals/InstructionsModal/InstructionsModal"
+import GameHeader from "./GameHeader/GameHeader"
 import ScoreReport from "./ScoreReport/ScoreReport"
 import TimerBar from "./TimerBar/TimerBar"
 import WordRacks from "./WordRacks/WordRacks"
@@ -90,19 +91,12 @@ export default function Game(props: GameProps) {
 
     return (
         <div className="game">
-            <div className="game-header">
-                <p className="game-date">DATE: {puzzle.date}</p>
-                <div className="header-buttons">
-                    <button type="button" onClick={openInstructions}>
-                        Instructions
-                    </button>
-                    {history && Object.keys(history).length > 0 && (
-                        <button type="button" onClick={openArchives}>
-                            Archives
-                        </button>
-                    )}
-                </div>
-            </div>
+            <GameHeader
+                date={puzzle.date}
+                history={history}
+                onOpenInstructions={openInstructions}
+                onOpenArchives={openArchives}
+            />
             {gameState === "pre-game" && (
                 <div className="pre-game-container">
                     <button type="button" onClick={startGame}>
