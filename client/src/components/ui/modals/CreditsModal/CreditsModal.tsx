@@ -48,7 +48,17 @@ export default function CreditsModal({ isOpen, onClose }: CreditsModalProps) {
                     </p>
                     <h3>Attributions</h3>
                     <ul>
-                        <li>Primary font is Nunito, via Google Fonts.</li>
+                        <li>
+                            Primary font is Nunito, used under the{" "}
+                            <a
+                                href="https://openfontlicense.org/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                SIL Open Font License
+                            </a>
+                            .
+                        </li>
                         <li>"Share" icon from Google's Material Symbols.</li>
                         <li>Logo, favicon, and character art generated with Google Gemini.</li>
                     </ul>
