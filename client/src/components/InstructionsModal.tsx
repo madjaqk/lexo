@@ -1,7 +1,7 @@
-import { useEffect, useRef } from "react"
 import ReactDOM from "react-dom"
-import "./Modal.css"
+import { useModalCloseEvents } from "@/hooks/useModalCloseEvents"
 import "./InstructionsModal.css"
+import "./Modal.css"
 
 interface InstructionsModalProps {
     isOpen: boolean
@@ -9,32 +9,7 @@ interface InstructionsModalProps {
 }
 
 export default function InstructionsModal({ isOpen, onClose }: InstructionsModalProps) {
-    const modalRef = useRef<HTMLDivElement>(null)
-
-    useEffect(() => {
-        function handleKeyDown(event: KeyboardEvent) {
-            if (event.key === "Escape") {
-                onClose()
-            }
-        }
-
-        function handleClickOutside(event: MouseEvent) {
-            if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-                onClose()
-            }
-        }
-
-        if (isOpen) {
-            document.addEventListener("keydown", handleKeyDown)
-            document.addEventListener("mouseup", handleClickOutside)
-        }
-
-        // Cleanup function to remove the event listener
-        return () => {
-            document.removeEventListener("keydown", handleKeyDown)
-            document.removeEventListener("mouseup", handleClickOutside)
-        }
-    }, [isOpen, onClose])
+    const modalRef = useModalCloseEvents({ isOpen, onClose })
 
     if (!isOpen) {
         return null

@@ -127,7 +127,9 @@ describe("App Loader and Routing", () => {
         vi.mocked(fetchDailyPuzzle).mockRejectedValue(new Response(null, { status: 500 }))
         renderWithRouter("/")
 
-        expect(await screen.findByRole("heading", { name: "Server Error: 500" })).toBeInTheDocument()
+        expect(
+            await screen.findByRole("heading", { name: "Server Error: 500" }),
+        ).toBeInTheDocument()
         expect(screen.getByRole("button", { name: "Try Again" })).toBeInTheDocument()
     })
 
@@ -136,7 +138,9 @@ describe("App Loader and Routing", () => {
         vi.mocked(fetchDailyPuzzle).mockRejectedValue(networkError)
         renderWithRouter("/")
 
-        expect(await screen.findByRole("heading", { name: "An error occurred!" })).toBeInTheDocument()
+        expect(
+            await screen.findByRole("heading", { name: "An error occurred!" }),
+        ).toBeInTheDocument()
         expect(screen.getByText(networkError.message)).toBeInTheDocument()
         expect(screen.getByRole("button", { name: "Try Again" })).toBeInTheDocument()
     })

@@ -1,0 +1,23 @@
+.app-footer {
+    width: 100%;
+    padding: 1rem;
+    margin-top: auto; /* Pushes the footer to the bottom of the flex container */
+    text-align: center;
+    font-size: 0.9em;
+    color: var(--text-color-subtle, #7f8c8d);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.footer-link {
+    background: none;
+    border: none;
+    color: var(--link-color, #2980b9);
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: inherit;
+    padding: 0;
+}

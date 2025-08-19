@@ -1,8 +1,8 @@
-import { useEffect, useRef } from "react"
 import ReactDOM from "react-dom"
-import "./Modal.css"
-import "./ArchivesModal.css"
+import { useModalCloseEvents } from "@/hooks/useModalCloseEvents"
 import type { PlayHistory } from "@/types"
+import "./ArchivesModal.css"
+import "./Modal.css"
 
 interface ArchivesModalProps {
     isOpen: boolean
@@ -21,31 +21,7 @@ export default function ArchivesModal({
     currentDate,
     history,
 }: ArchivesModalProps) {
-    const modalRef = useRef<HTMLDivElement>(null)
-
-    useEffect(() => {
-        function handleKeyDown(event: KeyboardEvent) {
-            if (event.key === "Escape") {
-                onClose()
-            }
-        }
-
-        function handleClickOutside(event: MouseEvent) {
-            if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-                onClose()
-            }
-        }
-
-        if (isOpen) {
-            document.addEventListener("keydown", handleKeyDown)
-            document.addEventListener("mouseup", handleClickOutside)
-        }
-
-        return () => {
-            document.removeEventListener("keydown", handleKeyDown)
-            document.removeEventListener("mouseup", handleClickOutside)
-        }
-    }, [isOpen, onClose])
+    const modalRef = useModalCloseEvents({ isOpen, onClose })
 
     // Sort in reverse chronological order
     const sortedHistory = history

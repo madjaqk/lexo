@@ -5,6 +5,8 @@ import { useTimer } from "@/hooks/useTimer"
 import type { DailyPuzzle, GameConfig, GameState, PlayHistoryRecord } from "@/types"
 import ArchivesModal from "./ArchivesModal"
 import "./Game.css"
+import CreditsModal from "./CreditsModal"
+import FooterComponent from "./Footer"
 import InstructionsModal from "./InstructionsModal"
 import ScoreReport from "./ScoreReport"
 import TimerBar from "./TimerBar"
@@ -26,6 +28,7 @@ export default function Game(props: GameProps) {
     const [wordRacks, setWordRacks] = useState(initialHistory?.racks ?? puzzle.initialRacks)
     const [isInstructionsOpen, setIsInstructionsOpen] = useState(false)
     const [isArchivesOpen, setIsArchivesOpen] = useState(false)
+    const [isCreditsOpen, setIsCreditsOpen] = useState(false)
     const [endTime, setEndTime] = useState<Date | null>(null)
     const gameBoardRef = useRef<HTMLDivElement>(null)
     const { history, saveHistoryForDate } = usePlayHistory()
@@ -56,6 +59,8 @@ export default function Game(props: GameProps) {
     const closeInstructions = useCallback(() => setIsInstructionsOpen(false), [])
     const openArchives = useCallback(() => setIsArchivesOpen(true), [])
     const closeArchives = useCallback(() => setIsArchivesOpen(false), [])
+    const openCredits = useCallback(() => setIsCreditsOpen(true), [])
+    const closeCredits = useCallback(() => setIsCreditsOpen(false), [])
 
     const timeRemainingMs = useTimer(endTime, endGame, gameConfig.timerSeconds * 1000)
 
@@ -174,6 +179,8 @@ export default function Game(props: GameProps) {
                 currentDate={gameConfig.currentDate}
                 history={history}
             />
+            <CreditsModal isOpen={isCreditsOpen} onClose={closeCredits} />
+            <FooterComponent onOpenCredits={openCredits} />
         </div>
     )
 }

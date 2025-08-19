@@ -166,7 +166,7 @@ TOTAL: 202 (14 over target!)
 3. [X] Add `.env` file for client configuration
 4. [X] Enhance keyboard and mobile touch interactions.
 5. [X] Implement comprehensive error handling and loading states for API calls.
-6. [ ] Credits/copyright information (footer?)
+6. [X] Credits/copyright information (footer?)
 7. [ ] MAYBE: Front-end refactor (break header into its own component, divide `client/src/components/` into subfolders)
 8. [ ] Download the primary font and serve it locally.
 9. [ ] Finalize the game name and create a logo.
