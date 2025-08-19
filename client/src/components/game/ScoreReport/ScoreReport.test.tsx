@@ -16,7 +16,7 @@ vi.mock("@/utils/resultsFormatter", () => ({
     generateSrSummaryText: vi.fn(),
 }))
 
-vi.mock("./ShareButton", () => ({
+vi.mock("../ShareButton/ShareButton", () => ({
     // The mock now destructures the props to avoid spreading unknown attributes to the DOM element.
     // We can pass specific props like `date` to a data attribute to make them verifiable in the test.
     default: (props: { rackScores: WordScore[]; targetScores: WordScore[]; date: string }) => (
@@ -120,7 +120,7 @@ describe("ScoreReport", () => {
         })
 
         it("should NOT render the ShareButton", () => {
-            expect(screen.queryByRole("button", { name: "Mock Share" })).not.toBeInTheDocument()
+            expect(screen.queryByRole("button", { name: /share/i })).not.toBeInTheDocument()
         })
 
         it("should still render the report text", () => {

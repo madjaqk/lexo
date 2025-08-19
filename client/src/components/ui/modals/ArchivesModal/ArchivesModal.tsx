@@ -2,7 +2,7 @@ import ReactDOM from "react-dom"
 import { useModalCloseEvents } from "@/hooks/useModalCloseEvents"
 import type { PlayHistory } from "@/types"
 import "./ArchivesModal.css"
-import "./Modal.css"
+import "@/components/ui/modals/Modal.css"
 
 interface ArchivesModalProps {
     isOpen: boolean

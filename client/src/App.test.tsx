@@ -6,7 +6,7 @@ import { usePlayHistory } from "@/hooks/usePlayHistory"
 import { fetchDailyPuzzle, fetchGameConfig } from "@/services/gameService"
 import type { DailyPuzzle, GameConfig } from "@/types"
 import App, { loader as appLoader } from "./App"
-import ErrorPage from "./components/ErrorPage"
+import ErrorPage from "./components/ui/shared/ErrorPage/ErrorPage"
 
 // Mock dependencies
 vi.mock("@/services/gameService", () => ({

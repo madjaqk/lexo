@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import { type LoaderFunctionArgs, redirect, useLoaderData, useSearchParams } from "react-router"
-import Game from "./components/Game"
+import Game from "./components/game/Game"
 import { LOCAL_STORAGE_KEY, usePlayHistory } from "./hooks/usePlayHistory"
 import { fetchDailyPuzzle, fetchGameConfig } from "./services/gameService"
 import { loadWordList } from "./services/wordValidation"

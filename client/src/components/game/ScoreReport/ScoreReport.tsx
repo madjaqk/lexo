@@ -1,10 +1,10 @@
+import ShareButton from "@/components/game/ShareButton/ShareButton"
 import type { WordRack, WordScore } from "@/types"
 import {
     calculateScoreSummary,
     generateScoreReportText,
     generateSrSummaryText,
 } from "@/utils/resultsFormatter"
-import ShareButton from "./ShareButton"
 import "./ScoreReport.css"
 
 export interface ScoreReportProps {

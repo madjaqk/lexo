@@ -1,7 +1,7 @@
 import ReactDOM from "react-dom"
 import { useModalCloseEvents } from "@/hooks/useModalCloseEvents"
 import "./CreditsModal.css"
-import "./Modal.css"
+import "@/components/ui/modals/Modal.css"
 
 interface CreditsModalProps {
     isOpen: boolean

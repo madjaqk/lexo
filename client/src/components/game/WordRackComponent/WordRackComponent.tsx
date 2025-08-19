@@ -2,7 +2,7 @@ import { type UniqueIdentifier, useDroppable } from "@dnd-kit/core"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import type { Tile, WordRack, WordScore } from "@/types"
-import RackScore from "./RackScore"
+import RackScore from "../RackScore/RackScore"
 import "./WordRackComponent.css"
 
 interface TileSortableProps {

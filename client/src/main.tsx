@@ -2,9 +2,9 @@ import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 import { createBrowserRouter, RouterProvider } from "react-router"
 import "./index.css"
-import ErrorPage from "@/components/ErrorPage"
+import ErrorPage from "@/components/ui/shared/ErrorPage/ErrorPage.tsx"
+import LoadingPage from "@/components/ui/shared/LoadingPage/LoadingPage.tsx"
 import App, { loader as appLoader } from "./App.tsx"
-import LoadingPage from "./components/LoadingPage"
 
 const router = createBrowserRouter([
     {

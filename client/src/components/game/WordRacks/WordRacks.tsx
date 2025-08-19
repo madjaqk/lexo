@@ -14,7 +14,7 @@ import {
 import { arrayMove, horizontalListSortingStrategy, SortableContext } from "@dnd-kit/sortable"
 import { type Dispatch, type SetStateAction, useCallback, useEffect, useState } from "react"
 import type { Tile, WordRack, WordScore } from "@/types"
-import { WordRackComponent } from "./WordRackComponent"
+import { WordRackComponent } from "../WordRackComponent/WordRackComponent"
 import "./WordRacks.css"
 import { customAnnouncements } from "@/utils/dnd_kit/announcements"
 import customCollisionDetection from "@/utils/dnd_kit/collision"
