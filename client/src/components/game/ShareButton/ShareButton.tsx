@@ -4,6 +4,7 @@ import type { WordScore } from "@/types"
 import { isMobile } from "@/utils/isMobile"
 import { calculateScoreSummary, generateShareText } from "@/utils/resultsFormatter"
 import "./ShareButton.css"
+import ShareIcon from "@/components/ui/icons/ShareIcon"
 
 interface ShareButtonProps {
     rackScores: WordScore[]
@@ -26,7 +27,7 @@ export default function ShareButton({ rackScores, targetScores, date }: ShareBut
         if (useNativeShare) {
             try {
                 await navigator.share({
-                    title: `[Tile Game Name tk] — ${date}`,
+                    title: `${import.meta.env.VITE_APP_NAME} — ${date}`,
                     text: shareText,
                 })
             } catch (error) {
@@ -49,7 +50,7 @@ export default function ShareButton({ rackScores, targetScores, date }: ShareBut
 
     return (
         <button type="button" className="share-button" onClick={handleShare}>
-            <span className="material-symbols-outlined">share</span>
+            <ShareIcon />
             <span>{buttonText}</span>
         </button>
     )

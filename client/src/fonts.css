@@ -1,0 +1,26 @@
+/*
+ * Defines the custom font-face for the self-hosted Nunito variable font.
+ * This tells the browser how to use the local font file.
+ */
+@font-face {
+    font-family: "Nunito";
+    /* The path is relative to the public directory. */
+    src: url("/Nunito-VariableFont_wght.ttf") format("truetype-variations");
+    /* The range of weights and styles supported by this variable font file. */
+    font-weight: 200 1000;
+    font-style: normal;
+    /* Improves perceived performance by showing a fallback font immediately. */
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Nunito";
+    /* The path is relative to the public directory. */
+    src: url("/Nunito-Italic-VariableFont_wght.ttf") format("truetype-variations");
+    /* The range of weights supported by this variable font file. */
+    font-weight: 200 1000;
+    /* This rule is for the italic style. */
+    font-style: italic;
+    /* Improves perceived performance by showing a fallback font immediately. */
+    font-display: swap;
+}
