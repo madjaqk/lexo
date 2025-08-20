@@ -15,7 +15,7 @@
 .footer-link {
     background: none;
     border: none;
-    color: var(--primary-color);
+    color: var(--link-color);
     cursor: pointer;
     text-decoration: underline;
     font-size: inherit;

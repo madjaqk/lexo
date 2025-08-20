@@ -68,13 +68,11 @@
 }
 
 .history-difference.positive {
-    /* TODO: Replace with --success-color variable */
     color: var(--valid-color);
     font-weight: bold;
 }
 
 .history-difference.negative {
-    /* TODO: Replace with --error-color variable */
     color: var(--invalid-color);
     font-weight: bold;
 }

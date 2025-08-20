@@ -12,7 +12,7 @@
 }
 
 .modal {
-    background-color: var(--bg-color-page);
+    background-color: var(--bg-color-content);
     color: var(--text-color);
     padding: 2rem;
     border-radius: 8px;
