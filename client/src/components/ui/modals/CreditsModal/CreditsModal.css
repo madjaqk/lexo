@@ -20,7 +20,7 @@
 }
 
 .credits-content a {
-    color: var(--link-color, #2980b9);
+    color: var(--link-color);
     text-decoration: none;
 }
 

@@ -9,7 +9,7 @@
 }
 
 .error-page h1 {
-    color: var(--error-color, #c0392b);
+    color: var(--invalid-color);
     margin-bottom: 1rem;
 }
 

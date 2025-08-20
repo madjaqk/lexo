@@ -4,7 +4,7 @@
     margin-top: auto; /* Pushes the footer to the bottom of the flex container */
     text-align: center;
     font-size: 0.9em;
-    color: var(--text-color-subtle, #7f8c8d);
+    color: var(--text-color);
     display: flex;
     justify-content: center;
     align-items: center;

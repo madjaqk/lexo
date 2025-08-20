@@ -1,6 +1,6 @@
 .timer-bar-container {
     position: relative;
-    background-color: #999; /* A neutral background for the empty part of the bar */
+    background-color: var(--timer-bg); /* A neutral background for the empty part of the bar */
 }
 
 /* Mobile-first: Horizontal bar */
@@ -16,7 +16,7 @@
     transform-origin: right;
     transform: scaleX(var(--scale-ratio, 1));
     height: 100%;
-    background-color: red; /* The end color of the timer */
+    background-color: var(--timer-fill-end); /* The end color of the timer */
 }
 
 /* Desktop: Vertical bar */
@@ -34,7 +34,7 @@
 
 .timer-fill-color {
     height: 100%;
-    background-color: green; /* The start color, which fades out */
+    background-color: var(--timer-fill-start); /* The start color, which fades out */
 }
 
 .timer-bar-text {

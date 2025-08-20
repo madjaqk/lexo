@@ -19,11 +19,6 @@
     color: var(--text-color);
 }
 
-.date-picker-form button:disabled {
-    background-color: #bdc3c7;
-    cursor: not-allowed;
-}
-
 .history-list-container {
     margin-top: 2rem;
     border-top: 1px solid var(--subtle-border-color);

@@ -8,16 +8,18 @@
 
 :root {
     --font-family: "Nunito", sans-serif;
+
     /* Default theme (Light Mode) */
-    --bg-color-page: #f8f6f4;
+    --bg-color-page: #d8d6d4;
     --bg-color-content: #ffffff;
     --text-color: #2c2c2c;
     --link-color: #5a7a8c;
+    --link-visited-color: #7b4397;
 
-    --primary-color: #4a90b8;
+    --primary-color: #2196f3;
     --primary-color-hover: #3a7a9c;
-    --valid-color: #2e7d32;
-    --invalid-color: #d32f2f;
+    --valid-color: #2196f3;
+    --invalid-color: #f44336;
 
     --tile-text-color: #2c2c2c;
     --tile-border-color: #4a5a62;
@@ -25,21 +27,37 @@
     --tile-bg-color-2-point: #d1dde6;
     --tile-bg-color-3-point: #a8bcc8;
     --tile-bg-color-4-point: #7a95a3;
+    --tile-placeholder: #2f4f4f;
 
-    --timer-fill-start: #4caf50;
+    --timer-fill-start: #2196f3;
     --timer-fill-end: #f44336;
     --timer-bg: #e0e0e0;
 }
 
 /* Dark Mode Overrides */
-@media (prefers-color-scheme: dark) {
-    :root {
-        --bg-color-page: #212f3c;
-        --bg-color-content: #2c3e50;
-        --text-color: #ecf0f1;
-        --tile-bg-color: #fdf5e6;
-        --timer-bg: #34495e;
-    }
+[data-theme="dark"] {
+    --bg-color-page: #1a1a1a;
+    --bg-color-content: #2d2d2d;
+    --text-color: #e8e8e8;
+    --link-color: #7ba3b8;
+    --link-visited-color: #ba68c8;
+
+    --primary-color: #1976d2;
+    --primary-color-hover: #1565c0;
+    --valid-color: #1976d2;
+    --invalid-color: #d32f2f;
+
+    --tile-text-color: #e8e8e8;
+    --tile-border-color: #8ba5b2;
+    --tile-bg-color-1-point: #3a3a3a;
+    --tile-bg-color-2-point: #4a5560;
+    --tile-bg-color-3-point: #5d7380;
+    --tile-bg-color-4-point: #7a95a3;
+    --tile-placeholder: #6b7280;
+
+    --timer-fill-start: #1976d2;
+    --timer-fill-end: #d32f2f;
+    --timer-bg: #404040;
 }
 
 html {
@@ -55,6 +73,10 @@ body {
 
 a:link {
     color: var(--link-color);
+}
+
+a:visited {
+    color: var(--link-visited-color);
 }
 
 /* Accessibility utility: Visually hide an element but keep it accessible to screen readers */

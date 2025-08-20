@@ -64,21 +64,20 @@
     font-size: 0.7em;
 }
 
+/* The "drop-placeholder-visual" divs aren't actually displayed, despite their name, but are important as valid drop targets for the tiles. */
 .drop-placeholder-visual {
     flex: 1;
     display: flex;
-    background: rgba(0, 128, 0, 0.1);
     align-items: center;
     justify-content: center;
     font-size: 1.2em;
-    border: 2px dashed #008000;
     margin-top: 4px;
     z-index: 0;
 }
 
 .placeholder-tile {
-    background: darkslategray;
-    border: 1px dotted blue;
+    background-color: var(--tile-placeholder);
+    border: 1px dotted var(--tile-border-color);
 }
 
 /* Larger screen overrides */

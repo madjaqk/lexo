@@ -3,7 +3,3 @@
     flex-direction: column;
     gap: 1rem;
 }
-
-.drag-preview {
-    border: 1px dashed green;
-}
