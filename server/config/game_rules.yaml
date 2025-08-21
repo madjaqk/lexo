@@ -9,17 +9,17 @@ letter_values:
     A: 1
     B: 2
     C: 2
-    D: 1
+    D: 2
     E: 1
     F: 3
     G: 2
-    H: 2
+    H: 3
     I: 1
     J: 4
-    K: 3
+    K: 4
     L: 1
     M: 2
-    N: 1   # TODO: In the distant past, `N` was a YAML shortcut for "false".  I don't think that's the case anymore, but if this causes problems, change the key here to `"N"` (that is, with quotes) to force it to be a string. -- JDB 2025-07-14
+    N: 1   # In the distant past, `N` was a YAML shortcut for "false".  I don't think that's the case anymore, but if this causes problems, change the key here to `"N"` (that is, with quotes) to force it to be a string. -- JDB 2025-07-14
     O: 1
     P: 2
     Q: 4
@@ -28,8 +28,8 @@ letter_values:
     T: 1
     U: 2
     V: 3
-    W: 2
+    W: 3
     X: 4
-    Y: 2
+    Y: 3
     Z: 4
 timer_seconds: 300 # in seconds
