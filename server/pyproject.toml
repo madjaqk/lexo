@@ -1,8 +1,11 @@
 [project]
-name = "tile-game-server"
-version = "0.1.0"
-description = "Back-end server for the daily tile game"
-readme = "README.md"
+name = "lexo-server"
+version = "1.0.0"
+description = "The back-end server for a daily word puzzle game."
+readme = "../README.md"
+license = "MIT"
+authors = [{ name = "Jack Brounstein", email = "jack.brounstein@yahoo.com" }]
+keywords = ["fastapi", "word-game", "puzzle", "python"]
 requires-python = ">=3.13"
 dependencies = [
     "fastapi>=0.116.1",
@@ -12,6 +15,10 @@ dependencies = [
     "typer>=0.16.0",
     "uvicorn[standard]>=0.35.0",
 ]
+
+[project.urls]
+"Repository" = "https://github.com/madjaqk/lexo"
+"Bug Tracker" = "https://github.com/madjaqk/lexo/issues"
 
 [dependency-groups]
 dev = [

@@ -1,8 +1,17 @@
 {
-    "name": "client",
+    "name": "lexo-client",
     "private": true,
     "version": "1.0.0",
     "type": "module",
+    "description": "The front-end client for a daily word puzzle game.",
+    "keywords": ["react", "word-game", "puzzle", "typescript", "vite"],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/madjaqk/lexo.git"
+    },
+    "bugs": {
+        "url": "https://github.com/madjaqk/lexo/issues"
+    },
     "scripts": {
         "dev": "vite --port 2000",
         "build": "tsc -b && vite build",
