@@ -2,6 +2,7 @@ import { useEffect } from "react"
 import { type LoaderFunctionArgs, redirect, useLoaderData, useSearchParams } from "react-router"
 import "./App.css"
 import Game from "./components/game/Game"
+import Logo from "./components/ui/Logo/Logo"
 import DarkModeToggle from "./components/ui/DarkModeToggle/DarkModeToggle"
 import { LOCAL_STORAGE_KEY, usePlayHistory } from "./hooks/usePlayHistory"
 import { fetchDailyPuzzle, fetchGameConfig } from "./services/gameService"
@@ -89,7 +90,7 @@ function App() {
 
     return (
         <main className="app-container">
-            <h1>{import.meta.env.VITE_APP_NAME}</h1>
+            <Logo />
             <Game
                 puzzle={puzzle}
                 gameConfig={config}

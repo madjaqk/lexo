@@ -170,7 +170,7 @@ TOTAL: 202 (14 over target!)
 7. [X] Front-end refactor: Break header into its own component, divide `client/src/components/` into subfolders
 8. [X] Download the primary font and serve it locally.
 9. [X] Finalize the color scheme and implement a dark mode toggle.
-10. [ ] Finalize the game name and create a logo.
+10. [X] Finalize the game name and create a logo.
 11. [ ] Add a favicon based on the new logo.
 12. [ ] Update `package.json` and `pyproject.toml` with the final project name, version, and author details.
 13. [ ] Write the project `README.md`.

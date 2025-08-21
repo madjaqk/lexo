@@ -1,0 +1,32 @@
+.logo {
+    font-size: 3.5rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    margin: 0 auto;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    text-shadow: 2px 2px 4px var(--primary-color);
+    color: var(--text-color);
+    user-select: none;
+}
+
+.logo-tile {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--tile-bg-color-1-point);
+    border: 2px solid var(--tile-border-color);
+    border-radius: 0.5rem;
+    min-width: 1.1em;
+    height: 1.1em;
+    box-shadow: 0.2rem 0.2rem 0.4rem rgba(0, 0, 0, 0.2);
+    /* text-shadow: none; */
+    color: var(--tile-text-color);
+    margin-right: 0.1em;
+}
+
+.logo-text {
+    letter-spacing: 0.05em;
+    font-style: italic;
+}
