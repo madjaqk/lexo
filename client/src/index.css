@@ -12,7 +12,9 @@
     /* Default theme (Light Mode) */
     --bg-color-page: #d8d6d4;
     --bg-color-content: #ffffff;
+    --bg-color-hover: #f0f0f0;
     --text-color: #2c2c2c;
+    --text-color-subtle: #7f8c8d;
     --link-color: #5a7a8c;
     --link-visited-color: #7b4397;
 
@@ -32,13 +34,18 @@
     --timer-fill-start: #2196f3;
     --timer-fill-end: #f44336;
     --timer-bg: #e0e0e0;
+
+    --backdrop-bg-color: rgba(0, 0, 0, 0.6);
+    --subtle-border-color: #e0e0e0;
 }
 
 /* Dark Mode Overrides */
 [data-theme="dark"] {
     --bg-color-page: #1a1a1a;
     --bg-color-content: #2d2d2d;
+    --bg-color-hover: #3a3a3a;
     --text-color: #e8e8e8;
+    --text-color-subtle: #95a5a6;
     --link-color: #7ba3b8;
     --link-visited-color: #ba68c8;
 
@@ -58,6 +65,9 @@
     --timer-fill-start: #1976d2;
     --timer-fill-end: #d32f2f;
     --timer-bg: #404040;
+
+    --backdrop-bg-color: rgba(0, 0, 0, 0.7);
+    --subtle-border-color: #404040;
 }
 
 html {

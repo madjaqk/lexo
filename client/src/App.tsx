@@ -1,11 +1,13 @@
 import { useEffect } from "react"
 import { type LoaderFunctionArgs, redirect, useLoaderData, useSearchParams } from "react-router"
+import "./App.css"
 import Game from "./components/game/Game"
+import DarkModeToggle from "./components/ui/DarkModeToggle/DarkModeToggle"
 import { LOCAL_STORAGE_KEY, usePlayHistory } from "./hooks/usePlayHistory"
 import { fetchDailyPuzzle, fetchGameConfig } from "./services/gameService"
 import { loadWordList } from "./services/wordValidation"
 import type { DailyPuzzle, GameConfig, PlayHistoryRecord } from "./types"
-import "./App.css"
+
 /**
  * We can cache the results of one-time fetches at the module level.
  * This prevents re-fetching on every navigation.
@@ -95,6 +97,7 @@ function App() {
                 onDateSelect={handleDateSelect}
                 maxTiles={7}
             />
+            <DarkModeToggle />
         </main>
     )
 }

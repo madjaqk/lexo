@@ -1,0 +1,25 @@
+.dark-mode-toggle-wrapper {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 1001; /* Above modal backdrop */
+}
+
+.dark-mode-toggle {
+    /* Reset button styles for a clean icon look */
+    background-color: var(--bg-color-hover);
+    border: 1px solid var(--subtle-border-color);
+    padding: 0.5rem;
+    border-radius: 50%;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px; /* Explicit size for a perfect circle */
+    height: 44px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode-toggle:hover {
+    background-color: var(--text-color-subtle);
+}

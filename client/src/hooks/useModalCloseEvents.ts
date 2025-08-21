@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react"
+import { useClickOutside } from "./useClickOutside"
 
 interface UseModalCloseEventsProps {
     isOpen: boolean
@@ -17,6 +18,16 @@ interface UseModalCloseEventsProps {
 export function useModalCloseEvents({ isOpen, onClose }: UseModalCloseEventsProps) {
     const modalRef = useRef<HTMLDivElement>(null)
 
+    // Use the dedicated hook for click outside logic.
+    // The handler will be called on every outside click, so we must check
+    // if the modal is open before calling onClose.
+    useClickOutside(modalRef, () => {
+        if (isOpen) {
+            onClose()
+        }
+    })
+
+    // This effect handles the 'Escape' key press.
     useEffect(() => {
         function handleKeyDown(event: KeyboardEvent) {
             if (event.key === "Escape") {
@@ -24,20 +35,13 @@ export function useModalCloseEvents({ isOpen, onClose }: UseModalCloseEventsProp
             }
         }
 
-        function handleClickOutside(event: MouseEvent) {
-            if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-                onClose()
-            }
-        }
-
+        // Only add the listener if the modal is open.
         if (isOpen) {
             document.addEventListener("keydown", handleKeyDown)
-            document.addEventListener("mouseup", handleClickOutside)
         }
 
         return () => {
             document.removeEventListener("keydown", handleKeyDown)
-            document.removeEventListener("mouseup", handleClickOutside)
         }
     }, [isOpen, onClose])
 

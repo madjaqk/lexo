@@ -70,6 +70,18 @@ describe("App Loader and Routing", () => {
             getHistoryForDate: vi.fn(),
             clearAllHistory: vi.fn(),
         })
+
+        // Mock window.matchMedia for useTernaryDarkMode hook, which is used by DarkModeToggle
+        Object.defineProperty(window, "matchMedia", {
+            writable: true,
+            value: vi.fn().mockImplementation((query) => ({
+                matches: false, // Default to light mode for tests
+                media: query,
+                onchange: null,
+                addEventListener: vi.fn(),
+                removeEventListener: vi.fn(),
+            })),
+        })
     })
 
     afterEach(() => {
