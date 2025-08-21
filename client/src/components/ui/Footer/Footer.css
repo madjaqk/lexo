@@ -24,5 +24,5 @@
 
 .footer-link:hover {
     background: none;
-    color: var(--primary-color-hover)
+    color: var(--primary-color-hover);
 }

@@ -40,7 +40,9 @@ export default function DarkModeToggle() {
             >
                 {themeIcons[theme]}
             </button>
-            {isMenuOpen && <ThemeMenu onClose={() => setIsMenuOpen(false)} onThemeSelect={setTheme} />}
+            {isMenuOpen && (
+                <ThemeMenu onClose={() => setIsMenuOpen(false)} onThemeSelect={setTheme} />
+            )}
         </div>
     )
 }

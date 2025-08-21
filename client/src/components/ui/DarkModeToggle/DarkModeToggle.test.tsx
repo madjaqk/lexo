@@ -109,7 +109,11 @@ describe("DarkModeToggle component", () => {
 
     it("should call setTheme and close the menu when an option is selected", async () => {
         const user = userEvent.setup()
-        mockedUseTheme.mockReturnValue({ theme: "light", setTheme: setThemeMock, isDarkMode: false })
+        mockedUseTheme.mockReturnValue({
+            theme: "light",
+            setTheme: setThemeMock,
+            isDarkMode: false,
+        })
         render(<DarkModeToggle />)
 
         await user.click(screen.getByRole("button", { name: /change theme/i }))
