@@ -21,7 +21,6 @@
     min-width: 1.1em;
     height: 1.1em;
     box-shadow: 0.2rem 0.2rem 0.4rem rgba(0, 0, 0, 0.2);
-    /* text-shadow: none; */
     color: var(--tile-text-color);
     margin-right: 0.1em;
 }
