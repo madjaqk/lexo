@@ -169,6 +169,7 @@ export default function Game(props: GameProps) {
                 isOpen={isArchivesOpen}
                 onClose={closeArchives}
                 onDateSelect={onDateSelect}
+                currentPuzzleDate={puzzle.date}
                 earliestDate={gameConfig.earliestDate}
                 currentDate={gameConfig.currentDate}
                 history={history}

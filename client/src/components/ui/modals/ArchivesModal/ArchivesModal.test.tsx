@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react"
+import { fireEvent, render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import type { PlayHistory } from "@/types"
@@ -15,6 +15,7 @@ describe("ArchivesModal", () => {
     }
     const earliestDate = "2025-07-01"
     const currentDate = "2025-07-21"
+    const currentPuzzleDate = "2025-07-20"
 
     beforeEach(() => {
         // The modal uses a portal, so we need to add the portal root to the DOM
@@ -40,6 +41,7 @@ describe("ArchivesModal", () => {
                 onDateSelect={onDateSelect}
                 earliestDate={earliestDate}
                 currentDate={currentDate}
+                currentPuzzleDate={currentPuzzleDate}
                 history={null}
             />,
         )
@@ -54,6 +56,7 @@ describe("ArchivesModal", () => {
                 onDateSelect={onDateSelect}
                 earliestDate={earliestDate}
                 currentDate={currentDate}
+                currentPuzzleDate={currentPuzzleDate}
                 history={mockHistory}
             />,
         )
@@ -71,6 +74,7 @@ describe("ArchivesModal", () => {
                 onDateSelect={onDateSelect}
                 earliestDate={earliestDate}
                 currentDate={currentDate}
+                currentPuzzleDate={currentPuzzleDate}
                 history={mockHistory}
             />,
         )
@@ -91,6 +95,7 @@ describe("ArchivesModal", () => {
                 onDateSelect={onDateSelect}
                 earliestDate={earliestDate}
                 currentDate={currentDate}
+                currentPuzzleDate={currentPuzzleDate}
                 history={mockHistory}
             />,
         )
@@ -109,6 +114,7 @@ describe("ArchivesModal", () => {
                 onDateSelect={onDateSelect}
                 earliestDate={earliestDate}
                 currentDate={currentDate}
+                currentPuzzleDate={currentPuzzleDate}
                 history={mockHistory}
             />,
         )
@@ -120,8 +126,8 @@ describe("ArchivesModal", () => {
         expect(onClose).toHaveBeenCalledTimes(1)
     })
 
-    it("should call onDateSelect and onClose when the date picker value changes", async () => {
-        const user = userEvent.setup()
+    it("should initialize the date picker with the current puzzle date", () => {
+        const testDate = "2025-07-19"
         render(
             <ArchivesModal
                 isOpen={true}
@@ -129,14 +135,32 @@ describe("ArchivesModal", () => {
                 onDateSelect={onDateSelect}
                 earliestDate={earliestDate}
                 currentDate={currentDate}
+                currentPuzzleDate={testDate}
+                history={mockHistory}
+            />,
+        )
+
+        const dateInput = screen.getByLabelText<HTMLInputElement>("Select a date:")
+        expect(dateInput.value).toBe(testDate)
+    })
+
+    it("should call onDateSelect and onClose when the date picker value changes", () => {
+        render(
+            <ArchivesModal
+                isOpen={true}
+                onClose={onClose}
+                onDateSelect={onDateSelect}
+                earliestDate={earliestDate}
+                currentDate={currentDate}
+                currentPuzzleDate={currentPuzzleDate}
                 history={mockHistory}
             />,
         )
 
         const dateInput = screen.getByLabelText("Select a date:")
-        await user.type(dateInput, "2025-07-15")
+        // fireEvent.change is the correct way to simulate a date input change
+        fireEvent.change(dateInput, { target: { value: "2025-07-15" } })
 
-        // userEvent.type triggers a change event after typing.
         expect(onDateSelect).toHaveBeenCalledWith("2025-07-15")
         expect(onClose).toHaveBeenCalledTimes(1)
     })
@@ -150,6 +174,7 @@ describe("ArchivesModal", () => {
                 onDateSelect={onDateSelect}
                 earliestDate={earliestDate}
                 currentDate={currentDate}
+                currentPuzzleDate={currentPuzzleDate}
                 history={null}
             />,
         )
