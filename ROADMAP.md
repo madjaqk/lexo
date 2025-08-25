@@ -173,7 +173,7 @@ TOTAL: 202 (14 over target!)
 10. [X] Finalize the game name and create a logo.
 11. [X] Add a favicon based on the new logo.
 12. [X] Update `package.json` and `pyproject.toml` with the final project name, version, and author details.
-13. [ ] Write the project `README.md`.
+13. [X] Write the project `README.md`.
 
 ### Phase 4: Deployment & Operations
 **Deliverables:**
