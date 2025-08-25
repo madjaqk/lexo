@@ -50,7 +50,7 @@ def generate_puzzle(seed: int | str | None = None) -> Puzzle:
     rules_path = settings.config_directory / "game_rules.yaml"
 
     with open(words_path, "r", encoding="utf-8") as f:
-        all_words = {line.strip().upper() for line in f if line.strip()}
+        all_words = [line.strip().upper() for line in f if line.strip()]
 
     with open(rules_path, "r", encoding="utf-8") as f:
         rules = yaml.safe_load(f)
