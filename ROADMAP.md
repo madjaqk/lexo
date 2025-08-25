@@ -191,6 +191,16 @@ TOTAL: 202 (14 over target!)
     - Set up a recurring job (e.g., a cron job in the Docker container) to automatically generate future puzzles.
     - (Optional) Configure a CI/CD pipeline (e.g., GitHub Actions) to automate testing and deployment.
 
+#### Detailed Steps
+1. [X] Write a `Dockerfile` for the FastAPI back-end, specifying dependencies and entrypoint.
+2. [ ] Write a `Dockerfile` for the Nginx front-end, serving the built React app.  Include a multi-stage build to build the front-end.
+3. [ ] Create a `docker-compose.yaml` file to define and orchestrate both containers, including network settings, environmental variables, and secrets.  Also include a volume to persist the server's SQLite DB.
+4. [ ] Add a `redis` service to the `docker-compose.yaml` file and update server to use cache-aside pattern
+5. [ ] Add a new service to `docker-compose.yaml` using the back-end image that runs the `generate_puzzles.py` script on a recurring schedule.  (TODO: Is it better to use a separate service for this or a cron job inside the existing server container?)
+6. [ ] First deployment!  Also, document the deployment process, including build, run, and update instructions for containers.
+7. [ ] Set up a GitHub Actions workflow to build, test, and deploy the application automatically on push to master.
+8. [ ] Add monitoring and logging for operational visibility.
+
 ## Technical Specifications
 
 ### API Endpoints
