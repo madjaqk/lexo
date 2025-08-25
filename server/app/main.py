@@ -11,6 +11,7 @@ from .database import create_db_and_tables, get_session
 from .logging_config import setup_logging
 from .models import GameRules, PuzzleWithDate
 from .settings import get_settings
+from .scripts.generate_puzzles import generate_daily_puzzles
 
 
 @asynccontextmanager
@@ -18,6 +19,7 @@ async def lifespan(app: FastAPI):
     # Code to run on startup
     setup_logging()
     create_db_and_tables()
+    generate_daily_puzzles(start_date=datetime.date.today(), end_date=datetime.date.today())
     yield
     # Code to run on shutdown
     # (no cleanup needed for SQLite)
