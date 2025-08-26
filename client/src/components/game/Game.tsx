@@ -124,12 +124,17 @@ export default function Game(props: GameProps) {
                     <div className="total-score-row">
                         <div className="timer-spacer" />
                         <div className="rack-score-spacer">
-                            {gameState === "playing" &&
+                            {/* {gameState === "playing" &&
                                 rackScores.every((s) => s.baseScore > 0) && (
                                     <button type="button" onClick={endGame}>
                                         Submit Answer
                                     </button>
-                                )}
+                            )} */}
+                            {gameState === "playing" &&
+                                <button type="button" onClick={endGame}>
+                                {rackScores.every((s) => s.baseScore > 0) ? "Submit Answer" : "Give Up?"}
+                                </button>
+                            }
                         </div>
                         <div className="score total-score">TOTAL: {totalScore}</div>
                     </div>

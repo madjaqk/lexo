@@ -362,6 +362,32 @@ describe("Game Component - Integration Tests", () => {
             expect(saveHistoryForDate).toHaveBeenCalledWith(MOCK_PUZZLE.date, expect.any(Object))
         })
 
+        it('should transition to the "finished" state if a user gives up', async () => {
+            render(
+                <Game
+                    puzzle={MOCK_PUZZLE}
+                    gameConfig={MOCK_RULES}
+                    initialHistory={null}
+                    onDateSelect={onDateSelect}
+                />,
+            )
+
+            // Start the game
+            await user.click(screen.getByRole("button", { name: /start game/i }))
+
+            // The "Give up?" button should be visible
+            const giveUpButton = screen.getByRole("button", { name: /give up\?/i })
+            expect(giveUpButton).toBeInTheDocument()
+
+            // Click the "Give up?" button
+            await user.click(giveUpButton)
+
+            // Assert we are in the "finished" state
+            expect(screen.queryByRole("button", { name: /give up\?/i })).not.toBeInTheDocument()
+            expect(screen.getByRole("region", { name: /final score report/i })).toBeInTheDocument()
+            expect(saveHistoryForDate).toHaveBeenCalledWith(MOCK_PUZZLE.date, expect.any(Object))
+        })
+
         it('should transition to the "finished" state when the timer runs out', async () => {
             render(
                 <Game
@@ -417,6 +443,10 @@ describe("Game Component - Integration Tests", () => {
             // 1. Start the game
             await user.click(screen.getByRole("button", { name: /start game/i }))
 
+            // Give Up? button should be visible, submit button should not be
+            expect(screen.getByRole("button", { name: /give up\?/i })).toBeInTheDocument()
+            expect(screen.queryByRole("button", { name: /submit answer/i })).not.toBeInTheDocument()
+
             // Initial state: R1:[A,B,C], R2:[D,I,R,T]
 
             // Move T to Rack 1 -> R1:[A,B,C,T], R2:[D,I,R]
@@ -437,7 +467,8 @@ describe("Game Component - Integration Tests", () => {
                 screen.getByRole("toolbar", { name: /word rack 2/i }),
             )
 
-            // 3. Assert that the submit button is now visible
+            // 3. Assert that the submit button is now visible and the Give Up? button is not
+            expect(screen.queryByRole("button", { name: /give up\?/i })).not.toBeInTheDocument()
             const submitButton = screen.getByRole("button", { name: /submit answer/i })
             expect(submitButton).toBeInTheDocument()
 
@@ -678,7 +709,7 @@ describe("Game Component - Integration Tests", () => {
             return tiles.map((t) => t.textContent)
         }
 
-        it("should not display the submit button for a completely unsolved board", async () => {
+        it("should display the give up button for a completely unsolved board", async () => {
             render(
                 <Game
                     puzzle={MOCK_PUZZLE}
@@ -690,9 +721,10 @@ describe("Game Component - Integration Tests", () => {
 
             await user.click(screen.getByRole("button", { name: /start game/i }))
             expect(screen.queryByRole("button", { name: /submit answer/i })).not.toBeInTheDocument()
+            expect(screen.getByRole("button", { name: /give up\?/i })).toBeInTheDocument()
         })
 
-        it("should not display the submit button for a partially solved board", async () => {
+        it("should display the give up button for a partially solved board", async () => {
             render(
                 <Game
                     puzzle={MOCK_PARTIALLY_SOLVED_PUZZLE}
@@ -704,6 +736,7 @@ describe("Game Component - Integration Tests", () => {
 
             await user.click(screen.getByRole("button", { name: /start game/i }))
             expect(screen.queryByRole("button", { name: /submit answer/i })).not.toBeInTheDocument()
+            expect(screen.getByRole("button", { name: /give up\?/i })).toBeInTheDocument()
         })
 
         it("should prevent dragging a tile to a full rack", async () => {
