@@ -1,0 +1,21 @@
+# Git
+.git
+.gitignore
+
+# Docker
+# Exclude Docker-related files from the build context
+Dockerfile
+.dockerignore
+
+# Dependencies
+# We install dependencies inside the container, so no need to copy the local ones.
+# This is the most important rule for Node.js projects.
+node_modules/
+
+# Build output
+# The container will build the app, so we don't need local build artifacts.
+build/
+
+# Local environment variables
+# Keep secrets and local configurations out of the final image.
+.env*
