@@ -5,7 +5,7 @@ from typing import Literal
 from pydantic_settings import BaseSettings
 
 PROJECT_ROOT = Path(__file__).parent.parent
-DEFAULT_DB_FILE_PATH = PROJECT_ROOT / "db.sqlite3"
+DEFAULT_DB_FILE_PATH = PROJECT_ROOT / "data" / "db.sqlite3"
 
 
 class Settings(BaseSettings):

@@ -1,7 +1,7 @@
 FROM ghcr.io/astral-sh/uv:0.8.4-python3.13-bookworm
 
 # Set working directory
-WORKDIR /app
+WORKDIR /code
 
 # Enable bytecode compilation
 ENV UV_COMPILE_BYTECODE=1

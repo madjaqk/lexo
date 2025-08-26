@@ -1,0 +1,38 @@
+services:
+  # The FastAPI backend service, which we'll call 'api'
+  api:
+    build: ./server
+    restart: unless-stopped
+    env_file:
+      - ./server/.env.prod  # TODO: Probably replace this with secrets injected by CI/CD pipeline?
+    volumes:
+      # Mount a named volume to persist the SQLite database.
+      - db-data:/code/data
+    ports:
+      # Expose port 8000 to the host for direct API access during development.
+      # The frontend service will access this internally via http://api:8000
+      - "8000:8000"
+    # The healthcheck ensures the 'api' service is actually running and healthy
+    # before other services (like the frontend) that depend on it start.
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "--output", "/dev/null", "http://localhost:8000/api/config"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # The Nginx service that builds and serves the React frontend
+  frontend:
+    build: ./client
+    restart: unless-stopped
+    ports:
+      # Map host port 80 to the container's port 80, where Nginx is listening.
+      - "80:80"
+    depends_on:
+      api:
+        condition: service_healthy
+
+# Define the named volume for database persistence
+volumes:
+  db-data:
+    driver: local

@@ -43,7 +43,7 @@ def generate_puzzle(seed: int | str | None = None) -> Puzzle:
     """
     settings = get_settings()
     if seed is not None:
-        random.seed(str(seed) + settings.puzzle_generation_salt)
+        random.seed(f"{seed} {settings.puzzle_generation_salt}")
 
     # 1. Load words and game rules
     words_path = settings.config_directory / "words-common.txt"

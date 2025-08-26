@@ -15,7 +15,3 @@ node_modules/
 # Build output
 # The container will build the app, so we don't need local build artifacts.
 build/
-
-# Local environment variables
-# Keep secrets and local configurations out of the final image.
-.env*
