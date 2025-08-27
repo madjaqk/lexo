@@ -15,7 +15,10 @@ class CamelCaseBaseModel(SQLModel):
         populate_by_name=True,
         serialize_by_alias=True,
     )  # type: ignore
-    # SQLModel expects this to be SQLModelConfig, which is ConfigDict plus a few optional fields, so using just a ConfigDict works just fine in practice.  On the other hand, I couldn't figure out where to import SQLModelConfig from, so I couldn't use it directly.--JDB 2025-08-09
+    # SQLModel expects this to be SQLModelConfig, which is ConfigDict plus a few optional fields,
+    # so using just a ConfigDict works just fine in practice.  On the other hand, I couldn't
+    # figure out where to import SQLModelConfig from, so I couldn't use it directly.
+    # --JDB 2025-08-09
 
 
 class Tile(CamelCaseBaseModel):

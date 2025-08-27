@@ -195,7 +195,7 @@ TOTAL: 202 (14 over target!)
 1. [X] Write a `Dockerfile` for the FastAPI back-end, specifying dependencies and entrypoint.
 2. [X] Write a `Dockerfile` for the Nginx front-end, serving the built React app.  Include a multi-stage build to build the front-end.
 3. [X] Create a `docker-compose.yaml` file to define and orchestrate both containers, including network settings and environmental variables.  Also include a volume to persist the server's SQLite DB.
-4. [ ] Add a `redis` service to the `docker-compose.yaml` file and update server to use cache-aside pattern
+4. [X] Add a `redis` service to the `docker-compose.yaml` file and update server to use cache-aside pattern
 5. [ ] Add a new service to `docker-compose.yaml` using the back-end image that runs the `generate_puzzles.py` script on a recurring schedule.  (TODO: Is it better to use a separate service for this or a cron job inside the existing server container?)
     - Also, update the server to explicitly use the date in Austin, Texas, not the default timezone (which I assume is UTC in the Docker container).  It's a small thing that doesn't really fit elsewhere in this phase, so I'm shoehorning it in here.
 6. [ ] First deployment!  Also, document the deployment process, including build, run, and update instructions for containers.

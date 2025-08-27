@@ -32,6 +32,18 @@ services:
       api:
         condition: service_healthy
 
+  # The Redis service for caching API responses
+  redis:
+    image: redis:8.2-alpine
+    restart: unless-stopped
+    command: redis-server --maxmemory 50mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      # This command checks if the Redis server is ready to accept commands.
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 # Define the named volume for database persistence
 volumes:
   db-data:

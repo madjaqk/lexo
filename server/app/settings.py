@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     config_directory: Path = PROJECT_ROOT / "config"
     puzzle_generation_salt: str = "default-salt-for-dev"
     environment: Literal["dev", "prod"] = "dev"
+    redis_url: str | None = None
 
 
 @cache

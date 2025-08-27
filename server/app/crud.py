@@ -1,7 +1,10 @@
 import datetime
+import json
 from functools import cache
+from typing import cast
 
 import yaml
+from redis import Redis
 from sqlalchemy.exc import NoResultFound
 from sqlmodel import Session, func, select
 
@@ -9,7 +12,14 @@ from app.models import PuzzleWithDate
 from app.settings import get_settings
 
 
-def get_puzzle_by_date(db: Session, date: datetime.date) -> PuzzleWithDate | None:
+def redis_key_for_date(date: datetime.date) -> str:
+    """Small helper function to standardize the Redis key format."""
+    return f"puzzle:{date.isoformat()}"
+
+
+def get_puzzle_by_date(
+    db: Session, date: datetime.date, *, redis_client: Redis | None = None
+) -> PuzzleWithDate | None:
     """
     Retrieves a puzzle from the database by its date.
 
@@ -20,7 +30,25 @@ def get_puzzle_by_date(db: Session, date: datetime.date) -> PuzzleWithDate | Non
     Returns:
         The PuzzleWithDate object if found, otherwise None.
     """
-    return db.get(PuzzleWithDate, date)
+    if redis_client:
+        cached_puzzle = redis_client.get(redis_key_for_date(date))
+        cached_puzzle = cast(str | None, cached_puzzle)
+        if cached_puzzle:
+            # It seems like we should be able to use PuzzleWithDate.model_validate_json() rather
+            # than deserializing ourselves, but apparently model_validate_json doesn't actually
+            # validate the JSON, it just parses it, at least for models that are also database
+            # tables.  (This includes not converting, say, the date string into a datetime.date
+            # object).  See:
+            # https://github.com/fastapi/sqlmodel/discussions/961
+            # https://github.com/fastapi/sqlmodel/issues/453
+            cached_puzzle = json.loads(cached_puzzle)
+            return PuzzleWithDate.model_validate(cached_puzzle)
+
+    db_puzzle = db.get(PuzzleWithDate, date)
+    if db_puzzle and redis_client:
+        redis_client.set(redis_key_for_date(date), db_puzzle.model_dump_json())
+
+    return db_puzzle
 
 
 @cache

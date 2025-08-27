@@ -7,6 +7,7 @@ from sqlalchemy.exc import NoResultFound, MultipleResultsFound
 from sqlmodel import Session
 
 from . import crud
+from .cache import RedisDep
 from .database import create_db_and_tables, get_session
 from .logging_config import setup_logging
 from .models import GameRules, PuzzleWithDate
@@ -41,12 +42,12 @@ if settings.environment == "dev":
 
 
 @app.get("/api/puzzle/today", response_model=PuzzleWithDate, tags=["Puzzles"])
-def get_todays_puzzle(db: Session = Depends(get_session)):
+def get_todays_puzzle(redis_client: RedisDep, db: Session = Depends(get_session)):
     """
     Get the puzzle for the current date.
     """
     today = datetime.date.today()
-    puzzle = crud.get_puzzle_by_date(db, today)
+    puzzle = crud.get_puzzle_by_date(db, today, redis_client=redis_client)
     if not puzzle:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Puzzle not found for today's date."
@@ -55,7 +56,9 @@ def get_todays_puzzle(db: Session = Depends(get_session)):
 
 
 @app.get("/api/puzzle/{date}", response_model=PuzzleWithDate, tags=["Puzzles"])
-def get_puzzle_by_date(date: datetime.date, db: Session = Depends(get_session)):
+def get_puzzle_by_date(
+    date: datetime.date, redis_client: RedisDep, db: Session = Depends(get_session)
+):
     """
     Get the puzzle for a specific date.
     """
@@ -63,7 +66,7 @@ def get_puzzle_by_date(date: datetime.date, db: Session = Depends(get_session)):
     if date > today:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No spoilers!")
 
-    puzzle = crud.get_puzzle_by_date(db, date)
+    puzzle = crud.get_puzzle_by_date(db, date, redis_client=redis_client)
     if not puzzle:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -86,8 +89,6 @@ def get_config(db: Session = Depends(get_session)):
             detail="Could not load game configuration.",
         )
 
-
-settings = get_settings()
 
 if settings.environment == "dev":
     # In development, we serve the built front-end files from FastAPI.

@@ -86,8 +86,6 @@ def generate_puzzle(seed: int | str | None = None) -> Puzzle:
     for word in sorted(solution_words, key=len):
         rack = []
         for letter in word:
-            # The docstring says 't{...}' and 0-padded, but ROADMAP.md shows 'tile-1'.
-            # Following ROADMAP.md as the higher-level spec.
             tile_id = f"tile-{tile_ids.pop()}"
             tile = Tile(id=tile_id, letter=letter, value=letter_values.get(letter, 0))
             rack.append(tile)

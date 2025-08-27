@@ -6,7 +6,7 @@ import yaml
 from sqlmodel import Session
 from sqlalchemy.exc import NoResultFound
 
-from app.crud import get_game_rules, get_puzzle_by_date, get_stable_game_rules
+from app.crud import get_game_rules, get_puzzle_by_date, get_stable_game_rules, redis_key_for_date
 from app.models import PuzzleWithDate, Tile
 
 ##########################
@@ -45,6 +45,99 @@ def test_get_puzzle_by_date_not_found(session: Session):
     test_date = datetime.date(2025, 10, 21)
     retrieved_puzzle = get_puzzle_by_date(session, test_date)
     assert retrieved_puzzle is None
+
+
+def test_get_puzzle_by_date_reads_from_cache_if_redis_client_is_provided(
+    session: Session, fake_redis
+):
+    """
+    WHEN get_puzzle_by_date is called with a Redis client
+    THEN it should attempt to read from the cache first.
+    """
+    test_date = datetime.date(2025, 10, 20)
+    puzzle = PuzzleWithDate(
+        date=test_date,
+        initial_racks=[[Tile(id="tile-1", letter="A", value=1)]],
+        target_solution=[[Tile(id="tile-1", letter="A", value=1)]],
+    )
+    session.add(puzzle)
+    session.commit()
+    session.expunge_all()
+
+    puzzle_in_cache = PuzzleWithDate(
+        date=test_date,
+        initial_racks=[[Tile(id="tile-1", letter="B", value=2)]],
+        target_solution=[[Tile(id="tile-1", letter="B", value=2)]],
+    )
+
+    fake_redis.set(redis_key_for_date(test_date), puzzle_in_cache.model_dump_json())
+
+    # This should retrieve the value from the cache, not the puzzle in the DB
+    retrieved_puzzle = get_puzzle_by_date(session, test_date, redis_client=fake_redis)
+    assert retrieved_puzzle is not None
+    assert retrieved_puzzle.date == test_date
+    assert retrieved_puzzle.initial_racks == puzzle_in_cache.initial_racks
+    assert retrieved_puzzle.target_solution == puzzle_in_cache.target_solution
+
+
+def test_get_puzzle_by_date_falls_back_to_db_if_cache_miss(session: Session, fake_redis):
+    """
+    GIVEN the cache is empty
+    WHEN get_puzzle_by_date is called with a Redis client
+    THEN it should fall back to querying the database.
+    """
+    test_date = datetime.date(2025, 10, 20)
+    puzzle_data = {
+        "date": test_date,
+        "initial_racks": [[Tile(id="tile-1", letter="A", value=1)]],
+        "target_solution": [[Tile(id="tile-1", letter="A", value=1)]],
+    }
+    puzzle = PuzzleWithDate(**puzzle_data)
+    session.add(puzzle)
+    session.commit()
+    session.expunge_all()
+
+    assert fake_redis.get(redis_key_for_date(test_date)) is None
+
+    retrieved_puzzle = get_puzzle_by_date(session, test_date, redis_client=fake_redis)
+    assert retrieved_puzzle is not None
+    assert retrieved_puzzle.date == test_date
+    assert retrieved_puzzle.initial_racks == puzzle_data["initial_racks"]
+    assert retrieved_puzzle.target_solution == puzzle_data["target_solution"]
+
+    puzzle_in_cache = fake_redis.get(redis_key_for_date(test_date))
+    assert puzzle_in_cache is not None
+    assert puzzle_in_cache == retrieved_puzzle.model_dump_json()
+
+
+def test_get_puzzle_by_date_does_not_use_cache_if_redis_client_is_None(
+    session: Session, fake_redis
+):
+    """
+    WHEN get_puzzle_by_date is called with redis_client=None
+    THEN it should not attempt to read from or write to the cache.
+
+    Note that other tests use the form get_puzzle_by_date(session, date) without specifying
+    redis_client at all, which results in redis_client being None implicitly; this test is just
+    that nothing weird happens if redis_client is explicitly None.
+    """
+    test_date = datetime.date(2025, 10, 20)
+    puzzle_data = {
+        "date": test_date,
+        "initial_racks": [[Tile(id="tile-1", letter="A", value=1)]],
+        "target_solution": [[Tile(id="tile-1", letter="A", value=1)]],
+    }
+    puzzle = PuzzleWithDate(**puzzle_data)
+    session.add(puzzle)
+    session.commit()
+    session.expunge_all()
+
+    assert fake_redis.get(redis_key_for_date(test_date)) is None
+
+    retrieved_puzzle = get_puzzle_by_date(session, test_date, redis_client=None)
+    assert retrieved_puzzle is not None
+
+    assert fake_redis.get(redis_key_for_date(test_date)) is None
 
 
 ######################
