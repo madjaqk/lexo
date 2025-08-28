@@ -11,6 +11,11 @@
     user-select: none;
 }
 
+.logo-link, .logo-link:visited, .logo-link:hover, .logo-link:active, .logo-link:focus {
+    color: inherit;
+    text-decoration: inherit;
+}
+
 .logo-tile {
     display: inline-flex;
     align-items: center;

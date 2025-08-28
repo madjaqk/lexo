@@ -1,3 +1,4 @@
+import { Link } from "react-router"
 import "./Logo.css"
 
 export default function Logo() {
@@ -6,8 +7,10 @@ export default function Logo() {
     const restOfName = appName.substring(1)
     return (
         <h1 className="logo">
-            <span className="logo-tile">{firstLetter}</span>
-            <span className="logo-text">{restOfName}</span>
+            <Link to="/" className="logo-link">
+                <span className="logo-tile">{firstLetter}</span>
+                <span className="logo-text">{restOfName}</span>
+            </Link>
         </h1>
     )
 }
