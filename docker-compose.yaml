@@ -1,30 +1,52 @@
+x-service-defaults: &service-defaults
+  environment:
+    - TZ=America/Chicago
+  restart: unless-stopped
+
+
 services:
-  # The FastAPI backend service, which we'll call 'api'
+  # The FastAPI backend service
   api:
-    build: ./server
-    restart: unless-stopped
+    <<: *service-defaults
+    build:
+      context: ./server
+      target: app
     env_file:
       - ./server/.env.prod  # TODO: Probably replace this with secrets injected by CI/CD pipeline?
     volumes:
       # Mount a named volume to persist the SQLite database.
       - db-data:/code/data
-    ports:
-      # Expose port 8000 to the host for direct API access during development.
-      # The frontend service will access this internally via http://api:8000
-      - "8000:8000"
+    # ports:
+    #   # Expose port 8000 to the host for direct API access during development.
+    #   # The frontend service will access this internally via http://api:8000
+    #   - "8000:8000"
+    depends_on:
+      redis:
+        condition: service_healthy
     # The healthcheck ensures the 'api' service is actually running and healthy
     # before other services (like the frontend) that depend on it start.
     healthcheck:
       test: ["CMD", "curl", "--fail", "--silent", "--output", "/dev/null", "http://localhost:8000/api/config"]
       interval: 15s
-      timeout: 5s
+      timeout: 10s
       retries: 5
       start_period: 10s
 
+  scheduler:
+    <<: *service-defaults
+    build:
+      context: ./server
+      target: scheduler
+    env_file:
+      - ./server/.env.prod
+    volumes:
+      - db-data:/code/data
+
+
   # The Nginx service that builds and serves the React frontend
   frontend:
+    <<: *service-defaults
     build: ./client
-    restart: unless-stopped
     ports:
       # Map host port 80 to the container's port 80, where Nginx is listening.
       - "80:80"
@@ -34,8 +56,8 @@ services:
 
   # The Redis service for caching API responses
   redis:
+    <<: *service-defaults
     image: redis:8.2-alpine
-    restart: unless-stopped
     command: redis-server --maxmemory 50mb --maxmemory-policy allkeys-lru
     healthcheck:
       # This command checks if the Redis server is ready to accept commands.

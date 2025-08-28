@@ -1,0 +1,2 @@
+# Run the puzzle generation script every day at 2:00 AM (server time)
+0 2 * * * uv run python -m app.scripts.generate_puzzles --days 7

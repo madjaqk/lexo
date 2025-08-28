@@ -196,7 +196,7 @@ TOTAL: 202 (14 over target!)
 2. [X] Write a `Dockerfile` for the Nginx front-end, serving the built React app.  Include a multi-stage build to build the front-end.
 3. [X] Create a `docker-compose.yaml` file to define and orchestrate both containers, including network settings and environmental variables.  Also include a volume to persist the server's SQLite DB.
 4. [X] Add a `redis` service to the `docker-compose.yaml` file and update server to use cache-aside pattern
-5. [ ] Add a new service to `docker-compose.yaml` using the back-end image that runs the `generate_puzzles.py` script on a recurring schedule.  (TODO: Is it better to use a separate service for this or a cron job inside the existing server container?)
+5. [X] Add a new service to `docker-compose.yaml` using the back-end image that runs the `generate_puzzles.py` script on a recurring schedule.  (TODO: Is it better to use a separate service for this or a cron job inside the existing server container?)
     - Also, update the server to explicitly use the date in Austin, Texas, not the default timezone (which I assume is UTC in the Docker container).  It's a small thing that doesn't really fit elsewhere in this phase, so I'm shoehorning it in here.
 6. [ ] First deployment!  Also, document the deployment process, including build, run, and update instructions for containers.
 7. [ ] Set up a GitHub Actions workflow to build, test, and deploy the application automatically on push to master.
@@ -206,6 +206,11 @@ TOTAL: 202 (14 over target!)
 This is a list of miscellaneous things to fix after deployment so I don't forget.  These should be changed to GitHub issues once the repo is set up.
 
 1. The tile styling on iOS looks odd—the letters appear to be aligned with the bottom of the tile, not vertically centered.  There's also a bit of overlap between some letters and the point values (e.g. M/2), but that might be unavoidable given the size of the screen?
+2. Allow sorting the play history in the archives modal by total score/difference from target score.
+3. Add dedicated health check endpoint (with access log disabled).
+4. Click on logo to go directly to today's puzzle (e.g. page with no date query param).
+5. If the server encounters an error interacting with Redis, it should log an error but not crash, still returning a response.  (The `caplog` Pytest fixture can test if a message is actually logged.)
+6. Better handling for client-side errors.  (That is, anything that ends up in the `else if (error instanceof Error)` block in the ErrorPage component.)  Since by definition this is an error specific to a client, not something that shows up on the server, they're hard to debug from afar.  Just spitballing, maybe add a route to the server that's specifically for reporting errors (which then uses something like `logger.error` to trigger normal error-reporting) and add a front-end button to send the entire JSON-ified `error` object?
 
 ## Technical Specifications
 
