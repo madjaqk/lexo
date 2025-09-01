@@ -18,6 +18,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 # Copy the rest of the application code
 COPY config ./config
 COPY app ./app
+COPY .env.prod .env
 
 # Reset the entrypoint, don't invoke `uv`
 ENTRYPOINT []

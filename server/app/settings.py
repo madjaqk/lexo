@@ -2,7 +2,7 @@ from functools import cache
 from pathlib import Path
 from typing import Literal
 
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 PROJECT_ROOT = Path(__file__).parent.parent
 DEFAULT_DB_FILE_PATH = PROJECT_ROOT / "data" / "db.sqlite3"
@@ -18,6 +18,10 @@ class Settings(BaseSettings):
     environment: Literal["dev", "prod"] = "dev"
     redis_url: str | None = None
 
+    model_config = SettingsConfigDict(
+        env_file=PROJECT_ROOT / ".env",
+        env_file_encoding="utf-8",
+    )
 
 @cache
 def get_settings():

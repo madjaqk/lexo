@@ -2,3 +2,4 @@
 **build**
 screenshot*.png
 .vscode/
+docker-compose.prod.yaml

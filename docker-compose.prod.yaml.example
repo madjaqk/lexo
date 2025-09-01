@@ -3,24 +3,20 @@ x-service-defaults: &service-defaults
     - TZ=America/Chicago
   restart: unless-stopped
 
+x-efs-driver-opts: &efs-driver-opts
+  type: nfs
+  o: addr={EFS address},nfsvers=4.1
 
 services:
   # The FastAPI backend service
   api:
     <<: *service-defaults
-    build:
-      context: ./server
-      target: app
-    image: lexo/server:latest
+    image: {ECR repo name}/lexo/server:latest
     env_file:
-      - ./server/.env.prod.secret  # TODO: Probably replace this with secrets injected by CI/CD pipeline?
+      - ./.env.prod.secret  # TODO: Probably replace this with secrets injected by CI/CD pipeline?
     volumes:
       # Mount a named volume to persist the SQLite database.
       - db-data:/code/data
-    # ports:
-    #   # Expose port 8000 to the host for direct API access during development.
-    #   # The frontend service will access this internally via http://api:8000
-    #   - "8000:8000"
     depends_on:
       redis:
         condition: service_healthy
@@ -35,24 +31,22 @@ services:
 
   scheduler:
     <<: *service-defaults
-    build:
-      context: ./server
-      target: scheduler
-    image: lexo/scheduler:latest
+    image: {ECR repo name}/lexo/scheduler:latest
     env_file:
-      - ./server/.env.prod.secret
+      - ./.env.prod.secret
     volumes:
       - db-data:/code/data
 
-
-  # The Cappy service that builds and serves the React frontend
+  # The Caddy service that builds and serves the React frontend
   frontend:
     <<: *service-defaults
-    build: ./client
-    image: lexo/frontend:latest
+    image: {ECR repo name}/lexo/frontend:latest
     ports:
-      - "4747:80"
+      - "80:80"
       - "443:443"
+    volumes:
+      - caddy-data:/data
+      - caddy-data:/config
     depends_on:
       api:
         condition: service_healthy
@@ -73,3 +67,16 @@ services:
 volumes:
   db-data:
     driver: local
+    driver_opts:
+      <<: *efs-driver-opts
+      device: :/db-data
+  caddy-data:
+    driver: local
+    driver_opts:
+      <<: *efs-driver-opts
+      device: :/caddy-data
+  caddy-config:
+    driver: local
+    driver_opts:
+      <<: *efs-driver-opts
+      device: :/caddy-config

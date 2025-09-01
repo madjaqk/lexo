@@ -6,8 +6,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-.env*
-!.env.example
+.env*.secret
 
 node_modules
 build

@@ -92,7 +92,7 @@ def get_config(db: Session = Depends(get_session)):
 
 if settings.environment == "dev":
     # In development, we serve the built front-end files from FastAPI.
-    # In production, Nginx will serve these files.
+    # In production, Cappy will serve these files.
     # The `html=True` argument tells StaticFiles to serve `index.html` for
     # any path that doesn't otherwise match. This is perfect for SPAs.
     from fastapi.staticfiles import StaticFiles

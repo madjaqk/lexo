@@ -1,0 +1,94 @@
+# Deployment
+
+This is a guide to deploying Lexo fresh on a new EC2 instance.  The goal is to eventually automate this process with GitHub actions, but I wanted to make sure I could get everything up and running once first.
+
+Before you start, you might need to update `client/.env` and `client/Caddyfile`, which hard-code the lexo.jackbrounstein.com URL.
+
+## 1. Create EC2 instance (Amazon Linux t3.micro) 
+
+You might need to reserve the capacity (in EC2 dashboard, "Capacity Reservations") first.
+
+## 2. Install Docker and set up
+
+On the EC2 instance:
+
+```bash
+sudo yum install -y docker
+sudo systemctl start docker  # Start the daemon for this session
+sudo systemctl enable docker  # Set the daemon to run on start-up in the future
+
+# Add current user to docker group (not strictly required, but will allow running Docker commands without sudo)
+sudo usermod -a -G docker $(whoami)
+docker newgrp
+
+docker run hello-world
+
+# Install docker-compose
+# From https://serverfault.com/a/1146597
+sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-linux-$(uname -m) -o /usr/bin/docker-compose \
+    && sudo chmod 755 /usr/bin/docker-compose \
+    && docker-compose --version
+```
+
+## 3. Create Amazon EFS file system in same VPC/region as the EC2 instance  
+
+I just used defaults for everything and it seemed to work.
+
+## 4. Allow inbound NFS traffic (port 2049) to the EFS file system from the EC2 instance
+
+The specific details here depend a lot on what your existing security groups look like.  For me, I had to create a new security group with an inbound rule on port 2049 with "Source" as the general security group that all of my EC2 instances are in, and then apply that security group to all mount targets listed under the Network tab in the AWS dashboard for the EFS file system.  The EC2 security group will also need to be set to allow outbound NFS traffic to the EFS security group, although I believe by default security groups allow all outbound traffic on all ports, so it might already be OK.
+
+## 5. Test EFS mount 
+
+Run these commands from EC2 instance:
+
+```bash
+sudo yum install -y amazon-efs-utils
+sudo mkdir /mnt/efs-test
+
+# You can also get this mount command by clicking Attach in the EFS dashboard
+sudo mount -t efs -o tls {file system ID, probably in the form of fs-long hex string}:/ /mnt/efs-test
+
+# Try writing to and reading from a file
+sudo touch /mnt/efs-test/test-file
+echo "Hello EFS" | sudo tee /mnt/efs-test/test-file
+cat /mnt/efs-test/test-file
+
+# Per Anthropic Claude, for the next command, you're looking to see that the test file actually appears and that the block size is 6144 rather than 4069 or whatever the default is.  Also pay attention to the user/group that owns the directory (almost certainly root) and who else can read/write to it.
+ls -ls /mnt/efs-test/
+
+# Make directories in the EFS file system for the docker-compose volumes
+sudo mkdir /mnt/efs-test/db-data /mnt/efs-test/caddy-data /mnt/efs-test/caddy-config
+
+# Clean up
+sudo rm /mnt/efs-test/test-file
+sudo umount /mnt/efs-test
+sudo rm -r /mnt/efs-test
+```
+
+## 6. Create repositories for the client and server images in Amazon ECR.  
+
+I went with public repos, as the code's on GitHub and secrets are injected with Docker Compose when the services are run, not included in the image.  Note that there are three repos, `lexo/server`, `lexo/frontend`, and `lexo/scheduler`.
+
+## 7. Build images locally, then push them to ECR.
+
+`docker-compose up --build` will build everything locally (and tag it correctly).  ECR has a "Get push commands" button to give the exact commands to push a local image to the repo.  Do note one issue I ran into, which is public repos use `aws ecr-public` CLI commands, not `aws ecr`.
+
+## 8. Create a `docker-compose.prod.yaml` based on `docker-compose.prod.yaml.example`, replacing `{ECR repo name}` and `{EFS address}` as appropriate.
+
+## 9. Use `scp` to copy `docker-compose.prod.yaml` and `server/.env.prod.secret` to the server.  
+
+Note that they should end up as siblings in the same directory.
+
+## 10.  On the server: `docker-compose -f docker-compose.prod.yaml up -d`  
+
+It's a good idea to also run `docker-compose -f docker-compose.prod.yaml exec api uv run python -m app.scripts.generate_puzzles --start [a few days ago] --days 10` to pre-load some puzzles in the DB.
+
+## Updating/Restarting
+
+First rebuild images locally, re-tag, and repush to ECR (see step 7 above).  Then on the EC2 instance:
+
+```bash
+docker-compose -f docker-compose.prod.yaml pull
+docker-compose -f docker-compose.prod.yaml up --force-recreate -d
+```

@@ -14,9 +14,7 @@ RUN pnpm run build
 
 
 
-FROM nginx:alpine
+FROM caddy:2.10-alpine
 
-COPY --from=build /app/build/dist /usr/share/nginx/html
-COPY ./nginx.conf /etc/nginx/conf.d/default.conf
-
-EXPOSE 80
+COPY --from=build /app/build/dist /usr/share/caddy/html
+COPY ./Caddyfile /etc/caddy/Caddyfile
