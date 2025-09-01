@@ -12,7 +12,7 @@
 }
 
 .logo-link, .logo-link:visited, .logo-link:hover, .logo-link:active, .logo-link:focus {
-    color: inherit;
+    color: var(--text-color);
     text-decoration: inherit;
 }
 
