@@ -1,7 +1,5 @@
 # Build the React front-end
-FROM node:24-alpine as build
-
-# RUN apk add --no-cache libc6-compat  # TODO: Is this line actually necessary?
+FROM node:24-alpine AS build
 
 WORKDIR /app
 

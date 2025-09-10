@@ -1,4 +1,4 @@
-FROM ghcr.io/astral-sh/uv:0.8.4-python3.13-bookworm as base
+FROM ghcr.io/astral-sh/uv:0.8.4-python3.13-bookworm AS base
 
 # Set working directory
 WORKDIR /code
@@ -24,12 +24,12 @@ COPY .env.prod .env
 ENTRYPOINT []
 
 
-FROM base as app
+FROM base AS app
 # Start the FastAPI server
 CMD ["uv", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
 
 
-FROM base as scheduler
+FROM base AS scheduler
 
 # Latest releases available at https://github.com/aptible/supercronic/releases
 ENV SUPERCRONIC_URL=https://github.com/aptible/supercronic/releases/download/v0.2.34/supercronic-linux-amd64 \

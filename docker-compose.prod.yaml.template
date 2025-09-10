@@ -12,8 +12,8 @@ services:
   api:
     <<: *service-defaults
     image: ${ECR_REPO_PREFIX}/${ECR_PROJECT_NAME}/server:latest
-    env_file:
-      - ./.env.prod.secret  # TODO: Probably replace this with secrets injected by CI/CD pipeline?
+    environment:
+      - PUZZLE_GENERATION_SALT=${PUZZLE_GENERATION_SALT}
     volumes:
       # Mount a named volume to persist the SQLite database.
       - db-data:/code/data
@@ -32,8 +32,8 @@ services:
   scheduler:
     <<: *service-defaults
     image: ${ECR_REPO_PREFIX}/${ECR_PROJECT_NAME}/scheduler:latest
-    env_file:
-      - ./.env.prod.secret
+    environment:
+      - PUZZLE_GENERATION_SALT=${PUZZLE_GENERATION_SALT}
     volumes:
       - db-data:/code/data
 

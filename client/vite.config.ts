@@ -5,7 +5,15 @@ import { defineConfig } from "vite"
 
 // https://vite.dev/config/
 export default defineConfig({
-    plugins: [react()],
+    plugins: [
+        react(),
+        {
+            name: "build-timestamp",
+            transformIndexHtml: (html) => {
+                return html.replace("%BUILD_TIME%", new Date().toISOString())
+            }
+        }
+    ],
     build: {
         sourcemap: true,
         outDir: "build/dist",
