@@ -5,13 +5,13 @@ x-service-defaults: &service-defaults
 
 x-efs-driver-opts: &efs-driver-opts
   type: nfs
-  o: addr={EFS address},nfsvers=4.1
+  o: addr=${EFS_ADDRESS},nfsvers=4.1
 
 services:
   # The FastAPI backend service
   api:
     <<: *service-defaults
-    image: {ECR repo name}/lexo/server:latest
+    image: ${ECR_REPO_PREFIX}/${ECR_PROJECT_NAME}/server:latest
     env_file:
       - ./.env.prod.secret  # TODO: Probably replace this with secrets injected by CI/CD pipeline?
     volumes:
@@ -31,7 +31,7 @@ services:
 
   scheduler:
     <<: *service-defaults
-    image: {ECR repo name}/lexo/scheduler:latest
+    image: ${ECR_REPO_PREFIX}/${ECR_PROJECT_NAME}/scheduler:latest
     env_file:
       - ./.env.prod.secret
     volumes:
@@ -40,7 +40,7 @@ services:
   # The Caddy service that builds and serves the React frontend
   frontend:
     <<: *service-defaults
-    image: {ECR repo name}/lexo/frontend:latest
+    image: ${ECR_REPO_PREFIX}/${ECR_PROJECT_NAME}/frontend:latest
     ports:
       - "80:80"
       - "443:443"

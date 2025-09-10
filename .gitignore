@@ -3,3 +3,4 @@
 screenshot*.png
 .vscode/
 docker-compose.prod.yaml
+.envrc.ps1

@@ -1,0 +1,104 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - master
+      - test_deploy
+    tags:
+      - v*
+      - dev*
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Log in to Amazon ECR (server)
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+
+      - name: Build and push server image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./server
+          file: ./server/Dockerfile
+          target: app
+          push: true
+          tags: |
+            ${{ vars.ECR_REPO_PREFIX }}/${{ vars.ECR_PROJECT_NAME }}/server:latest
+            ${{ vars.ECR_REPO_PREFIX }}/${{ vars.ECR_PROJECT_NAME }}/server:${{ github.sha }}
+
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./client
+          file: ./client/Dockerfile
+          push: true
+          tags: |
+            ${{ vars.ECR_REPO_PREFIX }}/${{ vars.ECR_PROJECT_NAME }}/frontend:latest
+            ${{ vars.ECR_REPO_PREFIX }}/${{ vars.ECR_PROJECT_NAME }}/frontend:${{ github.sha }}
+
+      - name: Build and push scheduler image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./server
+          file: ./server/Dockerfile
+          target: scheduler
+          push: true
+          tags: |
+            ${{ vars.ECR_REPO_PREFIX }}/${{ vars.ECR_PROJECT_NAME }}/scheduler:latest
+            ${{ vars.ECR_REPO_PREFIX }}/${{ vars.ECR_PROJECT_NAME }}/scheduler:${{ github.sha }}
+
+      - name: Create docker-compose.prod.yaml from template
+        env:
+          ECR_REPO_PREFIX: ${{ vars.ECR_REPO_PREFIX }}
+          ECR_PROJECT_NAME: ${{ vars.ECR_PROJECT_NAME }}
+          EFS_ADDRESS: ${{ secrets.EFS_ADDRESS }}
+        run: |
+          envsubst < docker-compose.prod.yaml.template > docker-compose.prod.yaml
+
+      - name: Copy docker-compose file to EC2 via SSM
+        run: |
+          COMPOSE_CONTENT=$(base64 -w 0 docker-compose.prod.yaml)
+          aws ssm send-command \
+            --instance-ids "${{ secrets.EC2_INSTANCE_ID }}" \
+            --document-name "AWS-RunShellScript" \
+            --comment "Copy docker-compose.prod.yaml via SSM" \
+            --parameters commands="echo '$COMPOSE_CONTENT' | base64 -f > ~/docker-compose.yaml && docker-compose pull && docker-compose up --force-recreate -d"
+
+      # - name: Copy docker-compose file to EC2
+      #   uses: appleboy/scp-action@v0.1.7
+      #   with:
+      #     host: ${{ secrets.EC2_HOST }}
+      #     username: ${{ secrets.EC2_USER }}
+      #     key: ${{ secrets.EC2_SSH_KEY }}
+      #     source: docker-compose.prod.yaml
+      #     target: ~/
+
+      # - name: Deploy on EC2 via SSH
+      #   uses: appleboy/ssh-action@v0.1.10
+      #   with:
+      #     host: ${{ secrets.EC2_HOST }}
+      #     username: ${{ secrets.EC2_USER }}
+      #     key: ${{ secrets.EC2_SSH_KEY }}
+      #     script: |
+      #       docker-compose -f docker-compose.prod.yaml pull
+      #       docker-compose -f docker-compose.prod.yaml up --force-recreate -d

@@ -211,6 +211,7 @@ This is a list of miscellaneous things to fix after deployment so I don't forget
 4. Click on logo to go directly to today's puzzle (e.g. page with no date query param).
 5. If the server encounters an error interacting with Redis, it should log an error but not crash, still returning a response.  (The `caplog` Pytest fixture can test if a message is actually logged.)
 6. Better handling for client-side errors.  (That is, anything that ends up in the `else if (error instanceof Error)` block in the ErrorPage component.)  Since by definition this is an error specific to a client, not something that shows up on the server, they're hard to debug from afar.  Just spitballing, maybe add a route to the server that's specifically for reporting errors (which then uses something like `logger.error` to trigger normal error-reporting) and add a front-end button to send the entire JSON-ified `error` object?
+7. The ability to undo changes/cycle through past board states.  (This will probably require substantial code changes.)
 
 ## Technical Specifications
 
