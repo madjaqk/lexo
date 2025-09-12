@@ -144,7 +144,29 @@ describe("ArchivesModal", () => {
         expect(dateInput.value).toBe(testDate)
     })
 
-    it("should call onDateSelect and onClose when the date picker value changes", () => {
+    it("should enable Go button only when date is changed", async () => {
+        render(
+            <ArchivesModal
+                isOpen={true}
+                onClose={onClose}
+                onDateSelect={onDateSelect}
+                earliestDate={earliestDate}
+                currentDate={currentDate}
+                currentPuzzleDate={currentPuzzleDate}
+                history={mockHistory}
+            />,
+        )
+
+        const goButton = screen.getByRole("button", { name: "Go" })
+        expect(goButton).toBeDisabled()
+
+        const dateInput = screen.getByLabelText("Select a date:")
+        fireEvent.change(dateInput, { target: { value: "2025-07-15" } })
+        expect(goButton).not.toBeDisabled()
+    })
+
+    it("should call onDateSelect and onClose only when Go button is clicked", async () => {
+        const user = userEvent.setup()
         render(
             <ArchivesModal
                 isOpen={true}
@@ -158,9 +180,15 @@ describe("ArchivesModal", () => {
         )
 
         const dateInput = screen.getByLabelText("Select a date:")
-        // fireEvent.change is the correct way to simulate a date input change
-        fireEvent.change(dateInput, { target: { value: "2025-07-15" } })
+        const goButton = screen.getByRole("button", { name: "Go" })
 
+        // Change date but don't click Go yet
+        fireEvent.change(dateInput, { target: { value: "2025-07-15" } })
+        expect(onDateSelect).not.toHaveBeenCalled()
+        expect(onClose).not.toHaveBeenCalled()
+
+        // Now click Go
+        await user.click(goButton)
         expect(onDateSelect).toHaveBeenCalledWith("2025-07-15")
         expect(onClose).toHaveBeenCalledTimes(1)
     })

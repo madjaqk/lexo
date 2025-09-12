@@ -22,6 +22,8 @@
     --primary-color-hover: #3a7a9c;
     --valid-color: #2196f3;
     --invalid-color: #f44336;
+    --disabled: #e5e5e5;
+    --disabled-text: #9e9e9e;
 
     --tile-text-color: #2c2c2c;
     --tile-border-color: #4a5a62;
@@ -53,6 +55,8 @@
     --primary-color-hover: #1565c0;
     --valid-color: #1976d2;
     --invalid-color: #d32f2f;
+    --disabled: #525252;
+    --disabled-text: #9e9e9e;
 
     --tile-text-color: #e8e8e8;
     --tile-border-color: #8ba5b2;

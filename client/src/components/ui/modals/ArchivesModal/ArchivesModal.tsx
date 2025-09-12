@@ -1,3 +1,4 @@
+import React, { useState } from "react"
 import ReactDOM from "react-dom"
 import { useModalCloseEvents } from "@/hooks/useModalCloseEvents"
 import type { PlayHistory } from "@/types"
@@ -30,10 +31,16 @@ export default function ArchivesModal({
         ? Object.entries(history).sort(([dateA], [dateB]) => dateB.localeCompare(dateA))
         : []
 
+    // Local state for date picker
+    const [pendingDate, setPendingDate] = useState(currentPuzzleDate)
+
     function handleDateChange(event: React.ChangeEvent<HTMLInputElement>) {
-        const newDate = event.target.value
-        if (newDate) {
-            onDateSelect(newDate)
+        setPendingDate(event.target.value)
+    }
+
+    function handleGoClick() {
+        if (pendingDate) {
+            onDateSelect(pendingDate)
             onClose()
         }
     }
@@ -65,11 +72,19 @@ export default function ArchivesModal({
                     <input
                         id="date-picker-input"
                         type="date"
-                        value={currentPuzzleDate}
+                        value={pendingDate}
                         onChange={handleDateChange}
                         min={earliestDate}
                         max={currentDate}
                     />
+                    <button
+                        type="button"
+                        className="go-button"
+                        onClick={handleGoClick}
+                        disabled={pendingDate === currentPuzzleDate}
+                    >
+                        Go
+                    </button>
                 </div>
                 {sortedHistory.length > 0 && (
                     <div className="history-list-container">
