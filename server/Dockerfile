@@ -34,7 +34,8 @@ FROM base AS scheduler
 # Latest releases available at https://github.com/aptible/supercronic/releases
 ENV SUPERCRONIC_URL=https://github.com/aptible/supercronic/releases/download/v0.2.34/supercronic-linux-amd64 \
     SUPERCRONIC_SHA1SUM=e8631edc1775000d119b70fd40339a7238eece14 \
-    SUPERCRONIC=supercronic-linux-amd64
+    SUPERCRONIC=supercronic-linux-amd64 \
+    SENTRY_DSN=https://7037e56ede9aaa8aea791c96192a9016@o4510007912366080.ingest.us.sentry.io/4510007991795712
 
 RUN curl -fsSLO "$SUPERCRONIC_URL" \
     && echo "${SUPERCRONIC_SHA1SUM}  ${SUPERCRONIC}" | sha1sum -c - \
@@ -44,5 +45,4 @@ RUN curl -fsSLO "$SUPERCRONIC_URL" \
 
 COPY crontab /code/crontab
 
-# TODO: See https://github.com/aptible/supercronic for integrating with Sentry when Sentry is set up
-CMD ["/usr/local/bin/supercronic", "/code/crontab"]
+CMD ["/usr/local/bin/supercronic", "-sentry-dsn", "$SENTRY_DSN", "/code/crontab"]
