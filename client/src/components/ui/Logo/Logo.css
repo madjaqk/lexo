@@ -12,6 +12,7 @@
 }
 
 .logo-link,
+.logo-link:link,
 .logo-link:visited,
 .logo-link:hover,
 .logo-link:active,
