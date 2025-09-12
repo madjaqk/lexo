@@ -11,7 +11,11 @@
     user-select: none;
 }
 
-.logo-link, .logo-link:visited, .logo-link:hover, .logo-link:active, .logo-link:focus {
+.logo-link,
+.logo-link:visited,
+.logo-link:hover,
+.logo-link:active,
+.logo-link:focus {
     color: var(--text-color);
     text-decoration: inherit;
 }

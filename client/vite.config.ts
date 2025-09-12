@@ -1,5 +1,6 @@
 /// <reference types="vitest" />
 import path from "node:path"
+import { sentryVitePlugin } from "@sentry/vite-plugin"
 import react from "@vitejs/plugin-react"
 import { defineConfig } from "vite"
 
@@ -11,8 +12,12 @@ export default defineConfig({
             name: "build-timestamp",
             transformIndexHtml: (html) => {
                 return html.replace("%BUILD_TIME%", new Date().toISOString())
-            }
-        }
+            },
+        },
+        sentryVitePlugin({
+            org: "jack-brounstein",
+            project: "javascript-react",
+        }),
     ],
     build: {
         sourcemap: true,

@@ -130,11 +130,13 @@ export default function Game(props: GameProps) {
                                         Submit Answer
                                     </button>
                             )} */}
-                            {gameState === "playing" &&
+                            {gameState === "playing" && (
                                 <button type="button" onClick={endGame}>
-                                {rackScores.every((s) => s.baseScore > 0) ? "Submit Answer" : "Give Up?"}
+                                    {rackScores.every((s) => s.baseScore > 0)
+                                        ? "Submit Answer"
+                                        : "Give Up?"}
                                 </button>
-                            }
+                            )}
                         </div>
                         <div className="score total-score">TOTAL: {totalScore}</div>
                     </div>

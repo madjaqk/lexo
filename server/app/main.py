@@ -1,6 +1,7 @@
 import datetime
 from contextlib import asynccontextmanager
 
+import sentry_sdk
 import yaml
 from fastapi import Depends, FastAPI, HTTPException, status
 from sqlalchemy.exc import NoResultFound, MultipleResultsFound
@@ -13,6 +14,14 @@ from .logging_config import setup_logging
 from .models import GameRules, PuzzleWithDate
 from .settings import get_settings
 from .scripts.generate_puzzles import generate_daily_puzzles
+
+
+sentry_sdk.init(
+    dsn="https://7037e56ede9aaa8aea791c96192a9016@o4510007912366080.ingest.us.sentry.io/4510007991795712",
+    # Add data like request headers and IP for users,
+    # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
+    send_default_pii=True,
+)
 
 
 @asynccontextmanager
@@ -88,6 +97,11 @@ def get_config(db: Session = Depends(get_session)):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Could not load game configuration.",
         )
+
+
+@app.get("/sentry-debug-2")
+def trigger_error():
+    raise ValueError("This is a test error for Sentry")
 
 
 if settings.environment == "dev":

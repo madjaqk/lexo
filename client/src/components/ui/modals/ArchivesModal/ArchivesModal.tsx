@@ -10,7 +10,7 @@ interface ArchivesModalProps {
     onDateSelect: (date: string) => void
     earliestDate: string
     currentDate: string
-    currentPuzzleDate: string  // "currentPuzzleDate" is the date of the puzzle being viewed; "currentDate" is today's date
+    currentPuzzleDate: string // "currentPuzzleDate" is the date of the puzzle being viewed; "currentDate" is today's date
     history: PlayHistory | null
 }
 

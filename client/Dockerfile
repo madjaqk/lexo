@@ -1,6 +1,9 @@
 # Build the React front-end
 FROM node:24-alpine AS build
 
+ARG SENTRY_AUTH_TOKEN
+ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
+
 WORKDIR /app
 
 RUN corepack enable
