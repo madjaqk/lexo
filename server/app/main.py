@@ -99,11 +99,6 @@ def get_config(db: Session = Depends(get_session)):
         )
 
 
-@app.get("/sentry-debug-2")
-def trigger_error():
-    raise ValueError("This is a test error for Sentry")
-
-
 if settings.environment == "dev":
     # In development, we serve the built front-end files from FastAPI.
     # In production, Cappy will serve these files.
