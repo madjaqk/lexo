@@ -1,7 +1,11 @@
 x-service-defaults: &service-defaults
-  environment:
-    - TZ=America/Chicago
   restart: unless-stopped
+
+x-service-tz: &service-tz
+  TZ: America/Chicago
+
+x-puzzle-generation-salt: &puzzle-generation-salt
+  PUZZLE_GENERATION_SALT: ${PUZZLE_GENERATION_SALT}
 
 x-efs-driver-opts: &efs-driver-opts
   type: nfs
@@ -13,7 +17,8 @@ services:
     <<: *service-defaults
     image: ${ECR_REPO_PREFIX}/${ECR_PROJECT_NAME}/server:latest
     environment:
-      - PUZZLE_GENERATION_SALT=${PUZZLE_GENERATION_SALT}
+      <<: *service-tz
+      <<: *puzzle-generation-salt
     volumes:
       # Mount a named volume to persist the SQLite database.
       - db-data:/code/data
@@ -33,7 +38,8 @@ services:
     <<: *service-defaults
     image: ${ECR_REPO_PREFIX}/${ECR_PROJECT_NAME}/scheduler:latest
     environment:
-      - PUZZLE_GENERATION_SALT=${PUZZLE_GENERATION_SALT}
+      <<: *service-tz
+      <<: *puzzle-generation-salt
     volumes:
       - db-data:/code/data
 
@@ -41,6 +47,8 @@ services:
   frontend:
     <<: *service-defaults
     image: ${ECR_REPO_PREFIX}/${ECR_PROJECT_NAME}/frontend:latest
+    environment:
+      <<: *service-tz
     ports:
       - "80:80"
       - "443:443"
@@ -55,6 +63,8 @@ services:
   redis:
     <<: *service-defaults
     image: redis:8.2-alpine
+    environment:
+      <<: *service-tz
     command: redis-server --maxmemory 50mb --maxmemory-policy allkeys-lru
     healthcheck:
       # This command checks if the Redis server is ready to accept commands.

@@ -131,7 +131,7 @@ jobs:
             --parameters commands="\
                 cd /home/${{ secrets.EC2_USER }} && \
                 aws s3 cp s3://${{ secrets.S3_BUCKET }}/docker-compose.prod.yaml docker-compose.yaml && \
-                docker-compose pull && \
+                docker-compose pull --quiet && \
                 docker-compose up --force-recreate -d" \
             --query 'Command.CommandId' \
             --output text \
