@@ -17,8 +17,7 @@ services:
     <<: *service-defaults
     image: ${ECR_REPO_PREFIX}/${ECR_PROJECT_NAME}/server:latest
     environment:
-      <<: *service-tz
-      <<: *puzzle-generation-salt
+      <<: [*service-tz, *puzzle-generation-salt]
     volumes:
       # Mount a named volume to persist the SQLite database.
       - db-data:/code/data
@@ -38,8 +37,7 @@ services:
     <<: *service-defaults
     image: ${ECR_REPO_PREFIX}/${ECR_PROJECT_NAME}/scheduler:latest
     environment:
-      <<: *service-tz
-      <<: *puzzle-generation-salt
+      <<: [*service-tz, *puzzle-generation-salt]
     volumes:
       - db-data:/code/data
 
