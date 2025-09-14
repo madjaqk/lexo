@@ -4,3 +4,7 @@ lexo.jackbrounstein.com, localhost {
     root * /usr/share/caddy/html
     file_server
 }
+
+tiles.jackbrounstein.com {
+    redir https://lexo.jackbrounstein.com permanent
+}
