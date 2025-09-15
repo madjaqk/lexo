@@ -23,7 +23,6 @@
 
 .tile {
     border: 0.1rem solid var(--tile-border-color);
-    padding: 0.2rem;
     margin: 0.3rem;
     display: grid; /* Use grid to easily center the letter */
     place-items: center;
@@ -60,8 +59,8 @@
 .tile-value {
     position: absolute;
     bottom: 0.1em;
-    right: 0.25em;
-    font-size: 0.7em;
+    right: 0.2em;
+    font-size: 0.6em;
 }
 
 /* The "drop-placeholder-visual" divs aren't actually displayed, despite their name, but are important as valid drop targets for the tiles. */
@@ -96,5 +95,10 @@
         height: 3rem;
         width: 3rem;
         margin: 0.5rem;
+    }
+
+    .tile-value {
+        right: 0.25em;
+        font-size: 0.7em;
     }
 }
