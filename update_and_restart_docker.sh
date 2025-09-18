@@ -19,7 +19,7 @@ for REPO in "${REPOS[@]}"; do
     echo "=== Verifying $ECR_BASE/$REPO:latest points to $IMAGE_TAG ==="
     MAX_ATTEMPTS=12
 
-    for i in $(seq 1 $MAX_ATTEMPTS); do
+    for ((i=1; i <= MAX_ATTEMPTS; i++)); do
         if docker manifest inspect "$ECR_BASE/$REPO:$IMAGE_TAG" > /dev/null 2>&1; then
             echo "✅ $ECR_BASE/$REPO: Image $IMAGE_TAG found via Docker Manifest API"
 
@@ -39,7 +39,7 @@ for REPO in "${REPOS[@]}"; do
             echo "⏳ Attempt $i/$MAX_ATTEMPTS: $ECR_BASE/$REPO:$IMAGE_TAG not found via Docker Manifest API"
         fi
 
-        if [ "$i" -eq "$MAX_ATTEMPTS" ]; then
+        if (( i == MAX_ATTEMPTS)); then
             echo "❌ $ECR_BASE/$REPO: Timed out waiting for latest to point to $IMAGE_TAG"
             exit 1
         fi
