@@ -10,16 +10,12 @@ envsubst < docker-compose.prod.yaml.template > docker-compose.prod.yaml
 # Generate update_and_restart_docker.sh from template
 echo "=== Generating deployment script ==="
 export ECR_BASE="${ECR_REPO_PREFIX}/${ECR_PROJECT_NAME}"
-echo "+++++++++++++++++++++++++++++++++"
-echo $(cat update_and_restart_docker.sh)
-envsubst < update_and_restart_docker.sh > update_and_restart_docker.sh
-echo "After substitution"
-echo $(cat update_and_restart_docker.sh)
+envsubst < update_and_restart_docker.sh > update_and_restart_docker.sh.tmp
 
 # Upload both files to S3
 echo "=== Uploading files to S3 ==="
 aws s3 cp docker-compose.prod.yaml "s3://${S3_BUCKET}/docker-compose.prod.yaml"
-aws s3 cp update_and_restart_docker.sh "s3://${S3_BUCKET}/update_and_restart_docker.sh"
+aws s3 cp update_and_restart_docker.sh.tmp "s3://${S3_BUCKET}/update_and_restart_docker.sh"
 
 # Execute deployment on EC2 via SSM
 echo "=== Triggering deployment on EC2 ==="
