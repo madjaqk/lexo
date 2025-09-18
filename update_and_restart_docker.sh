@@ -29,7 +29,7 @@ for REPO in "${REPOS[@]}"; do
             echo "Image SHA digest: $SHA_DIGEST"
             echo "Latest digest:    $LATEST_DIGEST"
 
-            if [ "$SHA_DIGEST" = "$LATEST_DIGEST" ] && [ -n "$SHA_DIGEST" ] && [ "$SHA_DIGEST" != "null"]; then
+            if [ "$SHA_DIGEST" = "$LATEST_DIGEST" ] && [ -n "$SHA_DIGEST" ] && [ "$SHA_DIGEST" != "null" ]; then
                 echo "✅ $ECR_BASE/$REPO:latest points to $IMAGE_TAG"
                 break
             else
