@@ -75,13 +75,14 @@ jobs:
 
       - name: Deploy to EC2
         env:
-          ECR_REPO_PREFIX: ${{ vars.ECR_REPO_PREFIX }}
-          ECR_PROJECT_NAME: ${{ vars.ECR_PROJECT_NAME }}
-          EFS_ADDRESS: ${{ secrets.EFS_ADDRESS }}
-          PUZZLE_GENERATION_SALT: ${{ secrets.PUZZLE_GENERATION_SALT }}
-          IMAGE_TAG: ${{ github.sha }}
-          S3_BUCKET: ${{ secrets.S3_BUCKET }}
+          EC2_INSTANCE_ID: ${{ secrets.EC2_INSTANCE_ID }}
           EC2_USER: ${{ secrets.EC2_USER }}
+          ECR_PROJECT_NAME: ${{ vars.ECR_PROJECT_NAME }}
+          ECR_REPO_PREFIX: ${{ vars.ECR_REPO_PREFIX }}
+          EFS_ADDRESS: ${{ secrets.EFS_ADDRESS }}
+          IMAGE_TAG: ${{ github.sha }}
+          PUZZLE_GENERATION_SALT: ${{ secrets.PUZZLE_GENERATION_SALT }}
+          S3_BUCKET: ${{ secrets.S3_BUCKET }}
         run: |
           chmod +x deploy_to_ec2.sh
           ./deploy_to_ec2.sh
