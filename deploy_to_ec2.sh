@@ -13,6 +13,7 @@ export ECR_BASE="${ECR_REPO_PREFIX}/${ECR_PROJECT_NAME}"
 echo "+++++++++++++++++++++++++++++++++"
 echo $(cat update_and_restart_docker.sh)
 envsubst < update_and_restart_docker.sh > update_and_restart_docker.sh
+echo "After substitution"
 echo $(cat update_and_restart_docker.sh)
 
 # Upload both files to S3
