@@ -10,7 +10,7 @@ envsubst < docker-compose.prod.yaml.template > docker-compose.prod.yaml
 # Generate update_and_restart_docker.sh from template
 echo "=== Generating deployment script ==="
 export ECR_BASE="${ECR_REPO_PREFIX}/${ECR_PROJECT_NAME}"
-envsubst < update_and_restart_docker.sh > update_and_restart_docker.sh.tmp
+envsubst '$IMAGE_TAG,$ECR_BASE,$EC2_USER,$S3_BUCKET' < update_and_restart_docker.sh > update_and_restart_docker.sh.tmp
 
 # Upload both files to S3
 echo "=== Uploading files to S3 ==="
