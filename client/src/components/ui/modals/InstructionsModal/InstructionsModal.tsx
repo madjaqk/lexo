@@ -38,17 +38,23 @@ export default function InstructionsModal({ isOpen, onClose }: InstructionsModal
                     How to Play
                 </h2>
                 <div className="content">
-                    <p>The goal is to arrange all 18 letter tiles into four valid English words.</p>
+                    <p>
+                        The goal is to arrange all 18 letter tiles into four valid English words
+                        within the time limit.
+                    </p>
                     <ul>
-                        <li>Each rack must contain exactly one word.</li>
-                        <li>The words must be 3, 4, 5, and 6 letters long.</li>
-                        <li>You have a limited time to solve the puzzle!</li>
+                        <li>
+                            Place one word in each rack, matching the required length (3, 4, 5, and
+                            6 letters).
+                        </li>
+                        <li>Shorter words have higher score multipliers.  Use your best letters strategically!</li>
+                        <li>Each word is scored as (letter values) × (rack multiplier).  Your total score is the sum of all four word scores.</li>
                     </ul>
-                    <p>Drag and drop tiles between the racks to form your words. Good luck!</p>
+                    <p>Aim for the highest total score possible. Good luck!</p>
                 </div>
                 <img
                     src={walrus}
-                    alt="A friendly mascot character for the game" // Describe the image for accessibility
+                    alt="A friendly and sophisticated walrus"
                     className="logo-placeholder"
                 />
             </div>

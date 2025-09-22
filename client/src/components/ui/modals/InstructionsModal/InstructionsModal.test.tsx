@@ -31,7 +31,7 @@ describe("InstructionsModal", () => {
         render(<InstructionsModal isOpen={true} onClose={onClose} />)
         expect(screen.getByRole("dialog")).toBeInTheDocument()
         expect(screen.getByText("How to Play")).toBeInTheDocument()
-        expect(screen.getByAltText(/mascot/i)).toBeInTheDocument()
+        expect(screen.getByAltText(/walrus/i)).toBeInTheDocument()
     })
 
     it("should call onClose when the close button is clicked", async () => {
