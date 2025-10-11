@@ -1,11 +1,11 @@
+import datetime
 from itertools import chain
 from unittest.mock import mock_open, patch
 
 import pytest
-import yaml
 
-from app.models import Puzzle, Tile
-from app.puzzle_generator import generate_puzzle
+from app.models import Puzzle, Tile, LetterValuesDict
+from app.puzzle_generator import generate_puzzle, get_letter_values_for_date
 from app.settings import get_settings
 
 
@@ -14,21 +14,82 @@ def flatten_racks(racks: list[list[Tile]]) -> list[Tile]:
     return list(chain.from_iterable(racks))
 
 
+##################################
+# get_letter_values_for_date tests
+##################################
+
+MOCK_VALUES_FROM_YAML = {
+    datetime.date(1900, 1, 1): {
+        "A": 1,
+    },
+    datetime.date(2023, 1, 1): {
+        "A": 2,
+    },
+    datetime.date(2024, 1, 1): {
+        "A": 3,
+    },
+}
+
+
+@pytest.mark.parametrize(
+    "date,expected_value",
+    [
+        (datetime.date(1950, 6, 15), 1),  # Between first and second effective date
+        (datetime.date(2023, 1, 1), 2),  # Exactly on second effective date
+        (datetime.date(2023, 6, 15), 2),  # Between second and third effective date
+        (datetime.date(2025, 12, 31), 3),  # After last effective date
+    ],
+)
+def test_get_rules_for_date_returns_correct_rules(date, expected_value):
+    """
+    GIVEN a date
+    WHEN get_rules_for_date is called
+    THEN it should return the correct game rules for that date.
+    """
+    # Mock the load_game_rules_from_yaml_file function to return a controlled set of rules
+    with patch(
+        "app.puzzle_generator.load_letter_values_from_yaml_file", return_value=MOCK_VALUES_FROM_YAML
+    ):
+        # Test dates before the first effective date
+        letter_values = get_letter_values_for_date(date)
+    assert letter_values["A"] == expected_value
+
+
+def test_get_rules_for_date_raises_for_no_rules():
+    """
+    GIVEN a date before any effective rules
+    WHEN get_rules_for_date is called
+    THEN it should raise a ValueError.
+    """
+    with patch(
+        "app.puzzle_generator.load_letter_values_from_yaml_file", return_value=MOCK_VALUES_FROM_YAML
+    ):
+        with pytest.raises(ValueError, match="No letter values found for date"):
+            get_letter_values_for_date(datetime.date(1800, 1, 1))
+
+
+#######################
+# generate_puzzle tests
+#######################
+
+LETTER_VALUES: LetterValuesDict = {"A": 1, "B": 2, "C": 3}
+
+
 def test_generate_puzzle_with_seed_is_deterministic():
     """
     GIVEN a seed value
     WHEN generate_puzzle_logic is called twice with the same seed
     THEN the generated puzzles should be identical.
     """
-    puzzle1 = generate_puzzle(seed=42)
-    puzzle2 = generate_puzzle(seed=42)
+    puzzle1 = generate_puzzle(LETTER_VALUES, seed=42)
+    puzzle2 = generate_puzzle(LETTER_VALUES, seed=42)
 
     assert puzzle1 == puzzle2
     # Also check they are not the same object in memory
     assert puzzle1 is not puzzle2
 
     # And that a different seed produces a different puzzle
-    puzzle3 = generate_puzzle(seed=101)
+    puzzle3 = generate_puzzle(LETTER_VALUES, seed=101)
     assert puzzle1 != puzzle3
 
 
@@ -38,7 +99,7 @@ def test_generate_puzzle_structure_and_tile_count():
     WHEN a puzzle is generated
     THEN it should have the correct structure and number of tiles.
     """
-    puzzle = generate_puzzle(seed=1)
+    puzzle = generate_puzzle(LETTER_VALUES, seed=1)
 
     assert isinstance(puzzle, Puzzle)
 
@@ -57,7 +118,7 @@ def test_tile_conservation():
     WHEN comparing initial and target tiles
     THEN the set of tiles should be identical, just arranged differently.
     """
-    puzzle = generate_puzzle(seed=2)
+    puzzle = generate_puzzle(LETTER_VALUES, seed=2)
 
     initial_tiles = flatten_racks(puzzle.initial_racks)
     target_tiles = flatten_racks(puzzle.target_solution)
@@ -82,7 +143,7 @@ def test_target_solution_is_valid():
     with open(words_path, "r", encoding="utf-8") as f:
         valid_words = {line.strip().upper() for line in f if line.strip()}
 
-    puzzle = generate_puzzle(seed=3)
+    puzzle = generate_puzzle(LETTER_VALUES, seed=3)
 
     expected_lengths = [3, 4, 5, 6]
     for i, rack in enumerate(puzzle.target_solution):
@@ -97,7 +158,7 @@ def test_initial_racks_are_shuffled_correctly():
     WHEN inspecting the initial racks
     THEN the tiles should be sorted by their numeric ID.
     """
-    puzzle = generate_puzzle(seed=4)
+    puzzle = generate_puzzle(LETTER_VALUES, seed=4)
     initial_tiles = flatten_racks(puzzle.initial_racks)
     tile_ids = [int(tile.id.split("-")[1]) for tile in initial_tiles]
 
@@ -116,46 +177,15 @@ def test_generator_raises_error_for_missing_word_lengths(mock_open_builtin):
     # Mock word list missing 5-letter words
     mock_words = "CAT\nDOGS\n"
 
-    mock_rules = "multipliers:\n  3: 1"  # These rules aren't valid, but the generator should fail before that
-
     def mock_open_logic(file_path, *args, **kwargs):
         if "words-common.txt" in str(file_path):
             return mock_open(read_data=mock_words).return_value
-        if "game_rules.yaml" in str(file_path):
-            return mock_open(read_data=mock_rules).return_value
         raise FileNotFoundError(f"Unexpected file open: {file_path}")
 
     mock_open_builtin.side_effect = mock_open_logic
 
     with pytest.raises(ValueError, match="Could not find words of all required lengths"):
-        generate_puzzle()
-
-
-@patch("builtins.open")
-def test_generator_handles_missing_letter_values(mock_open_builtin):
-    """
-    GIVEN a game_rules.yaml file missing the 'letter_values' key
-    WHEN generate_puzzle_logic is called
-    THEN it should run without error and assign a value of 0 to all tiles.
-    """
-    # Mock game_rules.yaml to be empty or missing the key
-    mock_rules = "multipliers:\n  3: 1"  # Some valid YAML without letter_values
-    mock_words = "CAT\nDOGS\nBEAST\nTESTER"
-
-    def mock_open_logic(file_path, *args, **kwargs):
-        if "words-common.txt" in str(file_path):
-            return mock_open(read_data=mock_words).return_value
-        if "game_rules.yaml" in str(file_path):
-            return mock_open(read_data=mock_rules).return_value
-        raise FileNotFoundError(f"Unexpected file open: {file_path}")
-
-    mock_open_builtin.side_effect = mock_open_logic
-
-    puzzle = generate_puzzle(seed=5)
-    all_tiles = flatten_racks(puzzle.initial_racks)
-
-    # All tiles should have a value of 0
-    assert all(tile.value == 0 for tile in all_tiles)
+        generate_puzzle(LETTER_VALUES)
 
 
 @patch("builtins.open")
@@ -165,9 +195,6 @@ def test_generator_handles_letter_not_in_values(mock_open_builtin):
     WHEN generate_puzzle_logic is called
     THEN it should assign a value of 0 to that tile.
     """
-    # Use a real word list but a modified rules file
-    mock_rules_dict = {"letter_values": {"A": 1, "B": 1, "C": 1}}  # Missing 'T'
-    mock_rules_yaml = yaml.dump(mock_rules_dict)
 
     # Mock a word list that is guaranteed to produce a word with 'T'
     mock_words = "CAT\nDOGS\nBEAST\nTESTER"
@@ -175,13 +202,11 @@ def test_generator_handles_letter_not_in_values(mock_open_builtin):
     def mock_open_logic(file_path, *args, **kwargs):
         if "words-common.txt" in str(file_path):
             return mock_open(read_data=mock_words).return_value
-        if "game_rules.yaml" in str(file_path):
-            return mock_open(read_data=mock_rules_yaml).return_value
         raise FileNotFoundError(f"Unexpected file open: {file_path}")
 
     mock_open_builtin.side_effect = mock_open_logic
 
-    puzzle = generate_puzzle(seed=6)  # Seed doesn't matter much here
+    puzzle = generate_puzzle(LETTER_VALUES)
 
     target_tiles = flatten_racks(puzzle.target_solution)
 
@@ -189,7 +214,7 @@ def test_generator_handles_letter_not_in_values(mock_open_builtin):
     tile_c = next((tile for tile in target_tiles if tile.letter == "C"), None)
 
     assert tile_t is not None
-    assert tile_t.value == 0  # 'T' is not in our mocked rules
+    assert tile_t.value == 0  # 'T' is not in our mocked letter values
 
     assert tile_c is not None
-    assert tile_c.value == 1  # 'C' is in our mocked rules
+    assert tile_c.value == 3  # 'C' is in our mocked letter values

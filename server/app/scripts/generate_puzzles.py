@@ -35,7 +35,7 @@ from typing_extensions import Annotated
 from app.database import create_db_and_tables, get_session
 from app.logging_config import setup_logging
 from app.models import PuzzleWithDate
-from app.puzzle_generator import generate_puzzle
+from app.puzzle_generator import generate_puzzle, get_letter_values_for_date
 
 app = typer.Typer()
 
@@ -54,8 +54,9 @@ def generate_daily_puzzle(date: datetime.date, db: Session):
         return
 
     logging.info(f"Generating puzzle for {date.isoformat()}...")
+    letter_values = get_letter_values_for_date(date)
     # Use the date's ISO format string as a stable seed for reproducibility.
-    puzzle_data = generate_puzzle(seed=date.isoformat())
+    puzzle_data = generate_puzzle(letter_values, seed=date.isoformat())
 
     new_puzzle = PuzzleWithDate(
         date=date,

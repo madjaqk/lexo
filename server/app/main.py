@@ -92,11 +92,11 @@ def get_config(db: Session = Depends(get_session)):
     try:
         rules_dict = crud.get_game_rules(db)
         return GameRules.model_validate(rules_dict)
-    except (FileNotFoundError, yaml.YAMLError, NoResultFound, MultipleResultsFound):
+    except (FileNotFoundError, yaml.YAMLError, NoResultFound, MultipleResultsFound) as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Could not load game configuration.",
-        )
+        ) from e
 
 
 if settings.environment == "dev":

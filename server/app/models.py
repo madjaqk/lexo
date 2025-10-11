@@ -1,4 +1,5 @@
 import datetime
+from typing import TypedDict
 
 from pydantic import ConfigDict, TypeAdapter
 from pydantic.alias_generators import to_camel
@@ -63,7 +64,10 @@ class GameRules(CamelCaseBaseModel):
     """Pydantic model for the game rules configuration."""
 
     multipliers: dict[int, int]
-    letter_values: dict[str, int]
     timer_seconds: int
     earliest_date: str
     current_date: str
+
+
+type LetterValuesDict = dict[str, int]
+type LetterValuesByDate = dict[datetime.date, LetterValuesDict]

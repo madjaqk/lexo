@@ -6,14 +6,48 @@ database or the web server. It takes game parameters and returns a
 puzzle data structure.
 """
 
+import datetime
 import random
 import yaml
 
-from .models import Puzzle, Tile
+from .models import LetterValuesByDate, LetterValuesDict, Puzzle, Tile
 from .settings import get_settings
 
 
-def generate_puzzle(seed: int | str | None = None) -> Puzzle:
+def load_letter_values_from_yaml_file() -> LetterValuesByDate:
+    """Load and parse the values from letter_values.yaml.
+
+    This is broken into a standalone function to facilitate mocking in tests.
+    """
+    settings = get_settings()
+    letter_values_path = settings.config_directory / "letter_values.yaml"
+
+    with open(letter_values_path, "r", encoding="utf-8") as f:
+        letter_values_by_date: LetterValuesByDate = yaml.safe_load(f)
+
+    return letter_values_by_date
+
+
+def get_letter_values_for_date(date: datetime.date) -> LetterValuesDict:
+    """Get the game rules in effect for a given date.
+
+    The rules_by_date dictionary gives game rules keyed by the date they became effective.  We
+    will sort this in descending order, then loop to find the first date that is less than or
+    equal to the given date.
+    """
+    values_by_date = load_letter_values_from_yaml_file()
+    sorted_values = sorted(values_by_date.items(), key=lambda x: x[0], reverse=True)
+    for effective_date, letter_values in sorted_values:
+        if date >= effective_date:
+            return letter_values
+
+    # This shouldn't be reachable, as game_rules.yaml includes an entry for 1900-01-01
+    raise ValueError(
+        f"No letter values found for date {date.isoformat()}. Check letter_values.yaml."
+    )
+
+
+def generate_puzzle(letter_values: LetterValuesDict, seed: int | str | None = None) -> Puzzle:
     """
     Generates a new, solvable puzzle based on the game's configuration.
 
@@ -29,6 +63,7 @@ def generate_puzzle(seed: int | str | None = None) -> Puzzle:
     useful for creating daily challenges that are the same for all players.
 
     Args:
+        letter_values: A dictionary mapping letters to point values.
         seed: An optional seed for the random number generator. Can be an
             integer or a string (e.g., a date string like '2025-08-07').
             Using a canonical string for daily puzzles avoids timezone issues.
@@ -47,14 +82,9 @@ def generate_puzzle(seed: int | str | None = None) -> Puzzle:
 
     # 1. Load words and game rules
     words_path = settings.config_directory / "words-common.txt"
-    rules_path = settings.config_directory / "game_rules.yaml"
 
     with open(words_path, "r", encoding="utf-8") as f:
         all_words = [line.strip().upper() for line in f if line.strip()]
-
-    with open(rules_path, "r", encoding="utf-8") as f:
-        rules = yaml.safe_load(f)
-    letter_values = rules.get("letter_values", {})
 
     # Group words by length
     words_by_length = {3: [], 4: [], 5: [], 6: []}

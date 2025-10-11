@@ -1,6 +1,6 @@
 import datetime
 import logging
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 import typer
@@ -92,6 +92,37 @@ def test_generate_daily_puzzle_uses_date_as_seed(session: Session):
     # Assert they are identical
     assert puzzle1.initial_racks == puzzle2.initial_racks
     assert puzzle1.target_solution == puzzle2.target_solution
+
+
+@patch("app.puzzle_generator.load_letter_values_from_yaml_file")
+def test_generate_daily_puzzle_uses_correct_rules_for_date(
+    mock_load_values: MagicMock, session: Session
+):
+    """
+    GIVEN a specific date with known letter values
+    WHEN generate_daily_puzzle is called
+    THEN it should generate a puzzle that conforms to those values.
+    """
+
+    mock_load_values.return_value = {
+        datetime.date(1900, 1, 1): {
+            chr(i): 1
+            for i in range(65, 91)  # A-Z all 1 point
+        },
+        datetime.date(2025, 10, 1): {
+            chr(i): 5
+            for i in range(65, 91)  # A-Z all 5 points
+        },
+    }
+
+    test_date = datetime.date(2025, 2, 1)  # Date with known rules
+
+    generate_daily_puzzle(test_date, session)
+    session.commit()
+    puzzle = session.get(PuzzleWithDate, test_date)
+    assert puzzle is not None
+
+    assert puzzle.initial_racks[0][0].value == 1  # All tiles should be 1 point
 
 
 ##############################

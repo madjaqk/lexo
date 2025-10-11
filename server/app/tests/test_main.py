@@ -10,9 +10,9 @@ from sqlmodel import Session
 
 from app.models import PuzzleWithDate, Tile
 
-###########################
-# get_puzzle__by_date tests
-###########################
+##########################
+# get_puzzle_by_date tests
+##########################
 
 
 def test_get_puzzle_success(session: Session, client: TestClient):
@@ -127,7 +127,6 @@ def test_get_config_success(mock_get_rules, client: TestClient):
     """
     mock_config = {
         "multipliers": {3: 6, 4: 8},
-        "letter_values": {"A": 1, "B": 3},
         "timer_seconds": 300,
         "earliest_date": "2025-01-01",
         "current_date": "2025-08-15",
@@ -140,7 +139,6 @@ def test_get_config_success(mock_get_rules, client: TestClient):
 
     # FastAPI's jsonable_encoder will convert integer keys to strings for JSON
     assert data["multipliers"] == {"3": 6, "4": 8}
-    assert data["letterValues"] == {"A": 1, "B": 3}
     assert data["timerSeconds"] == 300
     assert data["earliestDate"] == "2025-01-01"
     assert data["currentDate"] == "2025-08-15"
@@ -180,3 +178,33 @@ def test_get_config_malformed_yaml(mock_get_rules, client: TestClient):
     response = client.get("/api/config")
     assert response.status_code == 500
     assert "Could not load game configuration" in response.json()["detail"]
+
+
+def test_get_config_works_with_actual_game_rules_yaml(session: Session, client: TestClient):
+    """
+    GIVEN the actual game_rules.yaml file exists
+    WHEN a GET request is made to /api/config
+    THEN it should return a 200 OK with the parsed config.
+
+    This is a regression test, kind of, for something that happened in development, where I
+    changed the format of game_rules.yaml, which caused this endpoint to break but wasn't
+    captured by any existing tests.
+    """
+    today = datetime.date.today()
+    puzzle_to_save = PuzzleWithDate(
+        date=today,
+        initial_racks=[[Tile(id="tile-1", letter="T", value=1)]],
+        target_solution=[[Tile(id="tile-1", letter="T", value=1)]],
+    )
+    session.add(puzzle_to_save)
+    session.commit()
+
+    response = client.get("/api/config")
+    assert response.status_code == 200, response.json()
+    data = response.json()
+
+    # Check for expected keys in the response
+    assert "multipliers" in data
+    assert "timerSeconds" in data
+    assert "earliestDate" in data
+    assert "currentDate" in data
