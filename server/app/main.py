@@ -15,9 +15,10 @@ from .models import GameRules, PuzzleWithDate
 from .settings import get_settings
 from .scripts.generate_puzzles import generate_daily_puzzles
 
+settings = get_settings()
 
 sentry_sdk.init(
-    dsn="https://7037e56ede9aaa8aea791c96192a9016@o4510007912366080.ingest.us.sentry.io/4510007991795712",
+    dsn=settings.sentry_dsn,
     # Add data like request headers and IP for users,
     # see https://docs.sentry.io/platforms/python/data-management/data-collected/ for more info
     send_default_pii=True,
@@ -37,7 +38,6 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Tile Game API", lifespan=lifespan)
 
-settings = get_settings()
 if settings.environment == "dev":
     from fastapi.middleware.cors import CORSMiddleware
 

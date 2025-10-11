@@ -17,11 +17,13 @@ class Settings(BaseSettings):
     puzzle_generation_salt: str = "default-salt-for-dev"
     environment: Literal["dev", "prod"] = "dev"
     redis_url: str | None = None
+    sentry_dsn: str | None = None
 
     model_config = SettingsConfigDict(
         env_file=PROJECT_ROOT / ".env",
         env_file_encoding="utf-8",
     )
+
 
 @cache
 def get_settings():
