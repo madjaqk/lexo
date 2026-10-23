@@ -1,5 +1,10 @@
 x-service-defaults: &service-defaults
   restart: unless-stopped
+  logging:
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "3"
 
 x-service-tz: &service-tz
   TZ: America/Chicago
@@ -18,6 +23,9 @@ services:
     image: ${ECR_REPO_PREFIX}/${ECR_PROJECT_NAME}/server:latest
     environment:
       <<: [*service-tz, *puzzle-generation-salt]
+    # Cap memory so a future leak kills only this container (which then restarts)
+    # rather than starving the whole instance.
+    mem_limit: 300m
     volumes:
       # Mount a named volume to persist the SQLite database.
       - db-data:/code/data
